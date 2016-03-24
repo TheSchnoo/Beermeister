@@ -1,16 +1,16 @@
-drop table Brewery;
-drop table Customer
-drop table BeerInfo;
-drop table BeerInStock;
-drop table StoreEmployeeHasA;
-drop table Rates;
-drop table Updates;
-drop table SearchesFor;
-drop table Searches;
+-- DROP TABLE Brewery;
+-- drop table Customer
+-- drop table BeerInfo;
+-- drop table BeerInStock;
+-- drop table StoreEmployeeHasA;
+-- drop table Rates;
+-- drop table Updates;
+-- drop table SearchesFor;
+-- drop table Searches;
 
 CREATE TABLE Brewery(
-	BreweryName CHAR(30),
-	PRIMARY KEY (BName),
+	bname CHAR(30),
+	PRIMARY KEY (bname)
 );
 
 grant select on Brewery to public;
