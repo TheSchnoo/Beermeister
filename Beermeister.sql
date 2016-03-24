@@ -10,7 +10,7 @@
 
 CREATE TABLE Brewery(
 	bname CHAR(30),
-	PRIMARY KEY (bname));
+	PRIMARY KEY (bname)).
 
 grant select on Brewery to public;
 
