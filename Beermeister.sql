@@ -1,5 +1,5 @@
 drop table Brewery;
-drop table Customer;
+drop table Customer
 drop table BeerInfo;
 drop table BeerInStock;
 drop table StoreEmployeeHasA;
