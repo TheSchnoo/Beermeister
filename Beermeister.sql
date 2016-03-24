@@ -1,13 +1,27 @@
+drop table Brewery;
+drop table Customer;
+drop table BeerInfo;
+drop table BeerInStock;
+drop table StoreEmployeeHasA;
+drop table Rates;
+drop table Updates;
+drop table SearchesFor;
+drop table Searches;
+
 CREATE TABLE Brewery(
 	BreweryName CHAR(30),
 	PRIMARY KEY (BName),
 );
+
+grant select on Brewery to public;
 
 CREATE TABLE Customer(
 	CID INTEGER,		
 	CName CHAR(40),
 	PRIMARY KEY(CID)
 );
+
+grant select on Customer to public;
 
 CREATE TABLE BeerInfo (
 	FName CHAR(20)  NOT NULL UNIQUE,		
@@ -24,6 +38,8 @@ CREATE TABLE BeerInfo (
 	ON DELETE NO ACTION
 );
 
+grant select on BeerInfo to public;
+
 CREATE TABLE BeerVendor (
 	StoreID INTEGER,
 	StoreName CHAR(30),
@@ -33,6 +49,8 @@ CREATE TABLE BeerVendor (
 	ON DELETE: NO ACTION
 );
 
+grant select on BeerVendor to public;
+
 CREATE TABLE BeerInStock (
 	BName CHAR(30),
 	StoreID INTEGER,
@@ -41,14 +59,17 @@ CREATE TABLE BeerInStock (
 	FOREIGN KEY(StoreID) REFERNCES BeerVendor
 );
 
+grant select on BeerInStock to public;
+
 CREATE TABLE StoreEmployeeHasA (
 	EmpID	INTEGER,
 	EmpName CHAR(40),
 	PRIMARY KEY(EmpID)
 	ON UPDATE CASCADE
 	ON DELETE NO ACTION
-	
 );
+
+grant select on StoreEmployeeHasA to public;
 
 CREATE TABLE Rates (
 	CID INTEGER,
@@ -57,6 +78,8 @@ CREATE TABLE Rates (
 	FOREIGN KEY (CID) REFERENCES Customer,
 	FOREIGN KEY (BName) REFERENCES BeerInfo
 );
+
+grant select on Rates to public;
 
 
 CREATE TABLE Updates(
@@ -69,6 +92,8 @@ CREATE TABLE Updates(
 	FOREIGN KEY(EmpID) REFERENCES StoreEmployee
 );
 
+grant select on Updates to public;
+
 CREATE TABLE SearchesFor(
 	CID INTEGER,		
 		StoreID INTEGER,
@@ -77,6 +102,8 @@ CREATE TABLE SearchesFor(
 	FOREIGN KEY (StoreID) REFERENCES BeerVendor
 );
 
+grant select on SearchesFor to public;
+
 CREATE TABLE Searches(
 	CID INTEGER,		
 		BName CHAR(30),
@@ -84,6 +111,8 @@ CREATE TABLE Searches(
 	FOREIGN KEY (CID) REFERENCES Customer,
 	FOREIGN KEY (BName) REFERENCES BeerInfo
 );
+
+grant select on Searches to public;
 
 insert into Brewery
 values('Parallel 49');
