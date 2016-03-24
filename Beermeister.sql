@@ -1,4 +1,4 @@
-drop table Brewery;
+drop table brewery;
 drop table Customer;
 drop table BeerInfo;
 drop table BeerInStock;
