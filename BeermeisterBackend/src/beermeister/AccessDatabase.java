@@ -111,6 +111,30 @@ public class AccessDatabase {
 	    }
 	  return "";
   }
+  
+  public String getBeersFromBrewery(String brewery) throws Exception {
+	  try {
+		  Class.forName("com.mysql.jdbc.Driver");
+		  
+	      connect = DriverManager
+	          .getConnection("jdbc:mysql://localhost/beerinfo?"
+	              + "user=sqluser&password=sqluserpw");
+	      preparedStatement = connect
+	              .prepareStatement("SELECT bname, BreweryName FROM beerinfo WHERE BreweryName = '%'+?+'%';");
+	      preparedStatement.setString(1, brewery);
+	      resultSet = preparedStatement.executeQuery();
+	      String ans = null;
+	      while(resultSet.next()){
+	    	  ans = ans + "BeerName: " + resultSet.getString(1) + " Brewery: " + resultSet.getString(2);
+	      }
+	      return ans;
+	      
+	    } catch (Exception e) {
+	      throw e;
+	    } finally {
+	      close();
+	    }
+  }
 
   // You need to close the resultSet
   private void close() {

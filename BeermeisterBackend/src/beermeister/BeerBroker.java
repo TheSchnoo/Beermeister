@@ -41,7 +41,19 @@ public class BeerBroker {
 						// Search beers by various parameters in form GET /searchbeers?&ibu=IBU&abv=
 						// ABV&brewery=BREWERYNAME&type=TYPE&name=NAME&rating=RATING&vendor=VENDORNAME
 						if(line.contains("/searchbeers")){
-							out.println(accessDB.searchBeers());
+							int arrayLength = line.split("=").length;
+							if(arrayLength < 1){
+								out.print(accessDB.searchBeers());
+							}
+							else{
+								String[] returnSet = new String[arrayLength];
+								int i = 0;
+								if(line.contains("brewery=")){
+									returnSet[i] = line.split("brewery=")[1];
+									out.print(accessDB.getBeersFromBrewery(returnSet[i]));
+									i++;
+								}
+							}
 						}
 						
 						if(line.contains("/reviews")){
@@ -68,7 +80,6 @@ public class BeerBroker {
 		}
 		catch (Exception e) {
 			System.err.println(e);
-			System.err.println("Usage: java HttpMirror <port>");
 			}
 		}
 }
