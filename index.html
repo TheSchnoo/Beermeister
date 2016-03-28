@@ -1,0 +1,184 @@
+
+<html lang="en" >
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- Angular Material style sheet -->
+  <link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/angular_material/1.0.0/angular-material.min.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+  <link rel="stylesheet" type="text/css" href="styles.css">
+</head>
+
+<body ng-app="Brewmaster" ng-cloak>
+  <div ng-controller="AppCtrl" ng-cloak >
+    <md-toolbar class="transparent">
+      <div class="md-toolbar-tools">
+        <h2>
+          <span>Brewmeister</span>
+        </h2>
+        <span flex></span>
+        <md-button id="login-signup" ng-click="submitSearch($event)">
+          Login/Signup
+        </md-button>
+        <md-button id="browse" ng-click="submitSearch($event)">
+          Browse
+        </md-button>
+        <md-button id="login-signup" ng-click="submitSearch($event)">
+          Contact
+        </md-button>
+      </div>
+    </md-toolbar>
+    <!-- Top banner -->
+    <div class="jumbotron vertical-center">
+      <div id="jumbotron-text" class="container">
+        <md-title>Love beer? So do we.</md-title>
+        <p>
+          <md-subhead>With Brewmeister, you can search for new beers to try, rate your favourites, and find out where different products are sold.</md-subhead>
+        </p>
+      </div>
+    </div>
+
+    <div class="jumbotron quote-area">
+      <div id="jumbotron-text" class="container">
+        <md-title>Beer is proof that god loves us and wants us to be happy.</md-title>
+        <p id="author">
+        <md-subhead>-Benjamin Franklin</md-subhead>
+        </p>
+      </div>
+
+    </div>
+
+
+    <div id="search-area">
+      <div id="search-form" ng-controller="SearchCtrl" layout="column" ng-cloak class="md-inline-form container">
+        <md-toolbar>
+          <div class="md-toolbar-tools">
+            <h2>
+              <span>Search for Beers</span>
+            </h2>
+            <span flex></span>
+          </div>
+        </md-toolbar>
+        <md-content layout-padding>
+          <div>
+            <form name="searchForm">
+              <div layout-gt-sm="row">
+                <md-input-container class="md-block" flex-gt-sm>
+                  <label>Beer Name</label>
+                  <input ng-model="beer.name">
+                </md-input-container>
+
+                <md-input-container class="md-block" flex-gt-sm>
+                  <label>Brewery Name</label>
+                  <input ng-model="beer.brewery">
+                </md-input-container>
+              </div>
+
+                <div layout-gt-sm="row">
+                  <md-input-container class="md-block" flex-gt-sm>
+                    <label>Type</label>
+                    <md-select ng-model="beer.type">
+                      <md-option ng-repeat="type in beerTypeCategories" value="{{type}}">
+                        {{type}}
+                      </md-option>
+                    </md-select>
+                  </md-input-container>
+
+                  <md-input-container class="md-block" flex-gt-sm>
+                    <label>ABV</label>
+                    <md-select ng-model="beer.abv">
+                      <md-option ng-repeat="abvCategory in abvCategories" value="{{abvCategory}}">
+                        {{abvCategory}}
+                      </md-option>
+                    </md-select>
+                  </md-input-container>
+
+                  <md-input-container required class="md-block" flex-gt-sm>
+                    <label>IBU</label>
+                    <md-select ng-model="beer.ibu">
+                      <md-option ng-repeat="ibuCategory in ibuCategories" value="{{ibuCategory}}">
+                        {{ibuCategory}}
+                      </md-option>
+                    </md-select>
+                  </md-input-container>
+
+                  <md-input-container class="md-block" flex-gt-sm>
+                    <label>Average Rating</label>
+                    <md-select ng-model="beer.averageRating">
+                      <md-option ng-repeat="ratingCategory in ratingCategories" value="{{ratingCategory}}">
+                        {{ratingCategory}}
+                      </md-option>
+                    </md-select>
+                  </md-input-container>
+
+                </div>
+            
+              <md-button id="submit-button" ng-click="submitSearch($event)">
+                Submit Search
+              </md-button>
+            </form>
+          </div>
+        </md-content>
+      </div>
+    </div>
+
+
+    <md-subhead id="recommendations">Our Recommendations:</md-subhead>
+    <md-content class="md-padding" layout-xs="column" layout="row">
+      <div flex-xs flex-gt-xs="50" layout="row">
+
+        <div data-ng-repeat="beer in beers">
+          <md-card class="beer-card">
+            <md-card-title>
+              <md-card-title-text>
+                <span class="md-headline beer-name">{{beer.name}}</span>
+                <span class="md-subhead beer-info">
+                  <p>Brewery: {{beer.brewery}}</p>
+                  <p>Type: {{beer.type}}</p>
+                  <p>ABV: {{beer.abv}}</p>
+                  <p>IBU: {{beer.ibu}}</p>
+                </span>
+              </md-card-title-text>
+              <md-card-title-media>
+                <div class="md-media-lg card-media">
+                  <img class="beer-image" src="{{beer.imageLocation}}"> 
+                </div>
+              </md-card-title-media>
+            </md-card-title>
+            <md-card-actions layout="row" layout-align="end center">
+              <md-button class="md-primary"ng-click="showVendors($event, beer)">Vendors</md-button>
+              <md-button class="md-primary" ng-click="showRatings($event, beer)">Ratings</md-button>
+            </md-card-actions>
+          </md-card>
+        </div>
+      </div>
+    </md-content>
+  </div>
+   
+
+
+
+
+  
+  <!-- Angular Material requires Angular.js Libraries -->
+  <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
+  <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular-animate.min.js"></script>
+  <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular-aria.min.js"></script>
+  <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular-messages.min.js"></script>
+
+  <!-- Angular Material Library -->
+  <script src="http://ajax.googleapis.com/ajax/libs/angular_material/1.0.0/angular-material.min.js"></script>
+
+  <!--Jquery-->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.2/jquery.min.js"></script>
+
+  <!--Boostrap-->
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+  
+
+
+  <script src="app.js"></script>
+  
+</body>
+</html>
+
+

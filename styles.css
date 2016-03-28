@@ -1,0 +1,142 @@
+/*#hero{
+	background-image:linear-gradient( rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5) ),url(images/banner.jpg);
+	background-size:cover;
+	position:relative;
+	height:100vh;
+}
+
+.header{
+	position:absolute;
+	top:40%;
+	text-align:center;
+	width:100%;
+	color:#fff;
+	font-size:60px;
+
+}*/
+
+/*.hero-unit {
+    background-image:linear-gradient( rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5) ), url('images/banner.jpg');
+    background-size:cover;
+    background-color: #EEEEEE;
+    height:100vh;
+    margin-top:0;
+    padding-top:0;
+ }
+
+ #banner-text{
+ 	position:absolute;
+	text-align:center;
+	width:100%;
+    color: #FFFFFF;
+    font-size: 60px;
+    letter-spacing: -1px;
+    line-height: 1;
+    margin-bottom: 0;
+    top:20%;
+ }*/
+#author{
+	padding-top: 30px;
+}
+
+.quote-area{
+	background-color: black;
+	color: #FFFFFF;
+	height:70vh;
+}
+
+ #contact{
+ 	margin-right: 20px;
+ }
+
+ #recommendations{
+ 	font-size: 20;
+ }
+
+ #search-form{
+ 	opacity:0.9;
+ }
+
+ #search-area{
+ 	background-image:linear-gradient( rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5) ), url('images/craft-beer.jpg');
+ 	background-size: cover;
+ 	height:100%;
+ 	padding-top: 100px;
+
+ }
+
+ .jumbotron{
+ 	background-size:cover;
+ 	height:70;
+ 	text-align: center;
+ }
+ .vertical-center {
+  background-image:linear-gradient( rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5) ), url('images/banner.jpg');
+  display: flex;
+  align-items: center;
+  padding-top: 0px;
+  height: 500px;
+  margin-bottom: 0;
+}
+
+.jumbotron md-title {
+	text-align:center;
+	width:100%;
+    color: #FFFFFF;
+    font-size: 60;
+}
+
+.jumbotron md-subhead {
+	text-align:center;
+	width:100%;
+    color: #FFFFFF;
+    font-size: 30;
+}
+
+
+.fill{width:100%;height:350px;background-position:center;background-size:cover;
+}
+
+
+#app-description{
+	font-size:30px;
+	padding-left: 100px;
+	padding-right: 100px;
+}
+
+.card-media {
+  background-color: #999999;
+  height: 100px;
+}
+
+.beer-card {
+	height: 250px;
+	width: 500px;
+	float: left;
+}
+
+.beer-info {
+	padding-left: 20px;
+}
+
+#subheading{
+	position: absolute;
+	top: 60%;
+	left: 45%;
+	color: white;
+}
+
+.beer-image{
+	height:173px;
+}
+
+.quote-area{
+	background-color:rgba(0, 0, 0, 0.95);
+    display: flex;
+    align-items: center;
+    padding-top: 0px;
+    height: 500px;
+    margin-bottom: 0;
+
+}
+
