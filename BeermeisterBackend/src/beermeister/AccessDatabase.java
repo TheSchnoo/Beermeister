@@ -123,7 +123,7 @@ public class AccessDatabase {
 	              .prepareStatement("SELECT bname, BreweryName FROM beerinfo WHERE BreweryName = '%'+?+'%';");
 	      preparedStatement.setString(1, brewery);
 	      resultSet = preparedStatement.executeQuery();
-	      String ans = null;
+	      String ans = "";
 	      while(resultSet.next()){
 	    	  ans = ans + "BeerName: " + resultSet.getString(1) + " Brewery: " + resultSet.getString(2);
 	      }

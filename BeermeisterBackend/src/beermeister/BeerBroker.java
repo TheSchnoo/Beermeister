@@ -41,17 +41,20 @@ public class BeerBroker {
 						// Search beers by various parameters in form GET /searchbeers?&ibu=IBU&abv=
 						// ABV&brewery=BREWERYNAME&type=TYPE&name=NAME&rating=RATING&vendor=VENDORNAME
 						if(line.contains("/searchbeers")){
-							int arrayLength = line.split("=").length;
-							if(arrayLength < 1){
+							String[] splitLine = line.split("&");
+							if(splitLine.length < 2){
 								out.print(accessDB.searchBeers());
 							}
 							else{
-								String[] returnSet = new String[arrayLength];
-								int i = 0;
-								if(line.contains("brewery=")){
-									returnSet[i] = line.split("brewery=")[1];
-									out.print(accessDB.getBeersFromBrewery(returnSet[i]));
-									i++;
+								for (int i=0; i < splitLine.length; i++){
+									if(splitLine[i].contains("ibu=")){
+										splitLine[i] = splitAndReplace(splitLine[i], "ibu=");
+										continue;
+									}
+									if(splitLine[i].contains("brewery=")){
+										splitLine[i] = splitAndReplace(splitLine[i], "brewery=");
+										out.print(accessDB.getBeersFromBrewery(splitLine[i]));
+									}
 								}
 							}
 						}
@@ -82,4 +85,8 @@ public class BeerBroker {
 			System.err.println(e);
 			}
 		}
+	
+	private static String splitAndReplace(String inString, String splitOn){
+		return inString.split(splitOn)[1].split(" ")[0].replace("%20", " ");
+	}
 }
