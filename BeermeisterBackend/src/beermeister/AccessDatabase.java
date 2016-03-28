@@ -89,19 +89,34 @@ public class AccessDatabase {
     }
   }
   
-  public String searchBeers() throws Exception {
+  public String searchBeers(String[] params) throws Exception {
+	  String searchString = "";
 	  try {
+		  if(params.length <= 1){
+			  // !!! fill in here
+		  }
+		  else{
+			  searchString = "WHERE ";
+			  for(int i = 1; i < params.length; i++){
+				  String[] split = params[i].split("=");
+				  searchString = searchString + split[0] + " LIKE " + "'%"+splitAndReplace(split[1])+"%'";
+				  if(i+1 < params.length){
+					  searchString = searchString + " AND ";
+				  }
+			  }
+		  }
+		  
 		  Class.forName("com.mysql.jdbc.Driver");
 		  
 	      connect = DriverManager
 	          .getConnection("jdbc:mysql://localhost/beerinfo?"
 	              + "user=sqluser&password=sqluserpw");
 	      preparedStatement = connect
-	              .prepareStatement("SELECT bname FROM beerinfo");
+	              .prepareStatement("SELECT * FROM beerinfo " + searchString);
 	      resultSet = preparedStatement.executeQuery();
 	      if(resultSet.next()){
-		      String ans = resultSet.getString(1);
-		      return ans;
+		      String ret = convertResultSetToJSONString_Beer(resultSet);
+		      return ret;
 	      }
 	      
 	    } catch (Exception e) {
@@ -120,7 +135,7 @@ public class AccessDatabase {
 	          .getConnection("jdbc:mysql://localhost/beerinfo?"
 	              + "user=sqluser&password=sqluserpw");
 	      preparedStatement = connect
-	              .prepareStatement("SELECT bname, BreweryName FROM beerinfo WHERE BreweryName = '%'+?+'%';");
+	              .prepareStatement("SELECT bname, BreweryName FROM beerinfo WHERE BreweryName LIKE '%'+?+'%';");
 	      preparedStatement.setString(1, brewery);
 	      resultSet = preparedStatement.executeQuery();
 	      String ans = "";
@@ -153,6 +168,31 @@ public class AccessDatabase {
     } catch (Exception e) {
 
     }
+  }
+  
+  private String splitAndReplace(String inString){
+		return inString.split(" ")[0].replace("%20", " ");
+	}
+  
+  private String convertResultSetToJSONString_Beer(ResultSet rs){
+	  try{
+		  String name = rs.getString("BName");
+		  String brewery = rs.getString("BreweryName");
+		  String type = rs.getString("BType");
+		  float abv = rs.getFloat("ABV");
+		  float ibu = rs.getFloat("IBU");
+//		  String averageRating;
+//		  int beerID;
+//		  String imageLocation;
+		  String returnString = "{'name': " + "'" + name + "'," + "'brewery': " + "'" + brewery + "'," + "'type': " + "'" + type + "'," + "'abv': " + "'" + abv + "'," + "'ibu': " + "'" + ibu + "'}";
+		  System.out.println(returnString);
+		  return returnString;
+	  }
+	  catch (Exception e){
+		  System.out.println(e);
+	  }
+	  return "";
+	  
   }
 
 }

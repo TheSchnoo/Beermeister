@@ -39,24 +39,25 @@ public class BeerBroker {
 							out.println(userid);
 						}
 						// Search beers by various parameters in form GET /searchbeers?&ibu=IBU&abv=
-						// ABV&brewery=BREWERYNAME&type=TYPE&name=NAME&rating=RATING&vendor=VENDORNAME
+						// ABV&breweryname=BREWERYNAME&type=TYPE&name=NAME&rating=RATING&vendor=VENDORNAME
 						if(line.contains("/searchbeers")){
-							String[] splitLine = line.split("&");
-							if(splitLine.length < 2){
-								out.print(accessDB.searchBeers());
-							}
-							else{
-								for (int i=0; i < splitLine.length; i++){
-									if(splitLine[i].contains("ibu=")){
-										splitLine[i] = splitAndReplace(splitLine[i], "ibu=");
-										continue;
-									}
-									if(splitLine[i].contains("brewery=")){
-										splitLine[i] = splitAndReplace(splitLine[i], "brewery=");
-										out.print(accessDB.getBeersFromBrewery(splitLine[i]));
-									}
-								}
-							}
+							String[] searchParams = line.split("&");
+							out.print(accessDB.searchBeers(searchParams));
+//							if(splitLine.length < 2){
+//								out.print(accessDB.searchBeers());
+//							}
+//							else{
+//								for (int i=0; i < splitLine.length; i++){
+//									if(splitLine[i].contains("ibu=")){
+//										splitLine[i] = splitAndReplace(splitLine[i], "ibu=");
+//										continue;
+//									}
+//									if(splitLine[i].contains("brewery=")){
+//										splitLine[i] = splitAndReplace(splitLine[i], "brewery=");
+//										out.print(accessDB.getBeersFromBrewery(splitLine[i]));
+//									}
+//								}
+//							}
 						}
 						
 						if(line.contains("/reviews")){
@@ -85,8 +86,4 @@ public class BeerBroker {
 			System.err.println(e);
 			}
 		}
-	
-	private static String splitAndReplace(String inString, String splitOn){
-		return inString.split(splitOn)[1].split(" ")[0].replace("%20", " ");
-	}
 }

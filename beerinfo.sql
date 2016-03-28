@@ -15,7 +15,7 @@ grant select on Customer to public;
 CREATE TABLE BeerInfo (
 	FName CHAR(20)  NOT NULL UNIQUE,		
 	IBU INTEGER,	
-	ABU INTEGER,
+	ABV INTEGER,
 	BName CHAR(30),
 	BType CHAR(30),
 	Description CHAR(255),
