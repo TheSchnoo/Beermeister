@@ -1,4 +1,4 @@
-var mockMode = false;
+var mockMode = true;
 var debugMode = false;
 var app = angular.module('Brewmaster', ['ngMaterial']);
 app.config(function($mdThemingProvider) {
@@ -6,7 +6,7 @@ app.config(function($mdThemingProvider) {
     .primaryPalette('blue-grey');
 });
 
-app.controller('AppCtrl', function($scope, $mdDialog, $mdMedia, $rootScope) {
+app.controller('AppCtrl', function($scope, $mdDialog, $mdMedia, $rootScope, $http) {
 	if (mockMode) {
 		$scope.beers = [
 		 	{
