@@ -9,12 +9,14 @@ import java.net.Socket;
 public class BeerBroker {
 	public static void start() {
 		try {
+			AccessDatabase accessDB = new AccessDatabase();
+			
 			int port = 8020;
 //					Integer.parseInt(args[0]);
 			ServerSocket socket = new ServerSocket(port);
 			
 			for (;;) {
-				System.out.println("wes");
+				System.out.println("connection");
 				Socket client = socket.accept();
 				BufferedReader in = new BufferedReader(new InputStreamReader(client.getInputStream()));
 				PrintWriter out = new PrintWriter(client.getOutputStream());
@@ -29,9 +31,33 @@ public class BeerBroker {
 					if (line.length() == 0){
 						break;
 					}
+					// Get requests
 					if(line.contains("GET")){
-						out.print("Moki" + "\r\n");
+						// Get recommended beers by userid
+						if(line.contains("/?/recommendedbeers?userid=")){
+							String userid = line.substring(31, 37);
+							out.println(userid);
+						}
+						// Search beers by various parameters in form GET /searchbeers?&ibu=IBU&abv=
+						// ABV&brewery=BREWERYNAME&type=TYPE&name=NAME&rating=RATING&vendor=VENDORNAME
+						if(line.contains("/searchbeers")){
+							out.println(accessDB.searchBeers());
+						}
 						
+						if(line.contains("/reviews")){
+							// Search reviews by userid in form GET /reviews?&userid=USERID
+							if(line.contains("userid=")){
+								
+							}
+							// Search reviews by beerid in form GET /reviews/BEERID
+							else{
+								
+							}
+						}
+						// Search vendors by beerid in form GET /vendors/BEERID
+						if(line.contains("/vendors")){
+							
+						}
 					}
 				}
 				

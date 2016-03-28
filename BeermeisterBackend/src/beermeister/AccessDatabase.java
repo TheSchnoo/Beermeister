@@ -79,14 +79,37 @@ public class AccessDatabase {
       // also possible to get the columns via the column number
       // which starts at 1
       // e.g. resultSet.getSTring(2);
-      String user = resultSet.getString("id");
+      String user = resultSet.getString("BName");
 //      String name = "";
 //      if(resultSet.isLast() && !resultSet.isFirst()){
 //    	  name = resultSet.getString(2);
 //      }
-      System.out.println("User: " + user); //+ " name: " + name);
+      System.out.println("BName: " + user); //+ " name: " + name);
      
     }
+  }
+  
+  public String searchBeers() throws Exception {
+	  try {
+		  Class.forName("com.mysql.jdbc.Driver");
+		  
+	      connect = DriverManager
+	          .getConnection("jdbc:mysql://localhost/beerinfo?"
+	              + "user=sqluser&password=sqluserpw");
+	      preparedStatement = connect
+	              .prepareStatement("SELECT bname FROM beerinfo");
+	      resultSet = preparedStatement.executeQuery();
+	      if(resultSet.next()){
+		      String ans = resultSet.getString(1);
+		      return ans;
+	      }
+	      
+	    } catch (Exception e) {
+	      throw e;
+	    } finally {
+	      close();
+	    }
+	  return "";
   }
 
   // You need to close the resultSet
