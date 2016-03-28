@@ -45,10 +45,10 @@ app.controller('AppCtrl', function($scope, $mdDialog, $mdMedia, $rootScope, $htt
   	} else {
   		$http({
 			  method: 'GET',
-			  url: ''
+			  url: 'http://localhost:8020/?/searchbeers?&breweryname=Parallel%2049'
 			}).then(function successCallback(response) {
 			    console.log(response.data);
-			    $scope.beers=JSON.parse(response.data);
+			    $scope.beers=response.data;
 			  }, function errorCallback(response) {
 			    // called asynchronously if an error occurs
 			    // or server returns response with an error status.
@@ -131,14 +131,47 @@ app.controller('SearchCtrl', function($scope) {
 
 
     $scope.submitSearch = function(ev){
+    	if (mockMode){
     	// console.log("Search submitted!");
     	// console.log("Submitting a search of: " + $scope.beer);
-    	console.log("There are "+Object.keys($scope.beer).length+" attributes in beer");
-    	if (jQuery.isEmptyObject($scope.beer)){
-    		console.log('invalid search');
-    	} else {
-    		console.log('good search');
-    	}
+	    	$scope.searchResults = [
+			 	{
+				  	"name": "Thunderbird Lager",
+				  	"brewery": "UBC Brewery",
+				  	"type": "Lager",
+				  	"abv": "5.1%",
+				  	"ibu": "10 bitterness units",
+				  	"imageLocation": "images/stock-beer.jpg"
+			  	},
+			  	{	
+				  	"name": "Passive Aggressive",
+				  	"brewery": "Brassneck",
+				  	"type": "IPA",
+				  	"abv": "5.3%",
+				  	"ibu": "2 bitterness units",
+				  	"imageLocation": "images/ipa.jpg"
+			  	},
+			  	{
+				  	"name": "Southern Hop",
+				  	"brewery": "Main Street Brewery",
+				  	"type": "IPA",
+				  	"abv": "6.1%",
+				  	"ibu": "20 bitterness units",
+				  	"imageLocation": "images/stock-beer.jpg"
+				},
+				{
+				  	"name": "Sun God Wheat Ale",
+				  	"brewery": "R&B Brewery",
+				  	"type": "Hefeweizen",
+				  	"abv": "5.6%",
+				  	"ibu": "2 bitterness units",
+				  	"imageLocation": "images/TownHallHefeweizen.jpg"
+				}
+	  		]
+	    } else {
+	    	//make http get request to search API
+	    	
+	    }
     }
 
   });
