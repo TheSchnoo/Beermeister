@@ -7,7 +7,7 @@ import java.sql.ResultSet;
 public class Connect {
 	public static void main(String[] args) throws Exception {
         URL url = new URL("http://192.168.0.11:8020/");
-        String query = "/searchbeers?&brewery=Parallel%2049";
+        String query = "/searchbeers?&breweryname=Parallel%2049";
         URLConnection connection = new URL(url + "?" + query).openConnection();
 //        System.out.println(connection.getURL());
         InputStream response = connection.getInputStream();
@@ -18,7 +18,10 @@ public class Connect {
         String inputLine;
 
         while ((resultLine = in.readLine()) != null){
-            System.out.println(resultLine);
+            String[] parseArray = resultLine.split("\\},\\{");
+            for(int i=0 ; i < parseArray.length; i++){
+            	System.out.println(parseArray[i]);
+            }
         }
         in.close();
     }

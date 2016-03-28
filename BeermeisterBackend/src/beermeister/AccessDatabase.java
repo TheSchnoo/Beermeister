@@ -7,6 +7,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 public class AccessDatabase {
   private Connection connect = null;
   private Statement statement = null;
@@ -89,7 +92,7 @@ public class AccessDatabase {
     }
   }
   
-  public String searchBeers(String[] params) throws Exception {
+  public JSONArray searchBeers(String[] params) throws Exception {
 	  String searchString = "";
 	  try {
 		  if(params.length <= 1){
@@ -114,17 +117,17 @@ public class AccessDatabase {
 	      preparedStatement = connect
 	              .prepareStatement("SELECT * FROM beerinfo " + searchString);
 	      resultSet = preparedStatement.executeQuery();
-	      if(resultSet.next()){
-		      String ret = convertResultSetToJSONString_Beer(resultSet);
-		      return ret;
+	      JSONArray beers = new JSONArray();
+	      while(resultSet.next()){
+	    	  beers.put(convertResultSetToJSONString_Beer(resultSet));
 	      }
+	      return beers;
 	      
 	    } catch (Exception e) {
 	      throw e;
 	    } finally {
 	      close();
 	    }
-	  return "";
   }
   
   public String getBeersFromBrewery(String brewery) throws Exception {
@@ -174,7 +177,7 @@ public class AccessDatabase {
 		return inString.split(" ")[0].replace("%20", " ");
 	}
   
-  private String convertResultSetToJSONString_Beer(ResultSet rs){
+  private JSONObject convertResultSetToJSONString_Beer(ResultSet rs){
 	  try{
 		  String name = rs.getString("BName");
 		  String brewery = rs.getString("BreweryName");
@@ -184,14 +187,19 @@ public class AccessDatabase {
 //		  String averageRating;
 //		  int beerID;
 //		  String imageLocation;
-		  String returnString = "{'name': " + "'" + name + "'," + "'brewery': " + "'" + brewery + "'," + "'type': " + "'" + type + "'," + "'abv': " + "'" + abv + "'," + "'ibu': " + "'" + ibu + "'}";
-		  System.out.println(returnString);
-		  return returnString;
+		  JSONObject returnJSON = new JSONObject();
+		  returnJSON.put("name", name);
+		  returnJSON.put("brewery", brewery);
+		  returnJSON.put("type", type);
+		  returnJSON.put("abv", abv);
+		  returnJSON.put("ibu", ibu);
+		  
+		  return returnJSON;
 	  }
 	  catch (Exception e){
 		  System.out.println(e);
 	  }
-	  return "";
+	  return null;
 	  
   }
 
