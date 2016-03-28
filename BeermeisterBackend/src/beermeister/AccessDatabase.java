@@ -173,6 +173,29 @@ public class AccessDatabase {
     }
   }
   
+  public JSONArray getVendors(String st) throws Exception{
+//	  splitAndReplace(st);
+	  try{
+		  Class.forName("com.mysql.jdbc.Driver");
+		  
+	      connect = DriverManager
+	          .getConnection("jdbc:mysql://localhost/beerinfo?"
+	              + "user=sqluser&password=sqluserpw");
+	      preparedStatement = connect
+	              .prepareStatement("SELECT * FROM beervendor ");
+	      resultSet = preparedStatement.executeQuery();
+	      JSONArray vendors = new JSONArray();
+	      while(resultSet.next()){
+	    	  vendors.put(convertResultSetToJSONString_Vendor(resultSet));
+	      }
+	      return vendors;
+    } catch (Exception e) {
+      throw e;
+    } finally {
+      close();
+    }
+  }
+  
   private String splitAndReplace(String inString){
 		return inString.split(" ")[0].replace("%20", " ");
 	}
@@ -200,7 +223,20 @@ public class AccessDatabase {
 		  System.out.println(e);
 	  }
 	  return null;
-	  
+  }
+  
+  private JSONObject convertResultSetToJSONString_Vendor(ResultSet rs){
+	  try{
+		  String name = rs.getString("StoreName");
+		  JSONObject returnJSON = new JSONObject();
+		  returnJSON.put("storeName", name);
+		  
+		  return returnJSON;
+	  }
+	  catch (Exception e){
+		  System.out.println(e);
+	  }
+	  return null;
   }
 
 }

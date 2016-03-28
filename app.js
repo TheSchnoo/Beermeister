@@ -6,7 +6,7 @@ app.config(function($mdThemingProvider) {
     .primaryPalette('blue-grey');
 });
 
-app.controller('AppCtrl', function($scope, $mdDialog, $mdMedia, $rootScope) {
+app.controller('AppCtrl', function($scope, $mdDialog, $mdMedia, $rootScope, $http) {
 	if (mockMode) {
 		$scope.beers = [
 		 	{
@@ -45,10 +45,10 @@ app.controller('AppCtrl', function($scope, $mdDialog, $mdMedia, $rootScope) {
   	} else {
   		$http({
 			  method: 'GET',
-			  url: ''
+			  url: 'http://localhost:8020/?/searchbeers?&breweryname=Parallel%2049'
 			}).then(function successCallback(response) {
-			    console.log(response.data);
-			    $scope.beers=JSON.parse(response.data);
+			    console.log("The response is" + JSON.stringify(response.data));
+			    $scope.beers=response.data;
 			  }, function errorCallback(response) {
 			    // called asynchronously if an error occurs
 			    // or server returns response with an error status.
