@@ -1,4 +1,4 @@
-var mockMode = true;
+var mockMode = false;
 var debugMode = false;
 var app = angular.module('Brewmaster', ['ngMaterial']);
 app.config(function($mdThemingProvider) {
@@ -43,7 +43,16 @@ app.controller('AppCtrl', function($scope, $mdDialog, $mdMedia, $rootScope) {
 			}
 	  	]
   	} else {
-  		//not mockmode beers
+  		$http({
+			  method: 'GET',
+			  url: ''
+			}).then(function successCallback(response) {
+			    console.log(response.data);
+			    $scope.beers=JSON.parse(response.data);
+			  }, function errorCallback(response) {
+			    // called asynchronously if an error occurs
+			    // or server returns response with an error status.
+			  });	
   	}
 
   	$scope.showVendors = function(ev, beer) {
@@ -167,4 +176,15 @@ function DialogController($scope, $mdDialog, $rootScope) {
   // 	} else {
   // 		//make http get and set response to $scope.vendors
   // 	}
-
+function makeGetRequest(url){
+	$http({
+	  method: 'GET',
+	  url: 'http://localhost:8020/?/searchbeers?&breweryname=Parallel%2049'
+	}).then(function successCallback(response) {
+	    console.log(response.data);
+	    $scope.beers=JSON.parse(response.data);
+	  }, function errorCallback(response) {
+	    // called asynchronously if an error occurs
+	    // or server returns response with an error status.
+	  });
+}
