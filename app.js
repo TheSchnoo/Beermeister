@@ -1,4 +1,4 @@
-var mockMode = false;
+var mockMode = true;
 var debugMode = false;
 var app = angular.module('Brewmaster', ['ngMaterial']);
 app.config(function($mdThemingProvider) {
