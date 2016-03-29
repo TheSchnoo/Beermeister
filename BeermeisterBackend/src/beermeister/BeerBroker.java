@@ -24,6 +24,9 @@ public class BeerBroker {
 				 out.print("HTTP/1.1 200 \r\n"); // Version & status code
 			     out.print("Content-Type: text/plain\r\n"); // The type of data
 			     out.print("Connection: close\r\n"); // Will close stream
+			     out.print("Access-Control-Allow-Headers: Content-Type\r\n");
+			     out.print("Access-Control-Allow-Methods: GET, POST, OPTIONS\r\n");
+			     out.print("Access-Control-Allow-Origin: *\r\n");
 			     out.print("\r\n"); // End of headers
 				
 				String line;
@@ -72,7 +75,13 @@ public class BeerBroker {
 						}
 						// Search vendors by beerid in form GET /vendors/BEERID
 						if(line.contains("/vendors")){
-							
+							if(line.split("vendors/").length > 1){
+								String beer = line.split("vendors/")[1];
+								out.print(accessDB.getVendors(beer));
+							}
+							else{
+								out.print(accessDB.getVendors(""));
+							}
 						}
 					}
 				}

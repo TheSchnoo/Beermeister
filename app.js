@@ -1,4 +1,4 @@
-var mockMode = true;
+var mockMode = false;
 var debugMode = false;
 var app = angular.module('Brewmaster', ['ngMaterial']);
 app.config(function($mdThemingProvider) {
@@ -43,11 +43,10 @@ app.controller('AppCtrl', function($scope, $mdDialog, $mdMedia, $rootScope, $htt
 			}
 	  	]
   	} else {
-  		$http({
+  	  		$http({
 			  method: 'GET',
-			  url: 'http://localhost:8020/?/searchbeers?&breweryname=Parallel%2049'
+			  url: 'http://localhost:8020/?/recommendedbeers?userid=1'
 			}).then(function successCallback(response) {
-			    console.log(response.data);
 			    $scope.beers=response.data;
 			  }, function errorCallback(response) {
 			    // called asynchronously if an error occurs
@@ -68,19 +67,42 @@ app.controller('AppCtrl', function($scope, $mdDialog, $mdMedia, $rootScope, $htt
 					"name":"Legacy Liquor Store"
 				}
 			];
+			var useFullScreen = ($mdMedia('sm') || $mdMedia('xs'))  && $scope.customFullscreen;
+			    $mdDialog.show({
+			        controller: DialogController,
+			      	templateUrl: 'app/vendordialog.html',
+			      	parent: angular.element(document.body),
+			      	targetEvent: ev,
+			      	clickOutsideToClose:true,
+			      	fullscreen: useFullScreen
+			    });
   		} else {
-  			//!!! implement this when webserver works
+  			console.log('making HTTP GET Request');
+  			var baseURL =  'http://localhost:8020/?/vendors/'
+  			$http({
+			  method: 'GET',
+			  url: baseURL + beer.name
+			}).then(function successCallback(response) {
+			    $scope.vendors = response.data;
+			    console.log("Successfully received response, setting $rootScope.vendors = " + 
+			    	JSON.stringify(response.data));
+			    var useFullScreen = ($mdMedia('sm') || $mdMedia('xs'))  && $scope.customFullscreen;
+			    $mdDialog.show({
+			        controller: DialogController,
+			      	templateUrl: 'app/vendordialog.html',
+			      	parent: angular.element(document.body),
+			      	targetEvent: ev,
+			      	clickOutsideToClose:true,
+			      	fullscreen: useFullScreen
+			    });
+			  }, function errorCallback(response) {
+			    // called asynchronously if an error occurs
+			    // or server returns response with an error status.
+			  });
+
   		}
   		// console.log(JSON.stringify($rootScope.vendors));
-	    var useFullScreen = ($mdMedia('sm') || $mdMedia('xs'))  && $scope.customFullscreen;
-	    $mdDialog.show({
-	        controller: DialogController,
-	      	templateUrl: 'app/vendordialog.html',
-	      	parent: angular.element(document.body),
-	      	targetEvent: ev,
-	      	clickOutsideToClose:true,
-	      	fullscreen: useFullScreen
-	    });
+
 	}
 
   // 	$scope.showVendors = function(ev, beer) {
@@ -189,35 +211,5 @@ function DialogController($scope, $mdDialog, $rootScope) {
   	$scope.answer = function(answer) {
     	$mdDialog.hide(answer);
   	}
-  	console.log('got to dialogcontroller');
-  	$scope.vendors = $rootScope.vendors;
-}
 
-
-  // 	if (mockMode){
-  // 		$scope.vendors = [
-		// 	{
-		// 		"name":"Darby's Liquor Store"
-		// 	},
-		// 	{
-		// 		"name":"UBC Liquor Store"
-		// 	},
-		// 	{	
-		// 		"name":"Legacy Liquor Store"
-		// 	}
-		// ];
-  // 	} else {
-  // 		//make http get and set response to $scope.vendors
-  // 	}
-function makeGetRequest(url){
-	$http({
-	  method: 'GET',
-	  url: 'http://localhost:8020/?/searchbeers?&breweryname=Parallel%2049'
-	}).then(function successCallback(response) {
-	    console.log(response.data);
-	    $scope.beers=JSON.parse(response.data);
-	  }, function errorCallback(response) {
-	    // called asynchronously if an error occurs
-	    // or server returns response with an error status.
-	  });
 }

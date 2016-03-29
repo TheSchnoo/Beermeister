@@ -6,8 +6,9 @@ import java.sql.ResultSet;
 
 public class Connect {
 	public static void main(String[] args) throws Exception {
-        URL url = new URL("http://192.168.0.11:8020/");
-        String query = "/searchbeers?&breweryname=Parallel%2049";
+        URL url = new URL("http://localhost:8020/");
+        String query = "/vendors/gypsy%20tears";
+//        		"/searchbeers?&breweryname=Parallel%2049";
         URLConnection connection = new URL(url + "?" + query).openConnection();
 //        System.out.println(connection.getURL());
         InputStream response = connection.getInputStream();
