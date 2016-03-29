@@ -219,7 +219,8 @@ app.controller('SearchCtrl', function($scope, $http, $timeout) {
     	// console.log("Submitting a search of: " + $scope.beer);
 	  
             $scope.count++;
-            $scope.$apply();
+            console.log('$scope.count is now ' + $scope.count);
+            $scope.$digest();
    //  		console.log("$scope.count is now " + $scope.count);
 	  //   	$scope.searchResults = [
 			//  	{
