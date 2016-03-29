@@ -1,3 +1,6 @@
+insert into BeerInStock
+values('Gypsy Tears',0);
+
 insert into BeerVendor
 values(0, 'Legacy Liquor Store');
 

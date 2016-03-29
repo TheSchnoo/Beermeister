@@ -38,8 +38,8 @@ public class BeerBroker {
 					if(line.contains("GET")){
 						// Get recommended beers by userid
 						if(line.contains("/?/recommendedbeers?userid=")){
-							String userid = line.substring(31, 37);
-							out.println(userid);
+							String user = line.split("userid=")[1];
+							out.print(accessDB.searchBeers(new String[0]));
 						}
 						// Search beers by various parameters in form GET /searchbeers?&ibu=IBU&abv=
 						// ABV&breweryname=BREWERYNAME&type=TYPE&name=NAME&rating=RATING&vendor=VENDORNAME
