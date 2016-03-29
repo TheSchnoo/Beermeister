@@ -119,18 +119,43 @@
           </div>
         </md-content>
       </div>
-
-
-
-      <div id="search-results" ng-controller="SearchCtrl">
-        Search Results
     </div>
 
+    <div id="search-results" ng-controller="SearchCtrl">
+      <md-subhead id="search-results">Search Results: {{count}}</md-subhead>
+      <md-content class="md-padding" layout-xs="column" layout="row">
+        <div flex-xs flex-gt-xs="50" layout="row">
+          <div data-ng-repeat="beer in searchResults">
+            <md-card class="beer-card">
+              <md-card-title>
+                <md-card-title-text>
+                  <span class="md-headline beer-name">{{beer.name}}</span>
+                  <span class="md-subhead beer-info">
+                    <p>Brewery: {{beer.brewery}}</p>
+                    <p>Type: {{beer.type}}</p>
+                    <p>ABV: {{beer.abv}}</p>
+                    <p>IBU: {{beer.ibu}}</p>
+                  </span>
+                </md-card-title-text>
+                <md-card-title-media>
+                  <div class="md-media-lg card-media">
+                    <img class="beer-image" src="images/stock-beer.jpg"> 
+                  </div>
+                </md-card-title-media>
+              </md-card-title>
+              <md-card-actions layout="row" layout-align="end center">
+                <md-button class="md-primary"ng-click="showVendors($event, beer)">Vendors</md-button>
+                <md-button class="md-primary" ng-click="showRatings($event, beer)">Ratings</md-button>
+              </md-card-actions>
+            </md-card>
+          </div>
+        </div>
+      </md-content>
+    </div>
 
     <md-subhead id="recommendations">Our Recommendations:</md-subhead>
     <md-content class="md-padding" layout-xs="column" layout="row">
       <div flex-xs flex-gt-xs="50" layout="row">
-
         <div data-ng-repeat="beer in beers">
           <md-card class="beer-card">
             <md-card-title>
@@ -145,7 +170,7 @@
               </md-card-title-text>
               <md-card-title-media>
                 <div class="md-media-lg card-media">
-                  <img class="beer-image" src="{{beer.imageLocation}}"> 
+                  <img class="beer-image" src="images/stock-beer.jpg"> 
                 </div>
               </md-card-title-media>
             </md-card-title>
