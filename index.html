@@ -121,11 +121,11 @@
       </div>
     </div>
 
-    <div id="search-results" ng-controller="SearchCtrl">
+    <div id="search-results" ng-controller="SearchCtrl" ng-model="$root.count">
       <md-subhead id="search-results">Search Results: {{count}}</md-subhead>
       <md-content class="md-padding" layout-xs="column" layout="row">
         <div flex-xs flex-gt-xs="50" layout="row">
-          <div data-ng-repeat="beer in searchResults">
+          <div data-ng-repeat="beer in $root.searchResults">
             <md-card class="beer-card">
               <md-card-title>
                 <md-card-title-text>
