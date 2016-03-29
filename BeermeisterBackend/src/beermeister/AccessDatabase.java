@@ -174,7 +174,7 @@ public class AccessDatabase {
   }
   
   public JSONArray getVendors(String st) throws Exception{
-//	  splitAndReplace(st);
+	  splitAndReplace(st);
 	  try{
 		  Class.forName("com.mysql.jdbc.Driver");
 		  
@@ -182,7 +182,8 @@ public class AccessDatabase {
 	          .getConnection("jdbc:mysql://localhost/beerinfo?"
 	              + "user=sqluser&password=sqluserpw");
 	      preparedStatement = connect
-	              .prepareStatement("SELECT * FROM beervendor ");
+	              .prepareStatement("SELECT StoreName FROM beervendor, BeerInStock WHERE BeerVendor.StoreID = BeerInStock.StoreID AND BName LIKE '%'+?+'%';");
+	    	      preparedStatement.setString(1, splitAndReplace(st));
 	      resultSet = preparedStatement.executeQuery();
 	      JSONArray vendors = new JSONArray();
 	      while(resultSet.next()){

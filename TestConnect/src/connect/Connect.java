@@ -7,7 +7,7 @@ import java.sql.ResultSet;
 public class Connect {
 	public static void main(String[] args) throws Exception {
         URL url = new URL("http://localhost:8020/");
-        String query = "/vendors/gypsy%20tears";
+        String query = "/vendors/Gypsy";
 //        		"/searchbeers?&breweryname=Parallel%2049";
         URLConnection connection = new URL(url + "?" + query).openConnection();
 //        System.out.println(connection.getURL());
