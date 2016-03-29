@@ -124,7 +124,7 @@ insert into Brewery
 values('Parallel 49');
 
 insert into BeerInfo
-values('Watermelo Witbier', 'Hefeweizen', 'WW Profile', 50, 5.22, 'Fruity, refreshing', 'Parallel 49');
+values('Watermelon Witbier', 'Hefeweizen', 'WW Profile', 50, 5.22, 'Fruity, refreshing', 'Parallel 49');
 
 insert into BeerInfo
 values('Jerkface 9000', 'Wheat Ale', 'JF Profile', 37, 5.0, 'Citrus, floral, malt base, hop punch', 'Parallel 49');
