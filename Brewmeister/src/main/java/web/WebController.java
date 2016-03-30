@@ -16,9 +16,9 @@ public class WebController {
     @ResponseBody
 //    String[] searchParams = new String[@RequestParam.split('=').length];
 
-    ArrayList<BeerInfo> searchBeers (@RequestParam(value="BName", required = true) String bname,
+    ArrayList<BeerInfo> searchBeers (@RequestParam(value="BName", required = false) String bname,
                                      @RequestParam(value="BType", required = false) String btype,
-                                     @RequestParam(value="FName", required = true) String fname,
+                                     @RequestParam(value="FName", required = false) String fname,
                                      @RequestParam(value="IBU", required = false) String ibu,
                                      @RequestParam(value="ABV", required = false) String abv,
                                      @RequestParam(value="Description", required = false) String description,
