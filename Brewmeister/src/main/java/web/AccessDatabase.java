@@ -39,10 +39,16 @@ public class AccessDatabase {
                         searchString = searchString + " AND ";
                     }
                     if(entry.getKey()=="ibu"){
-                        searchString = searchString + entry.getKey() + " BETWEEN " + entry.getValue() + " AND " + entry.getValue() + 9;
+                        float value = Float.parseFloat(entry.getValue());
+                        searchString = searchString + entry.getKey() + " BETWEEN " + value + " AND " + (value + (float) 9);
                     }
                     if(entry.getKey()=="abv"){
-                        searchString = searchString + entry.getKey() + " BETWEEN " + entry.getValue() + " AND " + entry.getValue() + 3;
+                        float value = Float.parseFloat(entry.getValue());
+                        float upperRange = value + (float) 1;
+                        if(value == 0){
+                            upperRange = value + (float) 4;
+                        }
+                        searchString = searchString + entry.getKey() + " BETWEEN " + value + " AND " + upperRange;
                     }
                     else {
                         searchString = searchString + entry.getKey() + " LIKE " + "'%" + entry.getValue() + "%'";
