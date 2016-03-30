@@ -128,3 +128,23 @@ values('Watermelon Witbier', 'Hefeweizen', 'WW Profile', 50, 5.22, 'Fruity, refr
 
 insert into BeerInfo
 values('Jerkface 9000', 'Wheat Ale', 'JF Profile', 37, 5.0, 'Citrus, floral, malt base, hop punch', 'Parallel 49');
+
+-- Procedure;
+
+CREATE PROCEDURE update_average
+	(IN avg FLOAT,beername CHAR(30))
+	BEGIN
+		UPDATE BEERINFO b
+		SET b.avg = avg
+		WHERE beername = BName;
+	END;
+
+CREATE PROCEDURE update_avg_ratings_table
+	(IN beername CHAR(30))
+	BEGIN
+		UPDATE RatingsTable
+		SET average = (SELECT AVG(rating)
+									 FROM Ratings
+									 WHERE BName=beername)
+		WHERE beername = BName;
+	END;
