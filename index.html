@@ -174,6 +174,11 @@
                   <h4>{{beer.breweryName}}</h4>
                   <p>description will be here</p>
                 </div>
+                  <md-button class="search-action-button md-primary">More Info</md-button>
+                  <md-button class="search-action-button md-primary">Vendors</md-button>
+                  <md-button class="search-action-button md-primary">Ratings</md-button>
+                <md-divider ng-if="!$last"></md-divider>
+
               </md-list-item>
         <!-- </div> -->
       <!-- </md-content> -->
@@ -182,7 +187,7 @@
     <md-subhead class="result-heading" id="recommendations">Our Recommendations:</md-subhead>
     <md-content class="md-padding" layout-xs="column" layout="row">
       <div flex-xs flex-gt-xs="50" layout="row">
-        <div data-ng-repeat="beer in beers">
+        <div data-ng-repeat="beer in recommendedBeers">
           <md-card class="beer-card">
             <md-card-title>
               <md-card-title-text>

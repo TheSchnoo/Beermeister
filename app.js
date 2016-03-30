@@ -15,7 +15,7 @@ app.controller('AppCtrl', function($scope, $mdDialog, $mdMedia, $rootScope, $htt
 	$rootScope.loading = false;
 	//this block used to get the recommended beers, and set to a scope variable
 	if (mockMode) {
-		$scope.beers = [
+		$scope.recommendedBeers = [
 		 	{
 			  	"bname": "Thunderbird Lager",
 			  	"breweryName": "UBC Brewery",
@@ -55,7 +55,7 @@ app.controller('AppCtrl', function($scope, $mdDialog, $mdMedia, $rootScope, $htt
 		    url: baseURL + '/recommendedbeers?userid=' + userid
 		}).then(function successCallback(response) {
 			console.log('recommended beers are ' + JSON.stringify(response.data));
-		    $scope.beers = response.data;
+		    $scope.recommendedBeers = response.data;
 		}, function errorCallback(response) {
 		    // called asynchronously if an error occurs
 		    // or server returns response with an error status.
