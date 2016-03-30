@@ -1,4 +1,4 @@
-var mockMode = true;
+var mockMode = false;
 var debugMode = false;
 var baseURL = 'http://localhost:8020'
 var userid = 1;
@@ -12,6 +12,7 @@ app.config(function($mdThemingProvider) {
 
 app.controller('AppCtrl', function($scope, $mdDialog, $mdMedia, $rootScope, $http) {
 	$rootScope.uuid = null;
+	$rootScope.loading = false;
 	//this block used to get the recommended beers, and set to a scope variable
 	if (mockMode) {
 		$scope.beers = [
@@ -180,7 +181,9 @@ app.controller('SearchCtrl', function($scope, $http, $timeout, $rootScope) {
 	  		console.log('searchResults[0].name is now ' + $scope.searchResults[0].name);
 	    } else {
 	    	var url = convertBeerToURL();
-	    	conosle.log('making HTTP request to ' + url);
+	    	$rootScope.loading = true;
+	    	console.log('rootScope.loading is ' + $rootScope.loading);
+	    	console.log('making HTTP request to ' + url);
 	    	$http({
 			    method: 'GET',
 			    url: url
@@ -191,7 +194,11 @@ app.controller('SearchCtrl', function($scope, $http, $timeout, $rootScope) {
 			}, function errorCallback(response) {
 			    // called asynchronously if an error occurs
 			    // or server returns response with an error status.
-			});	
+			});
+			$rootScope.loading = false;
+			console.log('rootScope.loading is ' + $rootScope.loading);
+
+
 
 	    }
 

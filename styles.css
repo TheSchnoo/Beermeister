@@ -49,7 +49,7 @@
  	margin-right: 20px;
  }
 
- #recommendations{
+ .result-heading{
  	font-size: 20;
  }
 
@@ -111,7 +111,7 @@
 
 .beer-card {
 	height: 250px;
-	width: 500px;
+	width: 400px;
 	float: left;
 }
 
