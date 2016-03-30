@@ -35,9 +35,16 @@
     margin-bottom: 0;
     top:20%;
  }*/
+
+#search-results{
+
+
+}
+
 #author{
 	padding-top: 30px;
 }
+
 
 .quote-area{
 	background-color: black;
@@ -60,7 +67,7 @@
  #search-area{
  	background-image:linear-gradient( rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5) ), url('images/craft-beer.jpg');
  	background-size: cover;
- 	height:100%;
+ 	height:640px;
  	padding-top: 100px;
 
  }
@@ -102,12 +109,6 @@
 	font-size:30px;
 	padding-left: 100px;
 	padding-right: 100px;
-}
-
-.search-action-button{
-	margin-top: 25px;
-
-
 }
 
 .card-media {
