@@ -135,13 +135,16 @@
       </div>
     </div>
 
-    <div id="search-results" ng-controller="SearchCtrl" ng-model="$root.count">
-      <md-subhead class="result-heading" id="search-results">Search Results: {{count}}</md-subhead>
+    <div id="search-results" ng-controller="SearchCtrl" ng-model="$root.count" class="container">
+      <md-subhead class="result-heading" id="search-results">Search Results:</md-subhead>
+      <md-content>
+        <md-list flex>
  <!--      <md-content class="md-padding" layout-xs="column" layout="row">
         <div flex-xs flex-gt-xs="50" layout="row">
         <div layout="row" layout-xs="column"> -->
-          <div data-ng-repeat="beer in $root.searchResults">
-            <md-card class="beer-card">
+          <!-- <div data-ng-repeat="beer in $root.searchResults"> -->
+
+            <!-- <md-card class="beer-card">
               <md-card-title>
                 <md-card-title-text>
                   <span class="md-headline beer-name">{{beer.bname}}</span>
@@ -162,8 +165,16 @@
                 <md-button class="md-primary"ng-click="showVendors($event, beer)">Vendors</md-button>
                 <md-button class="md-primary" ng-click="showRatings($event, beer)">Ratings</md-button>
               </md-card-actions>
-            </md-card>
-          </div>
+            </md-card> -->
+            
+              <md-list-item class="md-3-line" ng-repeat="beer in $root.searchResults">
+                <img ng-src="images/stock-beer.jpg" class="md-avatar" alt="images/stock-beer.jpg" />
+                <div class="md-list-item-text" layout="column">
+                  <h3>{{beer.bname}}</h3>
+                  <h4>{{beer.breweryName}}</h4>
+                  <p>description will be here</p>
+                </div>
+              </md-list-item>
         <!-- </div> -->
       <!-- </md-content> -->
     </div>

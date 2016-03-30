@@ -145,7 +145,7 @@ app.controller('SearchCtrl', function($scope, $http, $timeout, $rootScope) {
     	if (mockMode){
 	    	$rootScope.searchResults = [
 			 	{
-				  	"bname": "PLACEHOLDER 1",
+				  	"bname": "Thunderbird Lager",
 				  	"breweryName": "UBC Brewery",
 				  	"type": "Lager",
 				  	"abv": "5.1%",
@@ -153,7 +153,7 @@ app.controller('SearchCtrl', function($scope, $http, $timeout, $rootScope) {
 				  	"imageLocation": "images/stock-beer.jpg"
 			  	},
 			  	{	
-				  	"bname": "PLACEHOLDER 2",
+				  	"bname": "Passive Aggressive",
 				  	"breweryName": "Brassneck",
 				  	"type": "IPA",
 				  	"abv": "5.3%",
@@ -161,7 +161,7 @@ app.controller('SearchCtrl', function($scope, $http, $timeout, $rootScope) {
 				  	"imageLocation": "images/ipa.jpg"
 			  	},
 			  	{
-				  	"bname": "PLACEHOLDER 3",
+				  	"bname": "Southern Hop",
 				  	"breweryName": "Main Street Brewery",
 				  	"type": "IPA",
 				  	"abv": "6.1%",
@@ -169,7 +169,7 @@ app.controller('SearchCtrl', function($scope, $http, $timeout, $rootScope) {
 				  	"imageLocation": "images/stock-beer.jpg"
 				},
 				{
-				  	"bname": "PLACEHOLDER 4",
+				  	"bname": "Sun God Wheat Ale",
 				  	"breweryName": "R&B Brewery",
 				  	"type": "Hefeweizen",
 				  	"abv": "5.6%",
