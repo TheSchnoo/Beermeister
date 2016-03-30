@@ -9,6 +9,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Map;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -21,21 +22,34 @@ public class AccessDatabase {
     private PreparedStatement preparedStatement = null;
     private ResultSet resultSet = null;
 
-    public ArrayList<BeerInfo> searchBeers(String[] params) throws Exception {
+    public ArrayList<BeerInfo> searchBeers(Map<String, String> searchBeerMap) throws Exception {
         String searchString = "";
         try {
-            if(params.length <= 1){
+            if(searchBeerMap.size() <= 1){
                 // !!! fill in here
             }
             else{
                 searchString = "WHERE ";
-                for(int i = 1; i < params.length; i++){
-                    String[] split = params[i].split("=");
-                    searchString = searchString + split[0] + " LIKE " + "'%"+splitAndReplace(split[1])+"%'";
-                    if(i+1 < params.length){
+                int i=0;
+                for(Map.Entry<String,String> entry : searchBeerMap.entrySet()){
+                    if(entry.getValue() == null){
+                        continue;
+                    }
+                    if(i>0){
                         searchString = searchString + " AND ";
                     }
+                    if(entry.getKey()=="ibu"){
+                        searchString = searchString + entry.getKey() + " BETWEEN " + entry.getValue() + " AND " + entry.getValue() + 9;
+                    }
+                    if(entry.getKey()=="abv"){
+                        searchString = searchString + entry.getKey() + " BETWEEN " + entry.getValue() + " AND " + entry.getValue() + 3;
+                    }
+                    else {
+                        searchString = searchString + entry.getKey() + " LIKE " + "'%" + entry.getValue() + "%'";
+                    }
+                    i++;
                 }
+                System.out.println(searchString);
             }
 
             Class.forName("com.mysql.jdbc.Driver");
@@ -114,7 +128,7 @@ public class AccessDatabase {
         try{
             String name = rs.getString("BName");
             String brewery = rs.getString("BreweryName");
-            String type = rs.getString("BType");
+            String type = rs.getString("Type");
             float abv = rs.getFloat("ABV");
             float ibu = rs.getFloat("IBU");
 //		  String averageRating;

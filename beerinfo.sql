@@ -13,7 +13,7 @@ CREATE TABLE Customer(
 
 CREATE TABLE BeerInfo (
 	BName CHAR(30),
-	BType CHAR(30),
+	Type CHAR(30),
 	FName CHAR(20)  NOT NULL UNIQUE,		
 	IBU FLOAT,
 	ABV FLOAT,

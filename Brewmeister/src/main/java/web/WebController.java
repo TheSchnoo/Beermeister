@@ -7,29 +7,39 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 @Controller
 public class WebController {
 
-    @RequestMapping("/searchbeers")
+    @RequestMapping("/beers")
     public
     @ResponseBody
 //    String[] searchParams = new String[@RequestParam.split('=').length];
-
-    ArrayList<BeerInfo> searchBeers (@RequestParam(value="BName", required = false) String bname,
-                                     @RequestParam(value="BType", required = false) String btype,
-                                     @RequestParam(value="FName", required = false) String fname,
-                                     @RequestParam(value="IBU", required = false) String ibu,
-                                     @RequestParam(value="ABV", required = false) String abv,
-                                     @RequestParam(value="Description", required = false) String description,
+    ArrayList<BeerInfo> searchBeers (@RequestParam(value="bname", required = false) String bname,
+                                     @RequestParam(value="type", required = false) String btype,
+                                     @RequestParam(value="vendor", required = false) String vendor,
+                                     @RequestParam(value="ibu", required = false) String ibu,
+                                     @RequestParam(value="abv", required = false) String abv,
+                                     @RequestParam(value="rating", required = false) String rating,
+//                                     @RequestParam(value="description", required = false) String description,
                                      @RequestParam(value="breweryname", required = false) String breweryName) {
 
+        Map<String,String> searchBeerMap = new HashMap<>();
+
+        searchBeerMap.put("bname", bname);
+        searchBeerMap.put("type", btype);
+        searchBeerMap.put("ibu", ibu);
+        searchBeerMap.put("abv", abv);
+        searchBeerMap.put("averageRating", rating);
+//        searchBeerMap.put("Description", description);
+        searchBeerMap.put("breweryName", breweryName);
+
         AccessDatabase accessDB = new AccessDatabase();
-        String[] searchParams = new String[1];
-        searchParams[0] = breweryName;
         ArrayList<BeerInfo> beers;
         try {
-            beers = accessDB.searchBeers(searchParams);
+            beers = accessDB.searchBeers(searchBeerMap);
         } catch (Exception e) {
             beers = null;
         }
