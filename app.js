@@ -1,4 +1,4 @@
-var mockMode = false;
+var mockMode = true;
 var debugMode = false;
 var baseURL = 'http://localhost:8020'
 var userid = 1;
