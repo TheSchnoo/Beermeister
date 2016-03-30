@@ -1,6 +1,7 @@
-var mockMode = false;
+var mockMode = true;
 var debugMode = false;
 var baseURL = 'http://localhost:8020'
+var userid = 1;
 
 var app = angular.module('Brewmaster', ['ngMaterial']);
 app.config(function($mdThemingProvider) {
@@ -10,6 +11,7 @@ app.config(function($mdThemingProvider) {
 
 
 app.controller('AppCtrl', function($scope, $mdDialog, $mdMedia, $rootScope, $http) {
+	//this block used to get the recommended beers, and set to a scope variable
 	if (mockMode) {
 		$scope.beers = [
 		 	{
@@ -48,16 +50,17 @@ app.controller('AppCtrl', function($scope, $mdDialog, $mdMedia, $rootScope, $htt
   	} else {
   		$http({
 		    method: 'GET',
-		    url: 'http://localhost:8020/?/recommendedbeers?userid=1'
+		    url: baseURL + '/recommendedbeers?userid=' + userid
 		}).then(function successCallback(response) {
 			console.log('recommended beers are ' + JSON.stringify(response.data));
-		    $scope.beers=response.data;
+		    $scope.beers = response.data;
 		}, function errorCallback(response) {
 		    // called asynchronously if an error occurs
 		    // or server returns response with an error status.
 		});	
   	}
 
+  	//called when a vendor is clicked
   	$scope.showVendors = function(ev, beer) {
   		if (mockMode){
   			$rootScope.vendors = [
@@ -90,17 +93,6 @@ app.controller('AppCtrl', function($scope, $mdDialog, $mdMedia, $rootScope, $htt
 			}).then(function successCallback(response) {
 			    $rootScope.vendors = response.data;
 			    console.log(JSON.stringify(response.data));
-			 //    $rootScope.vendors = [
-				// 	{
-				// 		"name":"Darby's Liquor Store"
-				// 	},
-				// 	{
-				// 		"name":"UBC Liquor Store"
-				// 	},
-				// 	{	
-				// 		"name":"Legacy Liquor Store"
-				// 	}
-				// ];
 			    console.log('successfully got vendors of' + response.data);
 			    var useFullScreen = ($mdMedia('sm') || $mdMedia('xs'))  && $scope.customFullscreen;
 			    $mdDialog.show({
@@ -111,44 +103,14 @@ app.controller('AppCtrl', function($scope, $mdDialog, $mdMedia, $rootScope, $htt
 			      	clickOutsideToClose:true,
 			      	fullscreen: useFullScreen
 			    });
-
-				// $mdDialog.show(
-				// 	$mdDialog.alert()
-				// 	.parent(angular.element(document.querySelector('#popupContainer')))
-				// 	.clickOutsideToClose(true)
-				// 	.title('Showing ratings for ' + beer.name)
-				// 	.textContent(JSON.stringify(response.data))
-				// 	.ariaLabel('Alert Dialog Demo')
-				// 	.ok('Got it!')
-				// 	.targetEvent(ev)
-			 //    );
 			  }, function errorCallback(response) {
-			    // console.log("BLAHHH");
+			  	//called when an error is produced
+			   
 			  });
-
   		}
-  		// console.log(JSON.stringify($rootScope.vendors));
-
 	}
 
-  // 	$scope.showVendors = function(ev, beer) {
-  //   // Appending dialog to document.body to cover sidenav in docs app
-  //   // Modal dialogs should fully cover application
-  //   // to prevent interaction outside of dialog
-	 //    $mdDialog.show(
-		// 	$mdDialog.alert()
-		// 	.parent(angular.element(document.querySelector('#popupContainer')))
-		// 	.clickOutsideToClose(true)
-		// 	.title('Showing vendors for ' + beer.name)
-		// 	.textContent('You can specify some description text in here.')
-		// 	.ariaLabel('Alert Dialog Demo')
-		// 	.ok('Got it!')
-		// 	.targetEvent(ev)
-	 //    );
-
-		// // console.log("clicked on a beer's vendors" + beer.name);
-  // 	};
-
+	//called when the ratings button is clicked
   	$scope.showRatings = function(ev, beer) {
 
 	    $mdDialog.show(
@@ -167,6 +129,7 @@ app.controller('AppCtrl', function($scope, $mdDialog, $mdMedia, $rootScope, $htt
 
 });
 
+//controller used for search functionality
 app.controller('SearchCtrl', function($scope, $http, $timeout, $rootScope) {
     $scope.beer = {};
     $scope.beerTypeCategories = ["IPA", "Pilsner", "Porter", "Stout", "Lager"];
@@ -177,11 +140,7 @@ app.controller('SearchCtrl', function($scope, $http, $timeout, $rootScope) {
 
     $scope.submitSearch = function(ev){
   
-    	console.log('attempting to submit search');
     	if (mockMode){
-    	// console.log("Search submitted!");
-    	// console.log("Submitting a search of: " + $scope.beer);
-   //  		console.log("$scope.count is now " + $scope.count);
 	    	$rootScope.searchResults = [
 			 	{
 				  	"bname": "PLACEHOLDER 1",
@@ -209,7 +168,7 @@ app.controller('SearchCtrl', function($scope, $http, $timeout, $rootScope) {
 				},
 				{
 				  	"bname": "PLACEHOLDER 4",
-				  	"brewery": "R&B Brewery",
+				  	"breweryName": "R&B Brewery",
 				  	"type": "Hefeweizen",
 				  	"abv": "5.6%",
 				  	"ibu": "2 bitterness units",
@@ -220,12 +179,13 @@ app.controller('SearchCtrl', function($scope, $http, $timeout, $rootScope) {
 	  		console.log('searchResults[0].name is now ' + $scope.searchResults[0].name);
 	    } else {
 	    	var url = convertBeerToURL();
+	    	conosle.log('making HTTP request to ' + url);
 	    	$http({
 			    method: 'GET',
 			    url: url
 			}).then(function successCallback(response) {
-				console.log('recommended beers are ' + JSON.stringify(response.data));
-			    $scope.searchResults = response.data;
+				console.log('received a response of ' + JSON.stringify(response.data));
+			    $rootScope.searchResults = response.data;
 			    console.log("the search results are " + JSON.stringify($scope.searchResults));
 			}, function errorCallback(response) {
 			    // called asynchronously if an error occurs
@@ -245,8 +205,7 @@ app.controller('SearchCtrl', function($scope, $http, $timeout, $rootScope) {
 	    		var str = jQuery.param($scope.beer);
 	    		url = url + '?' + str;
 	    		console.log('making url request to ' + url);
-
-				return 'http://localhost:8020/?/recommendedbeers?userid=1';
+				return url;
 			}
 	    }
 	
@@ -255,9 +214,7 @@ app.controller('SearchCtrl', function($scope, $http, $timeout, $rootScope) {
 });
 
 
-
-
-
+//controller used for advanced dialog windows
 function DialogController($scope, $mdDialog, $rootScope) {
   	$scope.hide = function() {
     	$mdDialog.hide();
@@ -270,3 +227,44 @@ function DialogController($scope, $mdDialog, $rootScope) {
   	}
 
 }
+
+// renee-->all login/authentication functionality should sit here
+app.controller('LoginCtrl', function($scope, $mdDialog, $mdMedia, $rootScope, $http) {
+	$rootScope.uuid = null;
+	$scope.username = null;
+	$scope.password = null;
+
+
+	//called when login button is clicked
+	$scope.login = function(){
+		if ($rootScope.uuid === null){
+			//TODO: not logged in, need to show login prompt and retrieve username and password fields
+			alert('user will login here');
+			//...
+
+
+
+
+		} else {
+			//TODO: already logged in
+			alert('user has already logged in');
+			//...
+
+
+
+
+		}
+	}
+
+
+	$scope.signup = function(){
+		//TODO: implement this, need to show prompt to get username and password fields 
+		//and create an entry in the db accordingly
+		alert('signup window will be shown here');
+		//...
+
+
+
+	}
+
+});

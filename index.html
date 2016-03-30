@@ -16,8 +16,11 @@
           <span>Brewmeister</span>
         </h2>
         <span flex></span>
-        <md-button id="login-signup" ng-click="submitSearch($event)">
-          Login/Signup
+        <md-button ng-controller="LoginCtrl" id="login" ng-click="login($event)">
+          Login
+        </md-button>
+        <md-button ng-controller="LoginCtrl" id="signup" ng-click="signup($event)">
+          Signup
         </md-button>
         <md-button id="browse" ng-click="submitSearch($event)">
           Browse
@@ -137,9 +140,9 @@
             <md-card class="beer-card">
               <md-card-title>
                 <md-card-title-text>
-                  <span class="md-headline beer-name">{{beer.name}}</span>
+                  <span class="md-headline beer-name">{{beer.bname}}</span>
                   <span class="md-subhead beer-info">
-                    <p>Brewery: {{beer.brewery}}</p>
+                    <p>Brewery: {{beer.breweryName}}</p>
                     <p>Type: {{beer.type}}</p>
                     <p>ABV: {{beer.abv}}</p>
                     <p>IBU: {{beer.ibu}}</p>
