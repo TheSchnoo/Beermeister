@@ -1,4 +1,4 @@
-var mockMode = true;
+var mockMode = false;
 var debugMode = false;
 var baseURL = 'http://localhost:8020'
 
@@ -172,7 +172,7 @@ app.controller('SearchCtrl', function($scope, $http, $timeout, $rootScope) {
     $scope.beerTypeCategories = ["IPA", "Pilsner", "Porter", "Stout", "Lager"];
     $scope.abvCategories = ["<4%", "4-4.99%", "5-5.99%", "6-6.99%", ">7%" ];
     $scope.ibuCategories = ["<10", "10-19", "20-29", "30-39", "40-49", "50-59", "60-69", ">70"];
-    $scope.ratingCategories = [">1 Star", ">2 Stars", ">3 Stars", ">4 Stars"];
+    $scope.ratingCategories = ["1", "2", "3", "4"];
     $rootScope.searchResults = [];
 
     $scope.submitSearch = function(ev){
@@ -237,14 +237,17 @@ app.controller('SearchCtrl', function($scope, $http, $timeout, $rootScope) {
 	    function convertBeerToURL(){
 	    	//!!! implement this
 	    	// return 'http://localhost:8020/?/recommendedbeers?userid=1';
-	    	var url = baseURL;
-	    	for (var key in beer) {
-				if (p.hasOwnProperty(key)) {
-					console.log(key);
-				}
-			}
+	    	var url = baseURL + '/beers';
+	    	if (Object.keys($scope.beer).length === 0) {
+	    		console.log('making request to ' + url);
+	    		return url;
+	    	} else {
+	    		var str = jQuery.param($scope.beer);
+	    		url = url + '?' + str;
+	    		console.log('making url request to ' + url);
 
-			return 'http://localhost:8020/?/recommendedbeers?userid=1';
+				return 'http://localhost:8020/?/recommendedbeers?userid=1';
+			}
 	    }
 	
     }

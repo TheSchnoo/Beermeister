@@ -64,12 +64,12 @@
               <div layout-gt-sm="row">
                 <md-input-container class="md-block" flex-gt-sm>
                   <label>Beer Name</label>
-                  <input ng-model="beer.name">
+                  <input ng-model="beer.bname">
                 </md-input-container>
 
                 <md-input-container class="md-block" flex-gt-sm>
                   <label>Brewery Name</label>
-                  <input ng-model="beer.brewery">
+                  <input ng-model="beer.breweryName">
                 </md-input-container>
               </div>
 
@@ -86,18 +86,26 @@
                   <md-input-container class="md-block" flex-gt-sm>
                     <label>ABV</label>
                     <md-select ng-model="beer.abv">
-                      <md-option ng-repeat="abvCategory in abvCategories" value="{{abvCategory}}">
-                        {{abvCategory}}
-                      </md-option>
+                      <md-option value="0">&lt; 4%</md-option>
+                      <md-option value="4">4-4.99%</md-option>
+                      <md-option value="5">5-5.99%</md-option>
+                      <md-option value="6">6-6.99%</md-option>
+                      <md-option value="7">&gt; 7%</md-option>
                     </md-select>
                   </md-input-container>
 
                   <md-input-container required class="md-block" flex-gt-sm>
                     <label>IBU</label>
                     <md-select ng-model="beer.ibu">
-                      <md-option ng-repeat="ibuCategory in ibuCategories" value="{{ibuCategory}}">
-                        {{ibuCategory}}
-                      </md-option>
+                      <md-option value="0">&lt; 9</md-option>
+                      <md-option value="10">10-19</md-option>
+                      <md-option value="20">20-29</md-option>
+                      <md-option value="30">30-39</md-option>
+                      <md-option value="40">40-49</md-option>
+                      <md-option value="50">50-59</md-option>
+                      <md-option value="60">60-69</md-option>
+                      <md-option value="70">70-79</md-option>
+                      <md-option value="80">&gt; 80</md-option>
                     </md-select>
                   </md-input-container>
 
@@ -105,7 +113,7 @@
                     <label>Average Rating</label>
                     <md-select ng-model="beer.averageRating">
                       <md-option ng-repeat="ratingCategory in ratingCategories" value="{{ratingCategory}}">
-                        {{ratingCategory}}
+                        > {{ratingCategory}} Stars
                       </md-option>
                     </md-select>
                   </md-input-container>
