@@ -132,15 +132,15 @@ values('Jerkface 9000', 'Wheat Ale', 'JF Profile', 37, 5.0, 'Citrus, floral, mal
 -- Procedure;
 
 CREATE PROCEDURE update_average
-	(IN avg FLOAT,beername CHAR(30))
+	(IN beername CHAR(30),IN beeravg FLOAT)
 	BEGIN
-		UPDATE BEERINFO b
-		SET b.avg = avg
+		UPDATE BEERINFO
+		SET avg = beeravg
 		WHERE beername = BName;
 	END;
 
 CREATE PROCEDURE update_avg_ratings_table
-	(IN beername CHAR(30))
+	(INOUT beername CHAR(30), OUT average FLOAT)
 	BEGIN
 		UPDATE RatingsTable
 		SET average = (SELECT AVG(rating)
@@ -148,3 +148,5 @@ CREATE PROCEDURE update_avg_ratings_table
 									 WHERE BName=beername)
 		WHERE beername = BName;
 	END;
+
+-- example of the above 2 procedures in use update_average(update_avg_ratings_table("Parallel 49"));
