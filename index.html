@@ -16,10 +16,10 @@
           <span>Brewmeister</span>
         </h2>
         <span flex></span>
-        <md-button ng-controller="LoginCtrl" id="login" ng-click="login($event)">
+        <md-button ng-controller="LoginCtrl" id="login" ng-click="showLoginPrompt($event)">
           Login
         </md-button>
-        <md-button ng-controller="LoginCtrl" id="signup" ng-click="signup($event)">
+        <md-button ng-controller="LoginCtrl" id="signup" ng-click="showSignupPrompt($event)">
           Signup
         </md-button>
         <md-button id="browse" ng-click="submitSearch($event)">

@@ -1,0 +1,40 @@
+<md-dialog aria-label="Login" ng-cloak ng-controller="LoginCtrl">
+  <form>
+    <md-toolbar>
+      <div class="md-toolbar-tools">
+        <h2>Please Provide Your Login Information</h2>
+        <span flex></span>
+        <md-button aria-label="cancel" class="md-icon-button" ng-click="cancel()">
+        </md-button>
+      </div>
+    </md-toolbar>
+    <md-dialog-content>
+      <div class="md-dialog-content">
+    
+    
+          <div>
+            <form name="loginForm">
+              <div layout-gt-sm="row">
+                <md-input-container class="md-block" flex-gt-sm>
+                  <label>Username</label>
+                  <input ng-model="loginInfo.username">
+                </md-input-container>
+
+                <md-input-container class="md-block" flex-gt-sm>
+                  <label>Password</label>
+                  <input ng-model="loginInfo.password">
+                </md-input-container>
+        	  </div>
+        	</form>
+
+      </div>
+    </md-dialog-content>
+
+    <md-dialog-actions layout="row">
+      <md-button ng-click="sendLoginInfo($event)" target="_blank" md-autofocus>
+        Log me in Captain!
+      </md-button>
+      <span flex></span>
+    </md-dialog-actions>
+  </form>
+</md-dialog>
