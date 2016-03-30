@@ -1,7 +1,6 @@
 package web;
 
 
-import java.sql.*;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -11,10 +10,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Map;
 
-import org.json.JSONArray;
 import org.json.JSONObject;
-
-import web.BeerInfo;
 
 public class AccessDatabase {
     private Connection connect = null;
@@ -23,40 +19,38 @@ public class AccessDatabase {
     private ResultSet resultSet = null;
 
     public ArrayList<BeerInfo> searchBeers(Map<String, String> searchBeerMap) throws Exception {
-        String searchString = "";
+        String searchString;
         try {
-            if(searchBeerMap.size() <= 1){
-                // !!! fill in here
-            }
-            else{
-                searchString = "WHERE ";
-                int i=0;
-                for(Map.Entry<String,String> entry : searchBeerMap.entrySet()){
-                    if(entry.getValue() == null){
-                        continue;
-                    }
-                    if(i>0){
-                        searchString = searchString + " AND ";
-                    }
-                    if(entry.getKey()=="ibu"){
-                        float value = Float.parseFloat(entry.getValue());
-                        searchString = searchString + entry.getKey() + " BETWEEN " + value + " AND " + (value + (float) 9);
-                    }
-                    if(entry.getKey()=="abv"){
-                        float value = Float.parseFloat(entry.getValue());
-                        float upperRange = value + (float) 1;
-                        if(value == 0){
-                            upperRange = value + (float) 4;
-                        }
-                        searchString = searchString + entry.getKey() + " BETWEEN " + value + " AND " + upperRange;
-                    }
-                    else {
-                        searchString = searchString + entry.getKey() + " LIKE " + "'%" + entry.getValue() + "%'";
-                    }
-                    i++;
+            searchString = "WHERE ";
+            int i=0;
+            for(Map.Entry<String,String> entry : searchBeerMap.entrySet()){
+                if(entry.getValue() == null){
+                    continue;
                 }
-                System.out.println(searchString);
+                if(i>0){
+                    searchString = searchString + " AND ";
+                }
+                if(entry.getKey()=="ibu"){
+                    float value = Float.parseFloat(entry.getValue());
+                    searchString = searchString + entry.getKey() + " BETWEEN " + value + " AND " + (value + (float) 9);
+                }
+                if(entry.getKey()=="abv"){
+                    float value = Float.parseFloat(entry.getValue());
+                    float upperRange = value + (float) 1;
+                    if(value == 0){
+                        upperRange = value + (float) 4;
+                    }
+                    searchString = searchString + entry.getKey() + " BETWEEN " + value + " AND " + upperRange;
+                }
+                else {
+                    searchString = searchString + entry.getKey() + " LIKE " + "'%" + entry.getValue() + "%'";
+                }
+                i++;
             }
+            if(i==0){
+                searchString = "";
+            }
+            System.out.println(searchString);
 
             Class.forName("com.mysql.jdbc.Driver");
 
@@ -82,28 +76,30 @@ public class AccessDatabase {
         }
     }
 
-    public String getBeersFromBrewery(String brewery) throws Exception {
-        try {
+    public ArrayList<BeerInfo> getRecommendations(int userid) throws Exception {
+        try{
             Class.forName("com.mysql.jdbc.Driver");
 
             connect = DriverManager
                     .getConnection("jdbc:mysql://localhost/beerinfo?"
                             + "user=sqluser&password=sqluserpw");
             preparedStatement = connect
-                    .prepareStatement("SELECT bname, BreweryName FROM beerinfo WHERE BreweryName LIKE '%'+?+'%';");
-            preparedStatement.setString(1, brewery);
+                    .prepareStatement("SELECT * FROM beerinfo");
             resultSet = preparedStatement.executeQuery();
-            String ans = "";
+            //JSONArray beers = new JSONArray();
+            ArrayList<BeerInfo> listBeers = new ArrayList<BeerInfo>();
             while(resultSet.next()){
-                ans = ans + "BeerName: " + resultSet.getString(1) + " Brewery: " + resultSet.getString(2);
+                listBeers.add(convertResultSetToJSONString_Beer(resultSet));
             }
-            return ans;
+            //return beers;
+            return listBeers;
 
         } catch (Exception e) {
             throw e;
         } finally {
             close();
         }
+
     }
 
     // You need to close the resultSet

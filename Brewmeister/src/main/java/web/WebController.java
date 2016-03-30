@@ -46,4 +46,19 @@ public class WebController {
 
         return beers;
     }
+
+    @RequestMapping("/recommendedbeers")
+    public
+    @ResponseBody
+    ArrayList<BeerInfo> recs (@RequestParam(value="userid", required = false) String userid) {
+        AccessDatabase accessDB = new AccessDatabase();
+        ArrayList<BeerInfo> beers;
+        try {
+            beers = accessDB.getRecommendations(Integer.parseInt(userid));
+        } catch (Exception e) {
+            beers = null;
+        }
+
+        return beers;
+    }
 }
