@@ -231,16 +231,24 @@ function DialogController($scope, $mdDialog, $rootScope) {
 // renee-->all login/authentication functionality should sit here
 app.controller('LoginCtrl', function($scope, $mdDialog, $mdMedia, $rootScope, $http) {
 	$rootScope.uuid = null;
-	$scope.username = null;
-	$scope.password = null;
+	$scope.loginInfo = {};
+	
 
 
 	//called when login button is clicked
-	$scope.login = function(){
+	$scope.login = function(ev){
 		if ($rootScope.uuid === null){
 			//TODO: not logged in, need to show login prompt and retrieve username and password fields
-			alert('user will login here');
-			//...
+			// alert('user will login here');
+			var useFullScreen = ($mdMedia('sm') || $mdMedia('xs'))  && $scope.customFullscreen;
+		    $mdDialog.show({
+		        controller: LoginPromtController,
+		      	templateUrl: 'app/logindialog.html',
+		      	parent: angular.element(document.body),
+		      	targetEvent: ev,
+		      	clickOutsideToClose:true,
+		      	fullscreen: useFullScreen
+		    });
 
 
 
@@ -256,6 +264,11 @@ app.controller('LoginCtrl', function($scope, $mdDialog, $mdMedia, $rootScope, $h
 		}
 	}
 
+	$scope.sendLoginInfo = function(ev){
+		console.log('sending login info of: ' + JSON.stringify($scope.loginInfo));
+
+	}
+
 
 	$scope.signup = function(){
 		//TODO: implement this, need to show prompt to get username and password fields 
@@ -268,3 +281,16 @@ app.controller('LoginCtrl', function($scope, $mdDialog, $mdMedia, $rootScope, $h
 	}
 
 });
+
+function LoginPromtController($scope, $mdDialog, $rootScope) {
+  	$scope.hide = function() {
+    	$mdDialog.hide();
+  	};
+  	$scope.cancel = function() {
+    	$mdDialog.cancel();
+  	};
+  	$scope.answer = function(answer) {
+    	$mdDialog.hide(answer);
+  	}
+
+}
