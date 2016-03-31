@@ -110,29 +110,32 @@
     </div>
 
     <div id="update-area" ng-controller="UpdateCtrl" layout="column" ng-cloak class="md-inline-form container">
-      <md-toolbar class="md-primary">
-        <div class="md-toolbar-tools">
-          <h2>
-            <span>Trying to update a beer? Search for it here.</span>
-          </h2>
-          <span flex></span>
-        </div>
-      </md-toolbar>
-      <md-content layout-padding>
-        <div>
-          <form name="updateForm">
-            <div layout-gt-sm="row">
-              <md-input-container class="md-block" flex-gt-sm>
-                <label>Brewery name</label>
-                <input ng-model="brewery">
-              </md-input-container>
-              <md-button id="submit-button" ng-click="searchBeer($event)">
-                Find beers brewed by me
-              </md-button>
-            </div>
-          </form>
-        </div>
-      </md-content>
+      <md-whiteframe class="md-whiteframe-12dp" flex-sm="45" flex-gt-sm="35" flex-gt-md="25" layout="column">
+   
+        <md-toolbar class="md-primary">
+          <div class="md-toolbar-tools">
+            <h2>
+              <span>Trying to update a beer? Search for it here.</span>
+            </h2>
+            <span flex></span>
+          </div>
+        </md-toolbar>
+        <md-content layout-padding>
+          <div>
+            <form name="updateForm">
+              <div layout="column">
+                <md-input-container class="md-block" flex-gt-sm>
+                  <label>Brewery name</label>
+                  <input ng-model="brewery">
+                </md-input-container>
+                <md-button id="submit-button" ng-click="searchBeer($event)">
+                  Find beers brewed by me
+                </md-button>
+              </div>
+            </form>
+          </div>
+        </md-content>
+      </md-whiteframe>
     </div>
 
     <div id="brewery-search-results" ng-controller="UpdateCtrl" class="container">

@@ -129,7 +129,7 @@
               <md-button id="submit-button" ng-click="submitSearch($event)">
                 Submit Search
               </md-button>
-              <md-progress-circular ng-show="!$root.loading" md-mode="indeterminate"></md-progress-circular>
+              <md-progress-circular ng-show="$root.loading" md-mode="indeterminate"></md-progress-circular>
             </form>
           </div>
         </md-content>
@@ -146,7 +146,7 @@
             <div class="md-list-item-text" layout="column">
               <h3>{{beer.bname}}</h3>
               <h4>{{beer.breweryName}}</h4>
-              <p>description will be here</p>
+              <p>{{beer.description}}</p>
             </div>
               <md-button class="search-action-button md-primary">More Info</md-button>
               <md-button class="search-action-button md-primary">Vendors</md-button>
@@ -157,7 +157,7 @@
         </md-list>
       </md-content>
     </div>
-    
+
     <div class="container">
 
       <md-subhead class="result-heading" id="recommendations">Our Recommendations:</md-subhead>
