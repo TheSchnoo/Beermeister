@@ -117,9 +117,9 @@
 }
 
 .beer-card {
-	/*height: 250px;*/
-	/*width: 400px;*/
-	/*float: left;*/
+	height: 250px;
+	width: 400px;
+	float: left;
 }
 
 .beer-info {
