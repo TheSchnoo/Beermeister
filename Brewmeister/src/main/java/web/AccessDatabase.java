@@ -133,17 +133,13 @@ public class AccessDatabase {
             String type = rs.getString("Type");
             float abv = rs.getFloat("ABV");
             float ibu = rs.getFloat("IBU");
+            String description = rs.getString("Description");
+            String averageRating = rs.getString("AvgRating");
 //		  String averageRating;
 //		  int beerID;
 //		  String imageLocation;
-            JSONObject returnJSON = new JSONObject();
-            returnJSON.put("name", name);
-            returnJSON.put("brewery", brewery);
-            returnJSON.put("type", type);
-            returnJSON.put("abv", abv);
-            returnJSON.put("ibu", ibu);
 
-            BeerInfo newBI = new BeerInfo(name, brewery, type, abv, ibu);
+            BeerInfo newBI = new BeerInfo(name, brewery, type, abv, ibu, description);
 
             //return returnJSON;
             return newBI;

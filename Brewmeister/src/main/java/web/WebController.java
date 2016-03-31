@@ -25,8 +25,8 @@ public class WebController {
                                      @RequestParam(value="ibu", required = false) String ibu,
                                      @RequestParam(value="abv", required = false) String abv,
                                      @RequestParam(value="rating", required = false) String rating,
-//                                     @RequestParam(value="description", required = false) String description,
-                                     @RequestParam(value="breweryname", required = false) String breweryName,
+                                     @RequestParam(value="description", required = false) String description,
+                                     @RequestParam(value="breweryName", required = false) String breweryName,
                                      HttpServletResponse httpResponse) throws IOException {
 
         Map<String,String> searchBeerMap = new HashMap<>();
@@ -36,7 +36,7 @@ public class WebController {
         searchBeerMap.put("ibu", ibu);
         searchBeerMap.put("abv", abv);
         searchBeerMap.put("averageRating", rating);
-//        searchBeerMap.put("Description", description);
+        searchBeerMap.put("description", description);
         searchBeerMap.put("breweryName", breweryName);
 
         AccessDatabase accessDB = new AccessDatabase();
