@@ -1,3 +1,5 @@
+var baseURL = 'http://localhost:8080'
+
 var app = angular.module('Brewmaster', ['ngMaterial']);
 app.controller('AppCtrl', function($scope, $mdDialog, $mdMedia, $rootScope, $http) {
 });
@@ -28,7 +30,18 @@ app.controller('SearchCtrl', function($scope, $http, $timeout, $rootScope, $mdDi
 	    	);
 
     	} else {
-    		console.log('valid form detected');
+            var url = baseURL + '/beers';
+            console.log('making POST to ' + url + ' with a payload of ' + JSON.stringify($scope.beer));
+    		$http({
+                method: 'POST',
+                url: baseURL + '/beers'
+            }).then(function successCallback(response) {
+                //TODO: implement this
+            }, function errorCallback(response) {
+                // called asynchronously if an error occurs
+                // or server returns response with an error status.
+            }); 
+
     	}
 
   

@@ -87,28 +87,28 @@ app.controller('AppCtrl', function($scope, $mdDialog, $mdMedia, $rootScope, $htt
 			    });
 
   		} else {
-  			console.log('making HTTP GET Request');
-  			var baseURL =  'http://localhost:8020/?/vendors/'
-  			$http({
-			  method: 'GET',
-			  url: baseURL + beer.name
-			}).then(function successCallback(response) {
-			    $rootScope.vendors = response.data;
-			    console.log(JSON.stringify(response.data));
-			    console.log('successfully got vendors of' + response.data);
-			    var useFullScreen = ($mdMedia('sm') || $mdMedia('xs'))  && $scope.customFullscreen;
-			    $mdDialog.show({
-			        controller: DialogController,
-			      	templateUrl: 'app/vendordialog.html',
-			      	parent: angular.element(document.body),
-			      	targetEvent: ev,
-			      	clickOutsideToClose:true,
-			      	fullscreen: useFullScreen
-			    });
-			  }, function errorCallback(response) {
-			  	//called when an error is produced
+  	// 		console.log('making HTTP GET Request');
+  	// 		var baseURL =  'http://localhost:8020/?/vendors/'
+  	// 		$http({
+			//   method: 'GET',
+			//   url: baseURL + beer.name
+			// }).then(function successCallback(response) {
+			//     $rootScope.vendors = response.data;
+			//     console.log(JSON.stringify(response.data));
+			//     console.log('successfully got vendors of' + response.data);
+			//     var useFullScreen = ($mdMedia('sm') || $mdMedia('xs'))  && $scope.customFullscreen;
+			//     $mdDialog.show({
+			//         controller: DialogController,
+			//       	templateUrl: 'app/vendordialog.html',
+			//       	parent: angular.element(document.body),
+			//       	targetEvent: ev,
+			//       	clickOutsideToClose:true,
+			//       	fullscreen: useFullScreen
+			//     });
+			//   }, function errorCallback(response) {
+			//   	//called when an error is produced
 			   
-			  });
+			//   });
   		}
 	}
 
