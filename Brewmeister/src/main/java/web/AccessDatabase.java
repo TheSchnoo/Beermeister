@@ -63,7 +63,6 @@ public class AccessDatabase {
             //JSONArray beers = new JSONArray();
             ArrayList<BeerInfo> listBeers = new ArrayList<BeerInfo>();
             while(resultSet.next()){
-                //beers.put(convertResultSetToJSONString_Beer(resultSet));
                 listBeers.add(convertResultSetToBeerInfo(resultSet));
             }
             //return beers;
@@ -153,8 +152,8 @@ public class AccessDatabase {
     // Convert a ResultSet to a BeerInfo object
     private BeerInfo convertResultSetToBeerInfo(ResultSet rs){
         try{
-            String name = rs.getString("BName");
-            String brewery = rs.getString("BreweryName");
+            String bname = rs.getString("BName");
+            String breweryName = rs.getString("BreweryName");
             String type = rs.getString("Type");
             float abv = rs.getFloat("ABV");
             float ibu = rs.getFloat("IBU");
@@ -163,16 +162,19 @@ public class AccessDatabase {
 //            String averageRating; = rs.getString("")
 //		  String imageLocation;
 
-            JSONObject returnJSON = new JSONObject();
-            returnJSON.put("name", name);
-            returnJSON.put("brewery", brewery);
-            returnJSON.put("type", type);
-            returnJSON.put("abv", abv);
-            returnJSON.put("ibu", ibu);
+            JSONObject obj = new JSONObject();
+            obj.append("bname", bname);
+            obj.append("breweryName", breweryName);
+            obj.append("type", type);
+            obj.append("abv", abv);
+            obj.append("ibu", ibu);
+            obj.append("description", description);
+            obj.append("brewed", true);
 
-            BeerInfo newBI = new BeerInfo(name, brewery, type, abv, ibu, description, true);
 
-            //return returnJSON;
+            BeerInfo newBI = new BeerInfo(bname, breweryName, type, abv, ibu, description, true);
+
+//            return obj;
             return newBI;
         }
         catch (Exception e){
