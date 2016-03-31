@@ -64,7 +64,7 @@ public class AccessDatabase {
             ArrayList<BeerInfo> listBeers = new ArrayList<BeerInfo>();
             while(resultSet.next()){
                 //beers.put(convertResultSetToJSONString_Beer(resultSet));
-                listBeers.add(convertResultSetToJSONString_Beer(resultSet));
+                listBeers.add(convertResultSetToBeerInfo(resultSet));
             }
             //return beers;
             return listBeers;
@@ -89,7 +89,7 @@ public class AccessDatabase {
             //JSONArray beers = new JSONArray();
             ArrayList<BeerInfo> listBeers = new ArrayList<BeerInfo>();
             while(resultSet.next()){
-                listBeers.add(convertResultSetToJSONString_Beer(resultSet));
+                listBeers.add(convertResultSetToBeerInfo(resultSet));
             }
             //return beers;
             return listBeers;
@@ -99,7 +99,31 @@ public class AccessDatabase {
         } finally {
             close();
         }
+    }
 
+    public Boolean addBeer(BeerInfo beer) throws Exception {
+        try{
+            Class.forName("com.mysql.jdbc.Driver");
+
+            connect = DriverManager
+                    .getConnection("jdbc:mysql://localhost/beerinfo?"
+                            + "user=sqluser&password=sqluserpw");
+            preparedStatement = connect
+                    .prepareStatement("INSERT INTO BeerInfo VALUES " + beer.toTupleValueString());
+            resultSet = preparedStatement.executeQuery();
+            //JSONArray beers = new JSONArray();
+            ArrayList<BeerInfo> listBeers = new ArrayList<BeerInfo>();
+            while(resultSet.next()){
+                listBeers.add(convertResultSetToBeerInfo(resultSet));
+            }
+            //return beers;
+            return true;
+
+        } catch (Exception e) {
+            throw e;
+        } finally {
+            close();
+        }
     }
 
     // You need to close the resultSet
@@ -121,21 +145,24 @@ public class AccessDatabase {
         }
     }
 
+    //  Helper for cleaning a string for queries
     private String splitAndReplace(String inString){
         return inString.split(" ")[0].replace("%20", " ");
     }
 
-    //private JSONObject convertResultSetToJSONString_Beer(ResultSet rs){
-    private BeerInfo convertResultSetToJSONString_Beer(ResultSet rs){
+    // Convert a ResultSet to a BeerInfo object
+    private BeerInfo convertResultSetToBeerInfo(ResultSet rs){
         try{
             String name = rs.getString("BName");
             String brewery = rs.getString("BreweryName");
             String type = rs.getString("Type");
             float abv = rs.getFloat("ABV");
             float ibu = rs.getFloat("IBU");
-//		  String averageRating;
-//		  int beerID;
+            String description = rs.getString("Description");
+//            Boolean brewed = rs.getBoolean("Brewed");
+//            String averageRating; = rs.getString("")
 //		  String imageLocation;
+
             JSONObject returnJSON = new JSONObject();
             returnJSON.put("name", name);
             returnJSON.put("brewery", brewery);
@@ -143,7 +170,7 @@ public class AccessDatabase {
             returnJSON.put("abv", abv);
             returnJSON.put("ibu", ibu);
 
-            BeerInfo newBI = new BeerInfo(name, brewery, type, abv, ibu);
+            BeerInfo newBI = new BeerInfo(name, brewery, type, abv, ibu, description, true);
 
             //return returnJSON;
             return newBI;
@@ -152,6 +179,5 @@ public class AccessDatabase {
             System.out.println(e);
         }
         return null;
-
     }
 }
