@@ -1,4 +1,4 @@
-var mockMode = true;
+var mockMode = false;
 var debugMode = false;
 var baseURL = 'http://localhost:8020'
 var userid = 1;
@@ -262,7 +262,7 @@ app.controller('LoginCtrl', function($scope, $mdDialog, $mdMedia, $rootScope, $h
 				$mdDialog.alert()
 					.parent(angular.element(document.querySelector('#popupContainer')))
 					.clickOutsideToClose(true)
-					.title('Yo dawg, you\'ve already logged in!')
+					.textContent('Yo dawg, you\'ve already logged in!')
 					.ariaLabel('Alert Dialog Demo')
 					.ok('Got it!')
 					.targetEvent(ev)
