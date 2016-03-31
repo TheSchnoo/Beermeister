@@ -111,9 +111,11 @@ CREATE TABLE Ratings(
 	PRIMARY KEY(Bname),
 	FOREIGN KEY (BName) REFERENCES BeerInfo (BName)
 );
+CREATE TRIGGER the_averages AFTER INSERT ON BeerInfo
+FOR EACH ROW CALL insertBeer(BName);
 
 CREATE TRIGGER the_averages AFTER INSERT ON Rates
-FOR EACH ROW CALL update_or_insert(BName,BRate);
+FOR EACH ROW CALL update_avg_ratings_table(BName);
 
 -- grant select on Searches to public;
 
@@ -147,27 +149,16 @@ values('Jerkface 9000', 'Wheat Ale', 'JF Profile', 37, 5.0, 'Citrus, floral, mal
 
 -- Procedure;
 DELIMITER $$
-
-Create PROCEDURE update_or_insert
-	(IN beername CHAR(30), IN rate INTEGER)
-	MODIFIES SQL DATA
-	BEGIN
-		DECLARE duplicate_key INT DEFAULT 0;
-		BEGIN
-			DECLARE EXIT HANDLER FOR 1062 SET duplicate_key = 1;
-			INSERT into Ratings (Bname, Avg_Rating) VALUES (beername,rate);
-
-		END;
-
-	IF duplicate_key=1 THEN
-		CALL update_avg_ratings_table(beername,rate);
-	END IF;
+CREATE PROCEDURE insertBeer
+	(IN beerName CHAR(30))
+MODIFIES SQL DATA
+BEGIN
+	INSERT into Ratings (Bname, Avg_Rating) VALUES (beerName,0);
 END $$
-
-
 
 CREATE PROCEDURE update_avg_ratings_table
 	(IN beername CHAR(30))
+MODIFIES SQL DATA
 	BEGIN
 		UPDATE Ratings
 		SET Avg_Rating = (SELECT AVG(Rates.BRate)
@@ -175,6 +166,6 @@ CREATE PROCEDURE update_avg_ratings_table
 									 WHERE BName=beername)
 		WHERE beername = BName;
 	END $$
-
+DELIMITER ;
 
 -- example of the above 2 procedures in use update_average(update_avg_ratings_table("Parallel 49"));
