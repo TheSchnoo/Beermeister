@@ -1,0 +1,38 @@
+<md-dialog aria-label="Update" ng-cloak>
+  <form>
+    <md-toolbar>
+      <div class="md-toolbar-tools">
+        <h2>Enter The New Description</h2>
+        <span flex></span>
+        <!-- <md-button aria-label="cancel" class="md-icon-button" ng-click="cancel()">
+        </md-button> -->
+      </div>
+    </md-toolbar>
+    <md-dialog-content>
+      <div class="md-dialog-content">
+
+        <form name="updateForm">
+          <!-- <div layout-gt-sm="column"> -->
+          <div layout="column">
+            <md-input-container class="md-block" flex-gt-sm>
+              <label>New Descrption</label>
+              <input ng-model="newDescription">
+            </md-input-container>
+
+            <md-button ng-click="submitDescription($event)" target="_blank" md-autofocus>
+              Update Description!
+            </md-button>
+          </div>
+    	  </form>
+
+      </div>
+    </md-dialog-content>
+
+    <!-- <md-dialog-actions layout="row">
+      <md-button ng-click="sendSignupInfo($event)" target="_blank" md-autofocus>
+        Sign Me Up Captain!
+      </md-button>
+      <span flex></span>
+    </md-dialog-actions -->
+  </form>
+</md-dialog>
