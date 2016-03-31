@@ -183,7 +183,7 @@ app.controller('SearchCtrl', function($scope, $http, $timeout, $rootScope) {
 	    	var url = convertBeerToURL();
 	    	$rootScope.loading = true;
 	    	console.log('rootScope.loading is ' + $rootScope.loading);
-	    	console.log('making HTTP request to ' + url);
+	    	console.log('making HTTP GET request to ' + url);
 	    	$http({
 			    method: 'GET',
 			    url: url
@@ -197,9 +197,6 @@ app.controller('SearchCtrl', function($scope, $http, $timeout, $rootScope) {
 			});
 			$rootScope.loading = false;
 			console.log('rootScope.loading is ' + $rootScope.loading);
-
-
-
 	    }
 
 	    function convertBeerToURL(){
@@ -207,12 +204,10 @@ app.controller('SearchCtrl', function($scope, $http, $timeout, $rootScope) {
 	    	// return 'http://localhost:8020/?/recommendedbeers?userid=1';
 	    	var url = baseURL + '/beers';
 	    	if (Object.keys($scope.beer).length === 0) {
-	    		console.log('making request to ' + url);
 	    		return url;
 	    	} else {
 	    		var str = jQuery.param($scope.beer);
 	    		url = url + '?' + str;
-	    		console.log('making url request to ' + url);
 				return url;
 			}
 	    }
