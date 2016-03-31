@@ -32,15 +32,28 @@ public class AccessDatabase {
                 }
                 if(entry.getKey()=="ibu"){
                     float value = Float.parseFloat(entry.getValue());
-                    searchString = searchString + entry.getKey() + " BETWEEN " + value + " AND " + (value + (float) 9);
-                }
-                if(entry.getKey()=="abv"){
-                    float value = Float.parseFloat(entry.getValue());
-                    float upperRange = value + (float) 1;
-                    if(value == 0){
-                        upperRange = value + (float) 4;
+                    if(value < 9){
+                        searchString = searchString + entry.getKey() + " < " + 9;
                     }
-                    searchString = searchString + entry.getKey() + " BETWEEN " + value + " AND " + upperRange;
+                    else if(value >= 80){
+                        searchString = searchString + entry.getKey() + " >= " + 80;
+                    }
+                    else {
+                        searchString = searchString + entry.getKey() + " BETWEEN " + value + " AND " + (value + (float) 9);
+                    }
+                }
+                else if(entry.getKey()=="abv"){
+                    float value = Float.parseFloat(entry.getValue());
+                    float upperRange = value + (float) 1.99;
+                    if(value < 4){
+                        searchString = searchString + entry.getKey() + " < " + 4;
+                    }
+                    else if(value >= 7){
+                        searchString = searchString + entry.getKey() + " >= " + 7;
+                    }
+                    else{
+                        searchString = searchString + entry.getKey() + " BETWEEN " + value + " AND " + upperRange;
+                    }
                 }
                 else {
                     searchString = searchString + entry.getKey() + " LIKE " + "'%" + entry.getValue() + "%'";

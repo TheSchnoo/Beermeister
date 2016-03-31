@@ -23,7 +23,7 @@ public class BeerInfo {
         this.description = description;
         this.brewed = brewed;
     }
-    
+
     public String getBName() { return bname; }
 
     public void setBname(String bname) {
