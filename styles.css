@@ -35,9 +35,19 @@
     margin-bottom: 0;
     top:20%;
  }*/
+
+#search-results{
+
+}
+
+.search-action-button{
+	margin-top: 25px;
+}
+
 #author{
 	padding-top: 30px;
 }
+
 
 .quote-area{
 	background-color: black;
@@ -60,8 +70,8 @@
  #search-area{
  	background-image:linear-gradient( rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5) ), url('images/craft-beer.jpg');
  	background-size: cover;
- 	height:100%;
- 	padding-top: 100px;
+ 	height:700px;
+ 	padding-top: 30px;
 
  }
 

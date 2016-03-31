@@ -1,4 +1,4 @@
-var mockMode = true;
+var mockMode = false;
 var debugMode = false;
 var baseURL = 'http://localhost:8020'
 var userid = 1;
@@ -15,7 +15,7 @@ app.controller('AppCtrl', function($scope, $mdDialog, $mdMedia, $rootScope, $htt
 	$rootScope.loading = false;
 	//this block used to get the recommended beers, and set to a scope variable
 	if (mockMode) {
-		$scope.beers = [
+		$scope.recommendedBeers = [
 		 	{
 			  	"bname": "Thunderbird Lager",
 			  	"breweryName": "UBC Brewery",
@@ -55,7 +55,7 @@ app.controller('AppCtrl', function($scope, $mdDialog, $mdMedia, $rootScope, $htt
 		    url: baseURL + '/recommendedbeers?userid=' + userid
 		}).then(function successCallback(response) {
 			console.log('recommended beers are ' + JSON.stringify(response.data));
-		    $scope.beers = response.data;
+		    $scope.recommendedBeers = response.data;
 		}, function errorCallback(response) {
 		    // called asynchronously if an error occurs
 		    // or server returns response with an error status.
@@ -145,7 +145,7 @@ app.controller('SearchCtrl', function($scope, $http, $timeout, $rootScope) {
     	if (mockMode){
 	    	$rootScope.searchResults = [
 			 	{
-				  	"bname": "PLACEHOLDER 1",
+				  	"bname": "Thunderbird Lager",
 				  	"breweryName": "UBC Brewery",
 				  	"type": "Lager",
 				  	"abv": "5.1%",
@@ -153,7 +153,7 @@ app.controller('SearchCtrl', function($scope, $http, $timeout, $rootScope) {
 				  	"imageLocation": "images/stock-beer.jpg"
 			  	},
 			  	{	
-				  	"bname": "PLACEHOLDER 2",
+				  	"bname": "Passive Aggressive",
 				  	"breweryName": "Brassneck",
 				  	"type": "IPA",
 				  	"abv": "5.3%",
@@ -161,7 +161,7 @@ app.controller('SearchCtrl', function($scope, $http, $timeout, $rootScope) {
 				  	"imageLocation": "images/ipa.jpg"
 			  	},
 			  	{
-				  	"bname": "PLACEHOLDER 3",
+				  	"bname": "Southern Hop",
 				  	"breweryName": "Main Street Brewery",
 				  	"type": "IPA",
 				  	"abv": "6.1%",
@@ -169,7 +169,7 @@ app.controller('SearchCtrl', function($scope, $http, $timeout, $rootScope) {
 				  	"imageLocation": "images/stock-beer.jpg"
 				},
 				{
-				  	"bname": "PLACEHOLDER 4",
+				  	"bname": "Sun God Wheat Ale",
 				  	"breweryName": "R&B Brewery",
 				  	"type": "Hefeweizen",
 				  	"abv": "5.6%",
@@ -262,7 +262,7 @@ app.controller('LoginCtrl', function($scope, $mdDialog, $mdMedia, $rootScope, $h
 				$mdDialog.alert()
 					.parent(angular.element(document.querySelector('#popupContainer')))
 					.clickOutsideToClose(true)
-					.title('Yo dawg, you\'ve already logged in!')
+					.textContent('Yo dawg, you\'ve already logged in!')
 					.ariaLabel('Alert Dialog Demo')
 					.ok('Got it!')
 					.targetEvent(ev)
