@@ -35,7 +35,7 @@ public class WebController {
         searchBeerMap.put("type", btype);
         searchBeerMap.put("ibu", ibu);
         searchBeerMap.put("abv", abv);
-        searchBeerMap.put("averageRating", rating);
+        //searchBeerMap.put("averageRating", rating);
         searchBeerMap.put("description", description);
         searchBeerMap.put("breweryName", breweryName);
 

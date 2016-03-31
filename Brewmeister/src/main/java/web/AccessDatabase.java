@@ -134,7 +134,7 @@ public class AccessDatabase {
             float abv = rs.getFloat("ABV");
             float ibu = rs.getFloat("IBU");
             String description = rs.getString("Description");
-            String averageRating = rs.getString("AvgRating");
+            //String averageRating = rs.getString("AvgRating");
 //		  String averageRating;
 //		  int beerID;
 //		  String imageLocation;
