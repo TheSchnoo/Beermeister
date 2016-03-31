@@ -16,8 +16,7 @@ app.controller('SearchCtrl', function($scope, $http, $timeout, $rootScope, $mdDi
     $rootScope.searchResults = [];
 
     $scope.submitBeer = function(ev){
-    	var valid = checkValidSubmission();
-    	if (!valid) {
+    	if (!validSubmission()) {
     		$mdDialog.show(
 				$mdDialog.alert()
 					.parent(angular.element(document.querySelector('#popupContainer')))
@@ -29,15 +28,21 @@ app.controller('SearchCtrl', function($scope, $http, $timeout, $rootScope, $mdDi
 	    	);
 
     	} else {
-    		
+    		console.log('valid form detected');
     	}
 
   
     }
 
-    function checkValidSubmission(){
-    	//TODO: implement this
-    	return false;
+    function validSubmission(){
+    	if (!$scope.beer.hasOwnProperty('bname') || !$scope.beer.hasOwnProperty('breweryName') ||
+            !$scope.beer.hasOwnProperty('abv') || !$scope.beer.hasOwnProperty('ibu') || 
+            !$scope.beer.hasOwnProperty('description') || isNaN(parseFloat($scope.beer.abv)) || 
+            isNaN(parseFloat($scope.beer.abv))) {
+                return false;
+        } else {
+            return true;
+        }
     }
 
 });

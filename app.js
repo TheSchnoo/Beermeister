@@ -1,6 +1,6 @@
 var mockMode = false;
 var debugMode = false;
-var baseURL = 'http://localhost:8020'
+var baseURL = 'http://localhost:8080'
 var userid = 1;
 
 var app = angular.module('Brewmaster', ['ngMaterial']);
