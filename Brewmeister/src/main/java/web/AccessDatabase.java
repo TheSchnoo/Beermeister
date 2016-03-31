@@ -44,7 +44,7 @@ public class AccessDatabase {
                 }
                 else if(entry.getKey()=="abv"){
                     float value = Float.parseFloat(entry.getValue());
-                    float upperRange = value + (float) 1.99;
+                    float upperRange = value + (float) 0.99;
                     if(value < 4){
                         searchString = searchString + entry.getKey() + " < " + 4;
                     }
