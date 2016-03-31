@@ -31,12 +31,33 @@ app.controller('SearchCtrl', function($scope, $http, $timeout, $rootScope, $mdDi
 
     	} else {
             var url = baseURL + '/beers';
-            console.log('making POST to ' + url + ' with a payload of ' + JSON.stringify($scope.beer));
+            console.log('making POST to ' + url + 'with a payload of ' + JSON.stringify($scope.beer));
     		$http({
                 method: 'POST',
                 url: baseURL + '/beers'
             }).then(function successCallback(response) {
-                //TODO: implement this
+                console.log('received a response of ' + JSON.stringify(response.data));
+                if (response.data.created === true){
+                    $mdDialog.show(
+                        $mdDialog.alert()
+                            .parent(angular.element(document.querySelector('#popupContainer')))
+                            .clickOutsideToClose(true)
+                            .textContent('Beer successfully created.')
+                            .ariaLabel('Alert Dialog Demo')
+                            .ok('Got it!')
+                            .targetEvent(ev)
+                    );
+                } else {
+                    $mdDialog.show(
+                        $mdDialog.alert()
+                            .parent(angular.element(document.querySelector('#popupContainer')))
+                            .clickOutsideToClose(true)
+                            .textContent('Beer creation failed.')
+                            .ariaLabel('Alert Dialog Demo')
+                            .ok('Got it!')
+                            .targetEvent(ev)
+                    );
+                }
             }, function errorCallback(response) {
                 // called asynchronously if an error occurs
                 // or server returns response with an error status.
