@@ -1,11 +1,13 @@
 package web;
 
+import org.json.HTTP;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -24,7 +26,8 @@ public class WebController {
                                      @RequestParam(value="abv", required = false) String abv,
                                      @RequestParam(value="rating", required = false) String rating,
 //                                     @RequestParam(value="description", required = false) String description,
-                                     @RequestParam(value="breweryname", required = false) String breweryName) {
+                                     @RequestParam(value="breweryname", required = false) String breweryName,
+                                     HttpServletResponse httpResponse) throws IOException {
 
         Map<String,String> searchBeerMap = new HashMap<>();
 
@@ -44,21 +47,26 @@ public class WebController {
             beers = null;
         }
 
+        httpResponse.setStatus(HttpServletResponse.SC_OK);
+
         return beers;
     }
 
     @RequestMapping("/recommendedbeers")
     public
     @ResponseBody
-    ArrayList<BeerInfo> recs (@RequestParam(value="userid", required = false) String userid) {
+    ArrayList<BeerInfo> recs (
+            @RequestParam(value="userid", required = false) String userid,
+            HttpServletResponse httpResponse) throws IOException {
         AccessDatabase accessDB = new AccessDatabase();
         ArrayList<BeerInfo> beers;
         try {
             beers = accessDB.getRecommendations(Integer.parseInt(userid));
+            httpResponse.setStatus(HttpServletResponse.SC_OK);
         } catch (Exception e) {
             beers = null;
+            httpResponse.setStatus(HttpServletResponse.SC_NOT_FOUND);
         }
-
         return beers;
     }
 }
