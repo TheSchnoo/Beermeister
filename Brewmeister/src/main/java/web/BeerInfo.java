@@ -1,7 +1,5 @@
 package web;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 public class BeerInfo {
 
     String bname;
