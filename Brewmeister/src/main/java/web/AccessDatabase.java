@@ -138,6 +138,32 @@ public class AccessDatabase {
         }
     }
 
+    public Boolean updateBeerToDB(String bname, JSONObject jobj) throws Exception {
+        try{
+            Class.forName("com.mysql.jdbc.Driver");
+
+            connect = DriverManager
+                    .getConnection("jdbc:mysql://localhost/beerinfo?"
+                            + "user=sqluser&password=sqluserpw");
+            preparedStatement = connect
+                    .prepareStatement("Update BeerInfo SET " + "Description=" + jobj.getString("Description") + ", " +
+                            "Brewed=" + jobj.getString("Brewed") + " WHERE " + "BName=" + bname);
+            resultSet = preparedStatement.executeQuery();
+            //JSONArray beers = new JSONArray();
+            ArrayList<BeerInfo> listBeers = new ArrayList<BeerInfo>();
+            while(resultSet.next()){
+                listBeers.add(convertResultSetToBeerInfo(resultSet));
+            }
+            //return beers;
+            return true;
+
+        } catch (Exception e) {
+            throw e;
+        } finally {
+            close();
+        }
+    }
+
     // You need to close the resultSet
     private void close() {
         try {

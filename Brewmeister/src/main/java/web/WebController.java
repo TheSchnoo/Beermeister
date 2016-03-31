@@ -120,7 +120,7 @@ public class WebController {
 //    POST REQUESTS
 //++++++++++++++++++++++++++++++++++
     @RequestMapping(value = "/beers", method = RequestMethod.POST)
-    public @ResponseBody JSONObject updateBeer(@RequestBody String body) throws JSONException {
+    public @ResponseBody JSONObject addBeer(@RequestBody String body) throws JSONException {
         JSONObject bodyJSON = new JSONObject(body);
         String bname = bodyJSON.getString("bname");
         String breweryName = bodyJSON.getString("breweryName");
@@ -156,6 +156,36 @@ public class WebController {
 //        }
 //        return new ArrayList<BeerInfo>();
 //    }
+
+    @RequestMapping(value = "/beers/update", method = RequestMethod.POST)
+    public @ResponseBody JSONObject updateBeer(@RequestBody String body, @RequestParam(value="bname") String bname) throws JSONException {
+
+        JSONObject bodyJSON = new JSONObject(body);
+        AccessDatabase accessDB = new AccessDatabase();
+
+        try {
+            accessDB.updateBeerToDB(bname, bodyJSON);
+        } catch (Exception e) {
+            return new JSONObject().append("updated", false);
+        }
+
+        return new JSONObject().append("updated", true);
+    }
+//    ArrayList<BeerInfo> beers (
+//            @RequestParam(value="bname", required = false) String bname,
+//            HttpServletResponse httpResponse) throws IOException {
+//        AccessDatabase accessDB = new AccessDatabase();
+//        ArrayList<BeerInfo> reviews;
+//
+//        try {
+//            httpResponse.setStatus(HttpServletResponse.SC_OK);
+//        } catch (Exception e) {
+//            reviews = null;
+//            httpResponse.setStatus(HttpServletResponse.SC_NOT_FOUND);
+//        }
+//        return new ArrayList<BeerInfo>();
+//    }
+
 
 
 }
