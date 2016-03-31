@@ -1,5 +1,7 @@
 package web;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class BeerInfo {
 
     String bname;
@@ -11,9 +13,9 @@ public class BeerInfo {
     String description;
     boolean brewed;
 
-    public BeerInfo(String name, String brewery, String type, double abv, double ibu, String description, boolean brewed) {
-        this.bname = name;
-        this.breweryName = brewery;
+    public BeerInfo(String bname, String breweryName, String type, double abv, double ibu, String description, boolean brewed) {
+        this.bname = bname;
+        this.breweryName = breweryName;
         this.type = type;
         this.abv = abv;
         this.ibu = ibu;
@@ -22,13 +24,13 @@ public class BeerInfo {
         this.brewed = brewed;
     }
 
-    public String getName() { return bname; }
+    public String getBName() { return bname; }
 
     public void setBname(String bname) {
         this.bname = bname;
     }
 
-    public String getBrewery() { return breweryName; }
+    public String getBreweryName() { return breweryName; }
 
     //I think we decided you can't change the brewery of a beer?
 

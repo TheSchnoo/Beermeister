@@ -32,15 +32,28 @@ public class AccessDatabase {
                 }
                 if(entry.getKey()=="ibu"){
                     float value = Float.parseFloat(entry.getValue());
-                    searchString = searchString + entry.getKey() + " BETWEEN " + value + " AND " + (value + (float) 9);
-                }
-                if(entry.getKey()=="abv"){
-                    float value = Float.parseFloat(entry.getValue());
-                    float upperRange = value + (float) 1;
-                    if(value == 0){
-                        upperRange = value + (float) 4;
+                    if(value < 9){
+                        searchString = searchString + entry.getKey() + " < " + 9;
                     }
-                    searchString = searchString + entry.getKey() + " BETWEEN " + value + " AND " + upperRange;
+                    else if(value >= 80){
+                        searchString = searchString + entry.getKey() + " >= " + 80;
+                    }
+                    else {
+                        searchString = searchString + entry.getKey() + " BETWEEN " + value + " AND " + (value + (float) 9);
+                    }
+                }
+                else if(entry.getKey()=="abv"){
+                    float value = Float.parseFloat(entry.getValue());
+                    float upperRange = value + (float) 0.99;
+                    if(value < 4){
+                        searchString = searchString + entry.getKey() + " < " + 4;
+                    }
+                    else if(value >= 7){
+                        searchString = searchString + entry.getKey() + " >= " + 7;
+                    }
+                    else{
+                        searchString = searchString + entry.getKey() + " BETWEEN " + value + " AND " + upperRange;
+                    }
                 }
                 else {
                     searchString = searchString + entry.getKey() + " LIKE " + "'%" + entry.getValue() + "%'";
@@ -63,7 +76,6 @@ public class AccessDatabase {
             //JSONArray beers = new JSONArray();
             ArrayList<BeerInfo> listBeers = new ArrayList<BeerInfo>();
             while(resultSet.next()){
-                //beers.put(convertResultSetToJSONString_Beer(resultSet));
                 listBeers.add(convertResultSetToBeerInfo(resultSet));
             }
             //return beers;
@@ -126,6 +138,32 @@ public class AccessDatabase {
         }
     }
 
+    public Boolean updateBeerToDB(String bname, JSONObject jobj) throws Exception {
+        try{
+            Class.forName("com.mysql.jdbc.Driver");
+
+            connect = DriverManager
+                    .getConnection("jdbc:mysql://localhost/beerinfo?"
+                            + "user=sqluser&password=sqluserpw");
+            preparedStatement = connect
+                    .prepareStatement("Update BeerInfo SET " + "Description=" + jobj.getString("Description") + ", " +
+                            "Brewed=" + jobj.getString("Brewed") + " WHERE " + "BName=" + bname);
+            resultSet = preparedStatement.executeQuery();
+            //JSONArray beers = new JSONArray();
+            ArrayList<BeerInfo> listBeers = new ArrayList<BeerInfo>();
+            while(resultSet.next()){
+                listBeers.add(convertResultSetToBeerInfo(resultSet));
+            }
+            //return beers;
+            return true;
+
+        } catch (Exception e) {
+            throw e;
+        } finally {
+            close();
+        }
+    }
+
     // You need to close the resultSet
     private void close() {
         try {
@@ -153,8 +191,8 @@ public class AccessDatabase {
     // Convert a ResultSet to a BeerInfo object
     private BeerInfo convertResultSetToBeerInfo(ResultSet rs){
         try{
-            String name = rs.getString("BName");
-            String brewery = rs.getString("BreweryName");
+            String bname = rs.getString("BName");
+            String breweryName = rs.getString("BreweryName");
             String type = rs.getString("Type");
             float abv = rs.getFloat("ABV");
             float ibu = rs.getFloat("IBU");
@@ -163,16 +201,19 @@ public class AccessDatabase {
 //            String averageRating; = rs.getString("")
 //		  String imageLocation;
 
-            JSONObject returnJSON = new JSONObject();
-            returnJSON.put("name", name);
-            returnJSON.put("brewery", brewery);
-            returnJSON.put("type", type);
-            returnJSON.put("abv", abv);
-            returnJSON.put("ibu", ibu);
+            JSONObject obj = new JSONObject();
+            obj.append("bname", bname);
+            obj.append("breweryName", breweryName);
+            obj.append("type", type);
+            obj.append("abv", abv);
+            obj.append("ibu", ibu);
+            obj.append("description", description);
+            obj.append("brewed", true);
 
-            BeerInfo newBI = new BeerInfo(name, brewery, type, abv, ibu, description, true);
 
-            //return returnJSON;
+            BeerInfo newBI = new BeerInfo(bname, breweryName, type, abv, ibu, description, true);
+
+//            return obj;
             return newBI;
         }
         catch (Exception e){
