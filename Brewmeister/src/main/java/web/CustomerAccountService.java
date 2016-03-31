@@ -8,7 +8,6 @@ public class CustomerAccountService {
 
 
     public static Map createAccount(String username, String password) {
-        Map response = new HashMap();
         Map<String, String> createAccountMap = new HashMap<>();
 
         createAccountMap.put("cname", username);
@@ -18,13 +17,7 @@ public class CustomerAccountService {
         AccessDatabase ad = new AccessDatabase();
         Map operationResult = ad.createAccount(createAccountMap);
 
-        if (operationResult.containsValue("success")) {
-            response.put("created", true);
-            response.put("uuid", 1);
-        } else {
-            response.put("created", false);
-        }
-        return response;
+        return operationResult;
     }
 
     public static Map login(String username, String password) {

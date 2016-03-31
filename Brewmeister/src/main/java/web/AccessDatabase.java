@@ -19,6 +19,7 @@ public class AccessDatabase {
     private PreparedStatement preparedStatement = null;
     private ResultSet resultSet = null;
     private final String CustomerTable = "Customer";
+    public static int numAccounts = 0;
 
     public ArrayList<BeerInfo> searchBeers(Map<String, String> searchBeerMap) throws Exception {
         String searchString;
@@ -232,11 +233,13 @@ public class AccessDatabase {
         try {
             int createAccountResult = insertNewEntry(queryString);
         } catch (Exception e) {
-            response.put("status", "failure");
+            response.put("created", false);
             return response;
         }
 
-        response.put("status", "success"); //TODO: temporary for testing
+        numAccounts++;
+        response.put("created", true);
+        response.put("uuid", numAccounts);
         return response;
     }
 
