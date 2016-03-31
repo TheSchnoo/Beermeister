@@ -19,13 +19,13 @@ CREATE TABLE BeerInfo (
 	ABV FLOAT,
 	Description CHAR(255),
 	BreweryName CHAR(30),
-	Avg FLOAT NOT NULL ,
+	AvgRating FLOAT NOT NULL ,
 	PRIMARY KEY(BName),
 	-- CANDIDATE KEY (FName),
 	FOREIGN KEY(BreweryName) REFERENCES Brewery (bname)
 		ON UPDATE CASCADE
 		ON DELETE NO ACTION,
-	FOREIGN KEY(Avg) REFERENCES Ratings (Avg_rating)
+	FOREIGN KEY(AvgRating) REFERENCES Ratings (Avg_rating)
 		ON UPDATE CASCADE
 		ON DELETE NO ACTION
 );
