@@ -22,6 +22,9 @@ CREATE TABLE BeerInfo (
 	AvgRating FLOAT NOT NULL ,
 	PRIMARY KEY(BName),
 	-- CANDIDATE KEY (FName),
+	FOREIGN KEY (BName) REFERENCES Ratings (Bname)
+		ON UPDATE CASCADE
+		ON DELETE NO ACTION,
 	FOREIGN KEY(BreweryName) REFERENCES Brewery (bname)
 		ON UPDATE CASCADE
 		ON DELETE NO ACTION,
@@ -69,7 +72,7 @@ CREATE TABLE Rates (
 	BRate INTEGER,
 	PRIMARY KEY (CID, BName),
 	FOREIGN KEY (CID) REFERENCES Customer (CID),
-	FOREIGN KEY (BName) REFERENCES BeerInfo (BName)
+	FOREIGN KEY (BName) REFERENCES Ratings (BName)
 );
 
 -- grant select on Rates to public;
@@ -80,7 +83,7 @@ CREATE TABLE Updates(
 	StoreID INTEGER,
 	EmpID INTEGER,
 	PRIMARY KEY(BName, StoreID, EmpID),
-	FOREIGN KEY (BName) REFERENCES BeerInfo (BName),
+	FOREIGN KEY (BName) REFERENCES Ratings (BName),
 	FOREIGN KEY(StoreID) REFERENCES BeerVendor (StoreID),
 	FOREIGN KEY(EmpID) REFERENCES StoreEmployeeHasA(EmpID)
 );
@@ -102,16 +105,16 @@ CREATE TABLE Searches(
 	BName CHAR(30),
 	PRIMARY KEY (CID, BName),
 	FOREIGN KEY (CID) REFERENCES Customer (CID),
-	FOREIGN KEY (BName) REFERENCES BeerInfo (BName)
+	FOREIGN KEY (BName) REFERENCES Ratings (BName)
 );
 
 CREATE TABLE Ratings(
 	Bname CHAR(30),
 	Avg_Rating FLOAT,
-	PRIMARY KEY(Bname),
-	FOREIGN KEY (BName) REFERENCES BeerInfo (BName)
+	PRIMARY KEY(Bname)
 );
-CREATE TRIGGER the_averages AFTER INSERT ON BeerInfo
+
+CREATE TRIGGER the_averages BEFORE INSERT ON BeerInfo
 FOR EACH ROW CALL insertBeer(BName);
 
 CREATE TRIGGER the_averages AFTER INSERT ON Rates
@@ -119,9 +122,8 @@ FOR EACH ROW CALL update_avg_ratings_table(BName);
 
 -- grant select on Searches to public;
 
-
-insert into BeerInStock
-values('Gypsy Tears',0);
+insert into Brewery
+values('Parallel 49');
 
 insert into BeerVendor
 values(0, 'Legacy Liquor Store');
@@ -138,15 +140,14 @@ values(3, 'Darby\'s Liquor Store');
 insert into BeerInfo
 values('Gypsy Tears', 'Ruby Ale', 'GT Profile', 40, 6.0, 'Caramel', 'Parallel 49',0);
 
-insert into Brewery
-values('Parallel 49');
-
 insert into BeerInfo
 values('Watermelon Witbier', 'Hefeweizen', 'WW Profile', 50, 5.22, 'Fruity, refreshing', 'Parallel 49',0);
 
 insert into BeerInfo
 values('Jerkface 9000', 'Wheat Ale', 'JF Profile', 37, 5.0, 'Citrus, floral, malt base, hop punch', 'Parallel 49',0);
 
+insert into BeerInStock
+values('Gypsy Tears',0);
 -- Procedure;
 DELIMITER $$
 CREATE PROCEDURE insertBeer
