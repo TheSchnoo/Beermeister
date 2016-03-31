@@ -17,7 +17,7 @@ public class SimpleCORSFilter {
         response.setHeader("Access-Control-Allow-Methods", "POST, GET, PUT, OPTIONS, DELETE");
         response.setHeader("Access-Control-Allow-Headers",
                 "Origin,X-Requested-With,Content-Type,Accept,X-Prototype-Version,Cache-Control,Pragma");
-        response.setHeader("Custom-Header", "Own-Data");
+        response.setHeader("Content-Type", "text/plain");
         chain.doFilter(req, res);
     }
 
