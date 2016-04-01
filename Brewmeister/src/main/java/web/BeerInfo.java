@@ -1,6 +1,6 @@
 package web;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import java.util.ArrayList;
 
 public class BeerInfo {
 
@@ -12,6 +12,7 @@ public class BeerInfo {
     String averageRating;
     String description;
     boolean brewed;
+    ArrayList<Vendor> vendors;
 
     public BeerInfo(String bname, String breweryName, String type, double abv, double ibu, String description, boolean brewed) {
         this.bname = bname;
@@ -22,6 +23,20 @@ public class BeerInfo {
         this.averageRating = null;
         this.description = description;
         this.brewed = brewed;
+        this.vendors = new ArrayList<Vendor>();
+    }
+
+    public BeerInfo(String bname, String breweryName, String type, double abv, double ibu, String description,
+                    boolean brewed, ArrayList<Vendor> vendors) {
+        this.bname = bname;
+        this.breweryName = breweryName;
+        this.type = type;
+        this.abv = abv;
+        this.ibu = ibu;
+        this.averageRating = null;
+        this.description = description;
+        this.brewed = brewed;
+        this.vendors = vendors;
     }
 
     public String getBName() { return bname; }
@@ -65,6 +80,14 @@ public class BeerInfo {
     }
 
     public boolean isBrewed() { return brewed; }
+
+    public void addVendor(Vendor vendor){
+        vendors.add(vendor);
+    }
+
+    public ArrayList<Vendor> getVendors(){
+        return vendors;
+    }
 
     public String toTupleValueString() {
         return "(" + this.bname + ", " + this.type + ", " + this.ibu + ", " + this.abv + ", " + this.description + ", " +

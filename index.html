@@ -136,29 +136,38 @@
       </div>
     </div>
 
-    <div id="search-results" ng-controller="SearchCtrl" class="container">
-      <md-subhead class="result-heading" id="search-results">Search Results:</md-subhead>
-      <md-content>
-        <md-list flex>
+    <div id="search-results" ng-controller="SearchCtrl" class="container" ng-hide="searchResults.length ===0">
+      <md-whiteframe class="md-whiteframe-12dp search-whiteframe" layout="column">
+        <md-toolbar>
+          <div class="md-toolbar-tools">
+            <h2>
+              <span>Search Results</span>
+            </h2>
+            <span flex></span>
+          </div>
+        </md-toolbar>
+        <md-content id="search-content">
+          <md-list flex id="search-list">
 
-          <md-list-item class="md-3-line" ng-repeat="beer in $root.searchResults">
-            <img ng-src="images/stock-beer.jpg" class="md-avatar" alt="images/stock-beer.jpg" />
-            <div class="md-list-item-text" layout="column">
-              <h3>{{beer.bname}}</h3>
-              <h4>{{beer.breweryName}}</h4>
-              <p>{{beer.description}}</p>
-            </div>
-              <md-button class="search-action-button md-primary">More Info</md-button>
-              <md-button class="search-action-button md-primary">Vendors</md-button>
-              <md-button class="search-action-button md-primary">Ratings</md-button>
-            <md-divider ng-if="!$last"></md-divider>
-          </md-list-item>
+            <md-list-item class="md-3-line" ng-repeat="beer in $root.searchResults">
+              <img ng-src="images/stock-beer.jpg" class="md-avatar" alt="images/stock-beer.jpg" />
+              <div class="md-list-item-text" layout="column">
+                <h3>{{beer.bname}}</h3>
+                <h4>{{beer.breweryName}}</h4>
+                <p>{{beer.description}}</p>
+              </div>
+                <md-button class="search-action-button md-primary">More Info</md-button>
+                <md-button class="search-action-button md-primary">Vendors</md-button>
+                <md-button class="search-action-button md-primary">Ratings</md-button>
+              <md-divider ng-if="!$last"></md-divider>
+            </md-list-item>
 
-        </md-list>
-      </md-content>
+          </md-list>
+        </md-content>
+      </md-whiteframe>
     </div>
 
-    <div class="container">
+    <div class="container" id="recommendations-section">
 
       <md-subhead class="result-heading" id="recommendations">Our Recommendations:</md-subhead>
       <md-content class="md-padding" layout-xs="column" layout="row">
