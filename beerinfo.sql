@@ -29,7 +29,7 @@ CREATE TABLE BeerInfo (
 	ABV double(5,2),
 	Description CHAR(255),
 	BreweryName CHAR(30),
-	Brewerd BOOLEAN
+	Brewed BOOLEAN
 		DEFAULT 1,
 	AvgRating Double(4,2)
 		DEFAULT 0,
