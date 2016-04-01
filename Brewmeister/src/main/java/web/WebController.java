@@ -102,8 +102,12 @@ public class WebController {
     ArrayList<BeerInfo> vendors (
             @RequestParam(value="bname", required = false) String bname,
             HttpServletResponse httpResponse) throws IOException {
-        AccessDatabase accessDB = new AccessDatabase();
-        ArrayList<BeerInfo> reviews;
+//        VendorService vendorService = new VendorService();
+//        ArrayList<Vendor> vendors;
+//
+//        try {
+//            vendors = vendorService.getVendorsThatSellABeer(bname);
+//        }
 
         //TODO: ADD FUNCTIONALITY FOR GETTING VENDORS THAT SELL A BEER
 

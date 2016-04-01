@@ -1,12 +1,7 @@
 package web;
 
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.Map;
 
@@ -17,6 +12,10 @@ public class AccessDatabase {
     private Statement statement = null;
     private PreparedStatement preparedStatement = null;
     private ResultSet resultSet = null;
+
+    public AccessDatabase(){
+
+    }
 
     public ArrayList<BeerInfo> searchBeers(Map<String, String> searchBeerMap) throws Exception {
         String searchString;
@@ -190,6 +189,9 @@ public class AccessDatabase {
 
     // Convert a ResultSet to a BeerInfo object
     private BeerInfo convertResultSetToBeerInfo(ResultSet rs){
+
+        VendorService vs = new VendorService();
+
         try{
             String bname = rs.getString("BName");
             String breweryName = rs.getString("BreweryName");
@@ -201,17 +203,10 @@ public class AccessDatabase {
 //            String averageRating; = rs.getString("")
 //		  String imageLocation;
 
-            JSONObject obj = new JSONObject();
-            obj.append("bname", bname);
-            obj.append("breweryName", breweryName);
-            obj.append("type", type);
-            obj.append("abv", abv);
-            obj.append("ibu", ibu);
-            obj.append("description", description);
-            obj.append("brewed", true);
+            ArrayList<Vendor> vendors = vs.getVendorsThatSellABeer(bname);
 
 
-            BeerInfo newBI = new BeerInfo(bname, breweryName, type, abv, ibu, description, true);
+            BeerInfo newBI = new BeerInfo(bname, breweryName, type, abv, ibu, description, true, vendors);
 
 //            return obj;
             return newBI;
