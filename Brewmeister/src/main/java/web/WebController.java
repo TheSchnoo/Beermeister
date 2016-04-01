@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -25,28 +26,41 @@ public class WebController {
                                      @RequestParam(value="rating", required = false) String rating,
                                      @RequestParam(value="description", required = false) String description,
                                      @RequestParam(value="breweryName", required = false) String breweryName,
+                                     @RequestParam(value="storeName", required = false) String storeName,
                                      HttpServletResponse httpResponse) throws IOException {
-
-        Map<String,String> searchBeerMap = new HashMap<>();
-
-        searchBeerMap.put("bname", bname);
-        searchBeerMap.put("type", btype);
-        searchBeerMap.put("ibu", ibu);
-        searchBeerMap.put("abv", abv);
-        //searchBeerMap.put("averageRating", rating);
-        searchBeerMap.put("description", description);
-        searchBeerMap.put("breweryName", breweryName);
-
-        AccessDatabase accessDB = new AccessDatabase();
         ArrayList<BeerInfo> beers;
-        try {
-            beers = accessDB.searchBeers(searchBeerMap);
-        } catch (Exception e) {
-            beers = null;
+
+        if(storeName == null) {
+
+            Map<String, String> searchBeerMap = new HashMap<>();
+
+            searchBeerMap.put("bname", bname);
+            searchBeerMap.put("type", btype);
+            searchBeerMap.put("ibu", ibu);
+            searchBeerMap.put("abv", abv);
+            //searchBeerMap.put("averageRating", rating);
+            searchBeerMap.put("description", description);
+            searchBeerMap.put("breweryName", breweryName);
+
+            AccessDatabase accessDB = new AccessDatabase();
+            try {
+                beers = accessDB.searchBeers(searchBeerMap);
+            } catch (Exception e) {
+                beers = null;
+            }
+
+
         }
-
+        else{
+            VendorService vendorService = new VendorService();
+            try {
+                beers = vendorService.getBeersByVendor(storeName);
+            } catch (Exception e) {
+                beers = null;
+                e.printStackTrace();
+            }
+        }
         httpResponse.setStatus(HttpServletResponse.SC_OK);
-
         return beers;
     }
 
@@ -67,6 +81,43 @@ public class WebController {
         }
         return beers;
     }
+
+
+    @RequestMapping("/signup")
+    public
+    @ResponseBody
+    Map createAccount (
+            @RequestParam(value = "username", required = true) String username,
+            @RequestParam(value = "password", required = true) String password,
+            HttpServletResponse httpResponse) throws IOException {
+
+            httpResponse.setStatus(HttpServletResponse.SC_OK);
+            return CustomerAccountService.createAccount(username, password);
+    }
+
+    @RequestMapping("/login")
+    public
+    @ResponseBody
+    Map login (
+            @RequestParam(value = "username", required = true) String username,
+            @RequestParam(value = "password", required = true) String password,
+            HttpServletResponse httpResponse) throws IOException {
+
+            httpResponse.setStatus(HttpServletResponse.SC_OK);
+            return CustomerAccountService.login(username, password);
+    }
+
+    @RequestMapping("/logout")
+    public
+    @ResponseBody
+    Map logout (
+            @RequestParam(value = "sessionId", required = true) String sessionId,
+            HttpServletResponse httpResponse) throws IOException {
+
+            httpResponse.setStatus(HttpServletResponse.SC_OK);
+            return CustomerAccountService.logout(sessionId);
+    }
+
 
     @RequestMapping(value = "/reviews", method = RequestMethod.GET)
     public
@@ -102,8 +153,12 @@ public class WebController {
     ArrayList<BeerInfo> vendors (
             @RequestParam(value="bname", required = false) String bname,
             HttpServletResponse httpResponse) throws IOException {
-        AccessDatabase accessDB = new AccessDatabase();
-        ArrayList<BeerInfo> reviews;
+//        VendorService vendorService = new VendorService();
+//        ArrayList<Vendor> vendors;
+//
+//        try {
+//            vendors = vendorService.getVendorsThatSellABeer(bname);
+//        }
 
         //TODO: ADD FUNCTIONALITY FOR GETTING VENDORS THAT SELL A BEER
 
@@ -175,5 +230,4 @@ public class WebController {
 //    }
 
     }
-
 }
