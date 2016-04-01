@@ -193,7 +193,79 @@ public class AccessDatabase {
 
         }
     }
+    public Boolean checkForReview(int cid, String bname) throws Exception {
+        try{
+            Class.forName("com.mysql.jdbc.Driver");
 
+            connect = DriverManager
+                    .getConnection("jdbc:mysql://localhost/review?"
+                            + "user=sqluser&password=sqluserpw");
+            preparedStatement = connect
+                    .prepareStatement("Select * FROM Rates WWHERE bname like " + bname + " AND CID = " + cid);
+            resultSet = preparedStatement.executeQuery();
+            ArrayList<BeerInfo> listBeers = new ArrayList<BeerInfo>();
+            BeerService beerService = new BeerService();
+            while(resultSet.next()){
+                listBeers.add(beerService.convertResultSetToBeerInfo(resultSet));
+            }
+            return true;
+
+        } catch (Exception e) {
+            throw e;
+        } finally {
+            close();
+        }
+    }
+    public Boolean addReview(BeerReview review) throws Exception {
+        try{
+            Class.forName("com.mysql.jdbc.Driver");
+
+            connect = DriverManager
+                    .getConnection("jdbc:mysql://localhost/review?"
+                            + "user=sqluser&password=sqluserpw");
+            preparedStatement = connect
+                    .prepareStatement("INSERT INTO Rates VALUES " + review.toTupleValueString());
+            resultSet = preparedStatement.executeQuery();
+            ArrayList<BeerInfo> listBeers = new ArrayList<BeerInfo>();
+            BeerService beerService = new BeerService();
+            while(resultSet.next()){
+                listBeers.add(beerService.convertResultSetToBeerInfo(resultSet));
+            }
+            return true;
+
+        } catch (Exception e) {
+            throw e;
+        } finally {
+            close();
+        }
+    }
+
+    public Boolean updateReviewToDB(String bname, JSONObject jobj) throws Exception {
+        try{
+            Class.forName("com.mysql.jdbc.Driver");
+
+            connect = DriverManager
+                    .getConnection("jdbc:mysql://localhost/beerinfo?"
+                            + "user=sqluser&password=sqluserpw");
+            preparedStatement = connect
+                    .prepareStatement("Update BeerInfo SET " + "Description=" + jobj.getString("Description") + ", " +
+                            "Brewed=" + jobj.getString("Brewed") + " WHERE " + "BName=" + bname);
+            resultSet = preparedStatement.executeQuery();
+
+            ArrayList<BeerInfo> listBeers = new ArrayList<BeerInfo>();
+            BeerService beerService = new BeerService();
+            while(resultSet.next()){
+                listBeers.add(beerService.convertResultSetToBeerInfo(resultSet));
+            }
+            //return beers;
+            return true;
+
+        } catch (Exception e) {
+            throw e;
+        } finally {
+            close();
+        }
+    }
     //  Helper for cleaning a string for queries
     private String splitAndReplace(String inString){
         return inString.split(" ")[0].replace("%20", " ");

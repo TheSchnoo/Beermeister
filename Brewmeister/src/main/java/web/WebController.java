@@ -201,4 +201,51 @@ public class WebController {
         }
 
     }
+    @RequestMapping(value = "/rating", method = RequestMethod.POST)
+    public @ResponseBody JSONObject postRating(@RequestBody String body,
+                                             @RequestParam(value="bname", required=true) String beerName) throws JSONException {
+        // Add a rating
+
+            JSONObject bodyJSON = new JSONObject(body);
+            String bname = bodyJSON.getString("bname");
+            int rating = bodyJSON.getInt("brate");
+            String review = bodyJSON.getString("review");
+            int cid = bodyJSON.getInt("uuid");
+
+            BeerReview newBR = new BeerReview(bname, review,rating,cid);
+
+            AccessDatabase accessDB = new AccessDatabase();
+        if(beerName == null){
+            try {
+                accessDB.addReview(newBR);
+            } catch (Exception e) {
+                return new JSONObject().append("created", false);
+            }
+
+            return new JSONObject().append("created", true);
+        }
+
+        // Update a rating
+        else {
+            HashMap<String,String> updateMap;
+            JSONObject bodyJSON = new JSONObject(body);
+            try {
+                updateMap = new ObjectMapper().readValue(bodyJSON.toString(), HashMap.class);
+            } catch (IOException e) {
+                updateMap = null;
+                e.printStackTrace();
+            }
+            AccessDatabase accessDB = new AccessDatabase();
+
+            try {
+                beerName = "beerName=" + beerName;
+                accessDB.updateToDB("BeerInfo", updateMap, beerName);
+            } catch (Exception e) {
+                return new JSONObject().append("updated", false);
+            }
+
+            return new JSONObject().append("updated", true);
+        }
+
+    }
 }
