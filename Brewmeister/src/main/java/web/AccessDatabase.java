@@ -18,8 +18,11 @@ public class AccessDatabase {
     private Statement statement = null;
     private PreparedStatement preparedStatement = null;
     private ResultSet resultSet = null;
-    private final String CustomerTable = "Customer";
+    private final String CUSTOMERTABLE = "Customer";
+    private final String SESSIONTABLE = "CustomerSession";
+
     public static int numAccounts = 0;
+
 
     public ArrayList<BeerInfo> searchBeers(Map<String, String> searchBeerMap) throws Exception {
         String searchString;
@@ -227,20 +230,84 @@ public class AccessDatabase {
 
     public Map createAccount(Map<String, String> createAccountMap) {
 
-        Map response = new HashMap();
+        Map createAccountResponse = new HashMap();
+        String insertAccountString = this.generateInsertString(createAccountMap, CUSTOMERTABLE);
 
-        String queryString = this.generateInsertString(createAccountMap, CustomerTable);
         try {
-            int createAccountResult = insertNewEntry(queryString);
+            int createAccountResult = insertNewEntry(insertAccountString);
         } catch (Exception e) {
-            response.put("created", false);
-            return response;
+            createAccountResponse.put("created", false);
+            return createAccountResponse;
         }
 
         numAccounts++;
-        response.put("created", true);
-        response.put("uuid", numAccounts);
-        return response;
+        createAccountResponse.put("created", true);
+        createAccountResponse.put("uuid", numAccounts);
+        close();
+        return createAccountResponse;
+    }
+
+    public Map checkCredentials(Map<String, String> checkCredentials, String password) throws SQLException{
+
+        Map checkCredentialResponse = new HashMap();
+
+        String searchAccountString = this.generateSearchString(checkCredentials, CUSTOMERTABLE);
+        ResultSet searchResult;
+
+        try {
+            searchResult = queryDatabase(searchAccountString);
+        } catch (Exception e) {
+            checkCredentialResponse.put("matchFound", false);
+            checkCredentialResponse.put("error", CustomerAccountService.loginErrorTypes.sqlError);
+            return checkCredentialResponse;
+        }
+        //TODO: need more checks here
+        /*int sizeResult;
+        try {
+            sizeResult = resultSet.getFetchSize();
+        } catch (SQLException e) {
+            sizeResult = 0;
+        }
+
+        if (sizeResult == 0) {
+            checkCredentialResponse.put("matchFound", false);
+            checkCredentialResponse.put("error", CustomerAccountService.loginErrorTypes.noAccountFound);
+            return checkCredentialResponse;
+        }*/
+
+        while(searchResult.next()){
+            String cPassword = resultSet.getString("CPassword");
+            if (cPassword.equals(password)) {
+                checkCredentialResponse.put("matchFound", true);
+                checkCredentialResponse.put("CID", resultSet.getString("CID"));
+                return checkCredentialResponse;
+            }
+        }
+
+        checkCredentialResponse.put("matchFound", true);
+        checkCredentialResponse.put("error", CustomerAccountService.loginErrorTypes.wrongPassword);
+
+        close();
+
+        return checkCredentialResponse;
+    }
+
+    public Map createCustomerSession(Map<String, String> createSessionParams) {
+
+        Map createSessionResponse = new HashMap<String, Integer>();
+
+        String insertNewSessionString = generateInsertString(createSessionParams, SESSIONTABLE);
+        int insertResult;
+
+        try {
+            int createAccountResult = insertNewEntry(insertNewSessionString);
+        } catch (Exception e) {
+            createSessionResponse.put("created", false);
+            return createSessionResponse;
+        }
+
+        createSessionResponse.put("created", true);
+        return createSessionResponse;
     }
 
     private String generateInsertString(Map<String, String> searchParams, String tableName) {
@@ -253,7 +320,7 @@ public class AccessDatabase {
 
         String insertString = "INSERT INTO " + tableName + " VALUES (";
 
-        if (tableName.equals(CustomerTable)) {
+        if (tableName.equals(CUSTOMERTABLE)) {
             //insert NULL for id, table will change it to next available id number upon insertion
             insertString += "'" + "0" + "'";
             multipleParams = true;
@@ -316,7 +383,7 @@ public class AccessDatabase {
             switch (tempKey) {
                 case "cname":
                 case "cpassword":
-                    queryString += tempKey + "=" + entry.getValue();
+                    queryString += tempKey + " like " + "'" + entry.getValue() + "'";
                     break;
             }
         }
@@ -333,11 +400,9 @@ public class AccessDatabase {
             preparedStatement = connect.prepareStatement(queryString);
             resultSet = preparedStatement.executeQuery();
         } catch (Exception e) {
-            throw e;
-        } finally {
             close();
+            throw e;
         }
-
         return resultSet;
     }
 
@@ -351,11 +416,9 @@ public class AccessDatabase {
             preparedStatement = connect.prepareStatement(insertString);
             result = preparedStatement.executeUpdate();
         } catch (Exception e) {
-            throw e;
-        } finally {
             close();
+            throw e;
         }
-
         return result;
     }
 }
