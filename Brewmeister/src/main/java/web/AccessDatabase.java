@@ -95,14 +95,14 @@ public class AccessDatabase {
         int i = 0;
         for(Map.Entry<String,Object> entry : updateMap.entrySet()){
             if(entry.getValue().getClass().equals(String.class)){
-                searchString = searchString + entry.getKey() + "LIKE '%" + entry.getValue() + "%'";
+                searchString = searchString + entry.getKey() + "='%" + entry.getValue() + "%'";
             }
             else{
                 searchString = searchString + entry.getKey() + "=" + entry.getValue();
             }
 
             if(i!=updateMap.size()-1){
-                searchString = searchString + ", ";
+                searchString = searchString + " AND ";
             }
             i++;
         }
