@@ -194,7 +194,7 @@ public class AccessDatabase {
     }
 
     // Convert a ResultSet to a BeerInfo object
-    private BeerInfo convertResultSetToBeerInfo(ResultSet rs){
+    public BeerInfo convertResultSetToBeerInfo(ResultSet rs){
 
         VendorService vs = new VendorService();
 

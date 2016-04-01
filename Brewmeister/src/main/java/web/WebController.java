@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -25,28 +26,41 @@ public class WebController {
                                      @RequestParam(value="rating", required = false) String rating,
                                      @RequestParam(value="description", required = false) String description,
                                      @RequestParam(value="breweryName", required = false) String breweryName,
+                                     @RequestParam(value="storeName", required = false) String storeName,
                                      HttpServletResponse httpResponse) throws IOException {
-
-        Map<String,String> searchBeerMap = new HashMap<>();
-
-        searchBeerMap.put("bname", bname);
-        searchBeerMap.put("type", btype);
-        searchBeerMap.put("ibu", ibu);
-        searchBeerMap.put("abv", abv);
-        //searchBeerMap.put("averageRating", rating);
-        searchBeerMap.put("description", description);
-        searchBeerMap.put("breweryName", breweryName);
-
-        AccessDatabase accessDB = new AccessDatabase();
         ArrayList<BeerInfo> beers;
-        try {
-            beers = accessDB.searchBeers(searchBeerMap);
-        } catch (Exception e) {
-            beers = null;
+
+        if(storeName == null) {
+
+            Map<String, String> searchBeerMap = new HashMap<>();
+
+            searchBeerMap.put("bname", bname);
+            searchBeerMap.put("type", btype);
+            searchBeerMap.put("ibu", ibu);
+            searchBeerMap.put("abv", abv);
+            //searchBeerMap.put("averageRating", rating);
+            searchBeerMap.put("description", description);
+            searchBeerMap.put("breweryName", breweryName);
+
+            AccessDatabase accessDB = new AccessDatabase();
+            try {
+                beers = accessDB.searchBeers(searchBeerMap);
+            } catch (Exception e) {
+                beers = null;
+            }
+
+
         }
-
+        else{
+            VendorService vendorService = new VendorService();
+            try {
+                beers = vendorService.getBeersByVendor(storeName);
+            } catch (Exception e) {
+                beers = null;
+                e.printStackTrace();
+            }
+        }
         httpResponse.setStatus(HttpServletResponse.SC_OK);
-
         return beers;
     }
 
