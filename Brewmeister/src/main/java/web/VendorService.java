@@ -10,8 +10,7 @@ public class VendorService {
     private ResultSet resultSet = null;
 
     public ArrayList<Vendor> getVendorsThatSellABeer(String bname) throws Exception{
-        String searchString = "SELECT bv.StoreID, bv.StoreName" + //", bv.Address" +
-                " FROM BeerVendor bv, beerinstock bis " +
+        String searchString = "SELECT bv.* FROM BeerVendor bv, beerinstock bis " +
                 "WHERE bv.StoreID = bis.StoreID AND bis.bname LIKE '%" + bname + "%'";
 
         System.out.println(searchString);
@@ -33,6 +32,38 @@ public class VendorService {
             }
             //return vendors;
             return vendors;
+
+        } catch (Exception e) {
+            throw e;
+        } finally {
+            close();
+        }
+    }
+
+    public ArrayList<BeerInfo> getBeersByVendor(String storeName) throws SQLException, ClassNotFoundException {
+        String searchString = "SELECT bi.*" +
+                " FROM BeerInfo bi, BeerVendor bv, BeerInStock bis " +
+                "WHERE bi.BName = bis.BName AND bv.storeID = bis.storeID and bv.storeName like '%" + storeName + "%'";
+
+        System.out.println(searchString);
+
+        try {
+
+            Class.forName("com.mysql.jdbc.Driver");
+
+            connect = DriverManager
+                    .getConnection("jdbc:mysql://localhost/beerinfo?"
+                            + "user=sqluser&password=sqluserpw");
+            preparedStatement = connect
+                    .prepareStatement(searchString);
+            resultSet = preparedStatement.executeQuery();
+            ArrayList<BeerInfo> beers = new ArrayList<BeerInfo>();
+            AccessDatabase accessDB = new AccessDatabase();
+            while(resultSet.next()){
+                beers.add(accessDB.convertResultSetToBeerInfo(resultSet));
+            }
+            //return vendors;
+            return beers;
 
         } catch (Exception e) {
             throw e;
