@@ -2,9 +2,7 @@ package web;
 
 
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 import org.json.JSONObject;
 
@@ -20,17 +18,11 @@ public class AccessDatabase {
 
 
     public AccessDatabase(){
-
     }
 
     public ArrayList<BeerInfo> searchBeers(String searchString) throws Exception {
+        open();
         System.out.println(searchString);
-
-        Class.forName("com.mysql.jdbc.Driver");
-
-        connect = DriverManager
-                .getConnection("jdbc:mysql://localhost/beerinfo?"
-                        + "user=sqluser&password=sqluserpw");
 
         //Beer search by vendor
         if(searchString.contains("SELECT")){
@@ -56,12 +48,8 @@ public class AccessDatabase {
     }
 
     public ArrayList<BeerInfo> getRecommendations(int userid) throws Exception {
+        open();
         try{
-            Class.forName("com.mysql.jdbc.Driver");
-
-            connect = DriverManager
-                    .getConnection("jdbc:mysql://localhost/beerinfo?"
-                            + "user=sqluser&password=sqluserpw");
             preparedStatement = connect
                     .prepareStatement("SELECT * FROM beerinfo");
             resultSet = preparedStatement.executeQuery();
@@ -82,63 +70,36 @@ public class AccessDatabase {
         }
     }
 
-    public Boolean addBeer(BeerInfo beer) throws Exception {
+    public int insertToDB(String table, String values) throws Exception {
+        open();
         try{
-            Class.forName("com.mysql.jdbc.Driver");
+            System.out.println(("INSERT INTO " + table + " VALUES " + values));
 
-            connect = DriverManager
-                    .getConnection("jdbc:mysql://localhost/beerinfo?"
-                            + "user=sqluser&password=sqluserpw");
             preparedStatement = connect
-                    .prepareStatement("INSERT INTO BeerInfo VALUES " + beer.toTupleValueString());
-            resultSet = preparedStatement.executeQuery();
-            ArrayList<BeerInfo> listBeers = new ArrayList<BeerInfo>();
+                    .prepareStatement("INSERT INTO " + table + " VALUES " + values);
+            int insertSuccess = preparedStatement.executeUpdate();
             BeerService beerService = new BeerService();
-            while(resultSet.next()){
-                listBeers.add(beerService.convertResultSetToBeerInfo(resultSet));
-            }
-            return true;
+            return insertSuccess;
 
         } catch (Exception e) {
+            System.out.println("Error: " + e);
             throw e;
         } finally {
             close();
         }
     }
 
-    public Boolean updateBeerToDB(String bname, JSONObject jobj) throws Exception {
-        try{
-            Class.forName("com.mysql.jdbc.Driver");
-
-            connect = DriverManager
-                    .getConnection("jdbc:mysql://localhost/beerinfo?"
-                            + "user=sqluser&password=sqluserpw");
-            preparedStatement = connect
-                    .prepareStatement("Update BeerInfo SET " + "Description=" + jobj.getString("Description") + ", " +
-                            "Brewed=" + jobj.getString("Brewed") + " WHERE " + "BName=" + bname);
-            resultSet = preparedStatement.executeQuery();
-
-            ArrayList<BeerInfo> listBeers = new ArrayList<BeerInfo>();
-            BeerService beerService = new BeerService();
-            while(resultSet.next()){
-                listBeers.add(beerService.convertResultSetToBeerInfo(resultSet));
-            }
-            //return beers;
-            return true;
-
-        } catch (Exception e) {
-            throw e;
-        } finally {
-            close();
-        }
-    }
-
-    public Boolean updateToDB(String table, Map<String, String> updateMap, String parameter) throws Exception {
-
+    public int updateToDB(String table, Map<String, Object> updateMap, String parameter) throws Exception {
+        open();
         String searchString = "Update " + table + " SET ";
         int i = 0;
-        for(Map.Entry<String,String> entry : updateMap.entrySet()){
-            searchString = searchString + entry.getKey() + "=" + entry.getValue();
+        for(Map.Entry<String,Object> entry : updateMap.entrySet()){
+            if(entry.getValue().getClass().equals(String.class)){
+                searchString = searchString + entry.getKey() + "LIKE '%" + entry.getValue() + "%'";
+            }
+            else{
+                searchString = searchString + entry.getKey() + "=" + entry.getValue();
+            }
 
             if(i!=updateMap.size()-1){
                 searchString = searchString + ", ";
@@ -147,31 +108,71 @@ public class AccessDatabase {
         }
 
         if(parameter!=null){
-            searchString=searchString + "WHERE " + parameter;
+            searchString=searchString + " WHERE " + parameter;
         }
 
         try{
-            Class.forName("com.mysql.jdbc.Driver");
-
-            connect = DriverManager
-                    .getConnection("jdbc:mysql://localhost/beerinfo?"
-                            + "user=sqluser&password=sqluserpw");
+            System.out.print(searchString);
             preparedStatement = connect
                     .prepareStatement(searchString);
-            resultSet = preparedStatement.executeQuery();
+            int updateSuccess = preparedStatement.executeUpdate();
 
-            ArrayList<BeerInfo> listBeers = new ArrayList<BeerInfo>();
-            BeerService beerService = new BeerService();
-            while(resultSet.next()){
-                listBeers.add(beerService.convertResultSetToBeerInfo(resultSet));
-            }
-            //return beers;
-            return true;
+            return updateSuccess;
 
         } catch (Exception e) {
+            System.out.println("Error:" + e);
             throw e;
         } finally {
             close();
+        }
+    }
+
+    public int deleteTuple(String table, Map<String, Object> deleteMap) throws Exception {
+        open();
+        String searchString = "DELETE FROM " + table + " WHERE ";
+        int i = 0;
+        for(Map.Entry<String,Object> entry : deleteMap.entrySet()){
+            if(entry.getValue().getClass().equals(String.class)){
+                searchString = searchString + entry.getKey() + " LIKE '%" + entry.getValue() + "%'";
+            }
+            else{
+                searchString = searchString + entry.getKey() + "=" + entry.getValue();
+            }
+
+            if(i!=deleteMap.size()-1){
+                searchString = searchString + " AND ";
+            }
+            i++;
+        }
+
+        try{
+            System.out.print(searchString);
+
+            preparedStatement = connect
+                    .prepareStatement(searchString);
+            int updateSuccess = preparedStatement.executeUpdate();
+
+            return updateSuccess;
+
+        } catch (Exception e) {
+            System.out.println("Error:" + e);
+            throw e;
+        } finally {
+            close();
+        }
+    }
+
+    private void open(){
+        if(connect==null) {
+            try {
+                Class.forName("com.mysql.jdbc.Driver");
+                connect = DriverManager
+                        .getConnection("jdbc:mysql://localhost/beerinfo?"
+                                + "user=sqluser&password=sqluserpw");
+            } catch (Exception e) {
+                System.out.println("Cannot connect to DB from AccessDatabase object");
+                e.printStackTrace();
+            }
         }
     }
 
@@ -192,11 +193,6 @@ public class AccessDatabase {
         } catch (Exception e) {
 
         }
-    }
-
-    //  Helper for cleaning a string for queries
-    private String splitAndReplace(String inString){
-        return inString.split(" ")[0].replace("%20", " ");
     }
 
     public Map createAccount(Map<String, String> createAccountMap) {

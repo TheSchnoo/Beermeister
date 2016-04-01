@@ -28,7 +28,6 @@ CREATE TABLE CustomerSession(
 CREATE TABLE BeerInfo (
 	BName CHAR(30),
 	BType CHAR(30),
-	FName CHAR(20)  NOT NULL UNIQUE,
 	IBU double(5,2),
 	ABV double(5,2),
 	Description CHAR(255),
@@ -38,7 +37,6 @@ CREATE TABLE BeerInfo (
 	AvgRating Double(4,2)
 		DEFAULT 0,
 	PRIMARY KEY(BName),
-	-- CANDIDATE KEY (FName),
 	FOREIGN KEY(BreweryName) REFERENCES Brewery (BName)
 		ON UPDATE CASCADE
 		ON DELETE NO ACTION

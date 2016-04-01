@@ -47,7 +47,7 @@ public class BeerService {
                 }
             }
             else {
-                searchString = searchString + entry.getKey() + " LIKE " + "'%" + entry.getValue() + "%'";
+                searchString = searchString + entry.getKey() + " LIKE '%" + entry.getValue() + "%'";
             }
             i++;
         }
@@ -62,19 +62,6 @@ public class BeerService {
     public String getRecommendations(int userid) throws Exception {
         String searchString = "";
             return searchString;
-    }
-
-    public Map<String, String> updateBeerToDB(String bname, JSONObject jobj) throws Exception {
-        Map searchMap = new TreeMap<String, String>();
-        if(jobj.getString("Description")!=null){
-            searchMap.put("Description", jobj.getString("Description"));
-        }
-        if(jobj.getString("Brewed") != null){
-            searchMap.put("Brewed",jobj.getString("Brewed"));
-        }
-        searchMap.put("BName", bname);
-
-        return searchMap;
     }
 
     // Convert a ResultSet to a BeerInfo object
