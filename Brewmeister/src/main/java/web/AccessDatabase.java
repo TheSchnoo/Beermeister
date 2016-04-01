@@ -36,7 +36,7 @@ public class AccessDatabase {
                     searchString = searchString + " AND ";
                 }
                 if(entry.getKey()=="ibu"){
-                    float value = Float.parseFloat(entry.getValue());
+                    double value = Double.parseDouble(entry.getValue());
                     if(value < 9){
                         searchString = searchString + entry.getKey() + " < " + 9;
                     }
@@ -44,12 +44,12 @@ public class AccessDatabase {
                         searchString = searchString + entry.getKey() + " >= " + 80;
                     }
                     else {
-                        searchString = searchString + entry.getKey() + " BETWEEN " + value + " AND " + (value + (float) 9);
+                        searchString = searchString + entry.getKey() + " BETWEEN " + value + " AND " + (value + (double) 9);
                     }
                 }
                 else if(entry.getKey()=="abv"){
-                    float value = Float.parseFloat(entry.getValue());
-                    float upperRange = value + (float) 0.99;
+                    double value = Double.parseDouble(entry.getValue());
+                    double upperRange = value + (double) 0.99;
                     if(value < 4){
                         searchString = searchString + entry.getKey() + " < " + 4;
                     }
@@ -202,8 +202,8 @@ public class AccessDatabase {
             String bname = rs.getString("BName");
             String breweryName = rs.getString("BreweryName");
             String type = rs.getString("Type");
-            float abv = rs.getFloat("ABV");
-            float ibu = rs.getFloat("IBU");
+            double abv = rs.getDouble("ABV");
+            double ibu = rs.getDouble("IBU");
             String description = rs.getString("Description");
 //            Boolean brewed = rs.getBoolean("Brewed");
 //            String averageRating; = rs.getString("")
