@@ -30,10 +30,22 @@ app.controller('SearchCtrl', function($scope, $http, $timeout, $rootScope, $mdDi
 
     	} else {
             var url = baseURL + '/beers';
-            console.log('making POST to ' + url + 'with a payload of ' + JSON.stringify($scope.beer));
-    		$http({
+            var payload = $scope.beer;
+            var fakepayload = {'this-is':'a fake payload'}
+            payload['brewed'] = 'true';
+            var payloadString = JSON.stringify(payload);
+            var backToObject = JSON.parse(payloadString);
+            console.log('making POST to ' + url + ' with a payload of ' + payload);
+    	    $http({
+                data: payload,
                 method: 'POST',
-                url: baseURL + '/beers'
+                url: url,
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+    
+                //TODO: check that the data payload is correct
+      
             }).then(function successCallback(response) {
                 console.log('received a response of ' + JSON.stringify(response.data));
                 if (response.data.created === true){
@@ -60,6 +72,9 @@ app.controller('SearchCtrl', function($scope, $http, $timeout, $rootScope, $mdDi
             }, function errorCallback(response) {
                 // called asynchronously if an error occurs
                 // or server returns response with an error status.
+                // console.log('error with response of '+ JSON.parse(response.data));
+                console.log('server returned malformed thing');
+
             }); 
 
     	}

@@ -431,7 +431,7 @@ app.controller('LoginCtrl', function($scope, $mdDialog, $mdMedia, $rootScope, $h
 				$mdDialog.alert()
 					.parent(angular.element(document.querySelector('#popupContainer')))
 					.clickOutsideToClose(true)
-					.title('Yo dawg, you\'ve already logged in!')
+					.textContent('Yo dawg, you\'ve already logged in!')
 					.ariaLabel('Alert Dialog Demo')
 					.ok('Got it!')
 					.targetEvent(ev)
@@ -462,24 +462,30 @@ app.controller('LoginCtrl', function($scope, $mdDialog, $mdMedia, $rootScope, $h
 		    	//TODO: check that the data payload is correct
 		    	data: $scope.signupInfo
 			}).then(function successCallback(response) {
-				if (response.data.authenticated === false){
-					$mdDialog.alert()
-						.parent(angular.element(document.querySelector('#popupContainer')))
-						.clickOutsideToClose(true)
-						.textContent('Signup failed. Try a different username.')
-						.ariaLabel('Alert Dialog Demo')
-						.ok('Got it!')
-						.targetEvent(ev)
+				console.log('received a response of' + JSON.stringify(response.data));
+				if (response.data.created === false){
+					$mdDialog.show(
+						$mdDialog.alert()
+							.parent(angular.element(document.querySelector('#popupContainer')))
+							.clickOutsideToClose(true)
+							.textContent('Signup failed. Try a different username.')
+							.ariaLabel('Alert Dialog Demo')
+							.ok('Got it!')
+							.targetEvent(ev)
+					);
 	    	
 				} else {
 					$rootScope.uuid = response.data.uuid;
-					$mdDialog.alert()
-						.parent(angular.element(document.querySelector('#popupContainer')))
-						.clickOutsideToClose(true)
-						.textContent('Signup successful. Welcome to Brewmeister.')
-						.ariaLabel('Alert Dialog Demo')
-						.ok('Got it!')
-						.targetEvent(ev)
+					console.log('user account created');
+					$mdDialog.show(
+						$mdDialog.alert()
+							.parent(angular.element(document.querySelector('#popupContainer')))
+							.clickOutsideToClose(true)
+							.textContent('Signup successful. Welcome to Brewmeister.')
+							.ariaLabel('Alert Dialog Demo')
+							.ok('Got it!')
+							.targetEvent(ev)
+					);
 	    		
 				}
 
