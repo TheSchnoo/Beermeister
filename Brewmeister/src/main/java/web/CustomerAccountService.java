@@ -76,6 +76,7 @@ public class CustomerAccountService {
         }
 
         response.put("authenticated", true);
+        response.put("uuid", checkCredsResult.get("CID"));
         response.put("sessionId", sessionId);
 
         return response;
