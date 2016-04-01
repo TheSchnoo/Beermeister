@@ -37,7 +37,7 @@
  }*/
 
 #search-results{
-
+	padding-top:30px;
 }
 
 .search-action-button{
@@ -156,6 +156,15 @@
 
 #brewery-search-results{
 	padding-bottom:60px;
+	padding-top:30px;
+}
+
+#search-list{
+	padding-left:20px;
+	padding-right:20px;
+}
+
+#recommendations-section{
 	padding-top:30px;
 }
 

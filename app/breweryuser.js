@@ -190,64 +190,6 @@ app.controller('UpdateCtrl', function($scope, $http, $timeout, $rootScope, $mdDi
         }
         
     }
-
-    // $scope.submitDescription = function(ev){
-    //     console.log('the new description is ' + $scope.newDescription);
-    //     if ($scope.newDescription === ''){
-    //         // $scope.selectedBeer = {};
-    //         $mdDialog.show(
-    //             $mdDialog.alert()
-    //                 .parent(angular.element(document.querySelector('#popupContainer')))
-    //                 .clickOutsideToClose(true)
-    //                 .textContent('Yo dawg, please provide a new description')
-    //                 .ariaLabel('Alert Dialog Demo')
-    //                 .ok('Got it!')
-    //                 .targetEvent(ev)
-    //         );
-    //     } else {
-    //         //TODO: modify t back to bname
-    //         console.log('$scope.selectedBeer is ' + JSON.stringify($scope.selectedBeer));
-    //         var url = baseURL + '/beer/' + $scope.selectedBeer.bname;
-    //         var payload = {'description':$scope.newDescription};
-
-    //         console.log('Making HTTP POST to ' + url + ' with a payload of ' + JSON.stringify(payload)); //!!!
-    //         $http({
-    //             method: 'POST',
-    //             url: url,
-    //             data: payload
-    //         }).then(function successCallback(response) {
-    //             console.log('received a response of ' + JSON.stringify(response.data));
-    //             if (response.data.updated === true){
-    //                 $mdDialog.show(
-    //                     $mdDialog.alert()
-    //                         .parent(angular.element(document.querySelector('#popupContainer')))
-    //                         .clickOutsideToClose(true)
-    //                         .textContent('Successfully updated description.')
-    //                         .ariaLabel('Alert Dialog Demo')
-    //                         .ok('Got it!')
-    //                         .targetEvent(ev)
-    //                 );
-    //             } else {
-    //                 $mdDialog.show(
-    //                     $mdDialog.alert()
-    //                         .parent(angular.element(document.querySelector('#popupContainer')))
-    //                         .clickOutsideToClose(true)
-    //                         .textContent('Update failed.')
-    //                         .ariaLabel('Alert Dialog Demo')
-    //                         .ok('Got it!')
-    //                         .targetEvent(ev)
-    //                 );
-    //             }
-
-    //             // $scope.newDescription = '';
-    //             // $scope.selectedBeer = {};
-    //         }, function errorCallback(response) {
-    //             // called asynchronously if an error occurs
-    //             // or server returns response with an error status.
-    //         });
-    //     }
-
-    // }
-
+    
 });
 
