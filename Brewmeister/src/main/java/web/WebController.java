@@ -85,20 +85,21 @@ public class WebController {
         return beers;
     }
 
-
-    @RequestMapping("/signup")
+    @RequestMapping(value = "/signup", method = RequestMethod.POST)
     public
     @ResponseBody
     Map createAccount (
-            @RequestParam(value = "username", required = true) String username,
-            @RequestParam(value = "password", required = true) String password,
-            HttpServletResponse httpResponse) throws IOException {
+            @RequestBody String signupRequestBody,
+            HttpServletResponse httpResponse) throws IOException, JSONException {
 
+            JSONObject bodyJSON = new JSONObject(signupRequestBody);
+            String tempUsername = bodyJSON.getString("username");
+            String tempPassword = bodyJSON.getString("password");
             httpResponse.setStatus(HttpServletResponse.SC_OK);
-            return CustomerAccountService.createAccount(username, password);
+            return CustomerAccountService.createAccount(tempUsername, tempPassword);
     }
 
-    @RequestMapping("/login")
+    @RequestMapping(value = "/login", method = RequestMethod.GET)
     public
     @ResponseBody
     Map login (
@@ -110,7 +111,7 @@ public class WebController {
             return CustomerAccountService.login(username, password);
     }
 
-    @RequestMapping("/logout")
+    @RequestMapping(value = "/logout", method = RequestMethod.GET)
     public
     @ResponseBody
     Map logout (
