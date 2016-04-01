@@ -13,14 +13,14 @@ values('UBC Liquor Store','300 St. Catherine');
 insert into BeerVendor(StoreName,Address)
 values('Darby\'s Liquor Store','Vancouver City Center');
 
-insert into BeerInfo(BName,	BType, FName, IBU, ABV,	Description, BreweryName)
-values('Gypsy Tears', 'Ruby Ale', 'GT Profile', 40, 6.0, 'Caramel', 'Parallel 49');
+insert into BeerInfo(BName,	BType, IBU, ABV, Description, BreweryName)
+values('Gypsy Tears', 'Ruby Ale', 40, 6.0, 'Caramel', 'Parallel 49');
 
-insert into BeerInfo(BName,	BType, FName, IBU, ABV,	Description, BreweryName)
-values('Watermelon Witbier', 'Hefeweizen', 'WW Profile', 50, 5.22, 'Fruity, refreshing', 'Parallel 49');
+insert into BeerInfo(BName,	BType, IBU, ABV, Description, BreweryName)
+values('Watermelon Witbier', 'Hefeweizen', 50, 5.22, 'Fruity, refreshing', 'Parallel 49');
 
-insert into BeerInfo(BName,	BType, FName, IBU, ABV,	Description, BreweryName)
-values('Jerkface 9000', 'Wheat Ale', 'JF Profile', 37, 5.0, 'Citrus, floral, malt base, hop punch', 'Parallel 49');
+insert into BeerInfo(BName,	BType, IBU, ABV, Description, BreweryName)
+values('Jerkface 9000', 'Wheat Ale', 37, 5.0, 'Citrus, floral, malt base, hop punch', 'Parallel 49');
 
 insert into BeerInStock
 values('Gypsy Tears',1);
