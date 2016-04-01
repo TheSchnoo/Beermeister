@@ -1,5 +1,6 @@
 package web;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.stereotype.Controller;
@@ -11,6 +12,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 @Controller
 public class WebController {
@@ -29,6 +31,7 @@ public class WebController {
                                      @RequestParam(value="storeName", required = false) String storeName,
                                      HttpServletResponse httpResponse) throws IOException {
         ArrayList<BeerInfo> beers;
+        AccessDatabase accessDatabase = new AccessDatabase();
 
         if(storeName == null) {
 
@@ -42,9 +45,9 @@ public class WebController {
             searchBeerMap.put("description", description);
             searchBeerMap.put("breweryName", breweryName);
 
-            AccessDatabase accessDB = new AccessDatabase();
+            BeerService beerService = new BeerService();
             try {
-                beers = accessDB.searchBeers(searchBeerMap);
+                beers = accessDatabase.searchBeers(beerService.getBeers(searchBeerMap));
             } catch (Exception e) {
                 beers = null;
             }
@@ -52,9 +55,9 @@ public class WebController {
 
         }
         else{
-            VendorService vendorService = new VendorService();
             try {
-                beers = vendorService.getBeersByVendor(storeName);
+                VendorService vendorService = new VendorService();
+                beers = accessDatabase.searchBeers(vendorService.getBeersByVendor(storeName));
             } catch (Exception e) {
                 beers = null;
                 e.printStackTrace();
@@ -177,31 +180,25 @@ public class WebController {
 
         // Update a beer
         else {
+            HashMap<String,String> updateMap;
             JSONObject bodyJSON = new JSONObject(body);
+            try {
+                updateMap = new ObjectMapper().readValue(bodyJSON.toString(), HashMap.class);
+            } catch (IOException e) {
+                updateMap = null;
+                e.printStackTrace();
+            }
             AccessDatabase accessDB = new AccessDatabase();
 
             try {
-//                accessDB.updateBeerToDB(beerName, bodyJSON);
+                beerName = "beerName=" + beerName;
+                accessDB.updateToDB("BeerInfo", updateMap, beerName);
             } catch (Exception e) {
                 return new JSONObject().append("updated", false);
             }
 
             return new JSONObject().append("updated", true);
         }
-//    ArrayList<BeerInfo> beers (
-//            @RequestParam(value="bname", required = false) String bname,
-//            HttpServletResponse httpResponse) throws IOException {
-//        AccessDatabase accessDB = new AccessDatabase();
-//        ArrayList<BeerInfo> reviews;
-//
-//        try {
-//            httpResponse.setStatus(HttpServletResponse.SC_OK);
-//        } catch (Exception e) {
-//            reviews = null;
-//            httpResponse.setStatus(HttpServletResponse.SC_NOT_FOUND);
-//        }
-//        return new ArrayList<BeerInfo>();
-//    }
 
     }
 }
