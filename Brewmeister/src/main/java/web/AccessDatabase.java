@@ -23,74 +23,36 @@ public class AccessDatabase {
 
     }
 
-    public ArrayList<BeerInfo> searchBeers(Map<String, String> searchBeerMap) throws Exception {
-        String searchString;
-        try {
-            searchString = "WHERE ";
-            int i=0;
-            for(Map.Entry<String,String> entry : searchBeerMap.entrySet()){
-                if(entry.getValue() == null){
-                    continue;
-                }
-                if(i>0){
-                    searchString = searchString + " AND ";
-                }
-                if(entry.getKey()=="ibu"){
-                    double value = Double.parseDouble(entry.getValue());
-                    if(value < 9){
-                        searchString = searchString + entry.getKey() + " < " + 9;
-                    }
-                    else if(value >= 80){
-                        searchString = searchString + entry.getKey() + " >= " + 80;
-                    }
-                    else {
-                        searchString = searchString + entry.getKey() + " BETWEEN " + value + " AND " + (value + (double) 9);
-                    }
-                }
-                else if(entry.getKey()=="abv"){
-                    double value = Double.parseDouble(entry.getValue());
-                    double upperRange = value + (double) 0.99;
-                    if(value < 4){
-                        searchString = searchString + entry.getKey() + " < " + 4;
-                    }
-                    else if(value >= 7){
-                        searchString = searchString + entry.getKey() + " >= " + 7;
-                    }
-                    else{
-                        searchString = searchString + entry.getKey() + " BETWEEN " + value + " AND " + upperRange;
-                    }
-                }
-                else {
-                    searchString = searchString + entry.getKey() + " LIKE " + "'%" + entry.getValue() + "%'";
-                }
-                i++;
-            }
-            if(i==0){
-                searchString = "";
-            }
-            System.out.println(searchString);
+    public ArrayList<BeerInfo> searchBeers(String searchString) throws Exception {
+        System.out.println(searchString);
 
-            Class.forName("com.mysql.jdbc.Driver");
+        Class.forName("com.mysql.jdbc.Driver");
 
-            connect = DriverManager
-                    .getConnection("jdbc:mysql://localhost/beerinfo?"
-                            + "user=sqluser&password=sqluserpw");
+        connect = DriverManager
+                .getConnection("jdbc:mysql://localhost/beerinfo?"
+                        + "user=sqluser&password=sqluserpw");
+
+        //Beer search by vendor
+        if(searchString.contains("SELECT")){
+            preparedStatement = connect
+                    .prepareStatement(searchString);
+        }
+
+        // Normal beer search
+        else {
             preparedStatement = connect
                     .prepareStatement("SELECT * FROM beerinfo " + searchString);
-            resultSet = preparedStatement.executeQuery();
-            //JSONArray beers = new JSONArray();
-            ArrayList<BeerInfo> listBeers = new ArrayList<BeerInfo>();
-            while(resultSet.next()){
-                listBeers.add(convertResultSetToBeerInfo(resultSet));
-            }
-            //return beers;
-            return listBeers;
-
-        } catch (Exception e) {
-            throw e;
-        } finally {
-            close();
         }
+        resultSet = preparedStatement.executeQuery();
+
+        BeerService bs = new BeerService();
+
+        ArrayList<BeerInfo> listBeers = new ArrayList<BeerInfo>();
+
+        while(resultSet.next()){
+            listBeers.add(bs.convertResultSetToBeerInfo(resultSet));
+        }
+        return listBeers;
     }
 
     public ArrayList<BeerInfo> getRecommendations(int userid) throws Exception {
@@ -103,12 +65,14 @@ public class AccessDatabase {
             preparedStatement = connect
                     .prepareStatement("SELECT * FROM beerinfo");
             resultSet = preparedStatement.executeQuery();
-            //JSONArray beers = new JSONArray();
-            ArrayList<BeerInfo> listBeers = new ArrayList<BeerInfo>();
+
+            BeerService bs = new BeerService();
+
+            ArrayList<BeerInfo> listBeers = new ArrayList<>();
+
             while(resultSet.next()){
-                listBeers.add(convertResultSetToBeerInfo(resultSet));
+                listBeers.add(bs.convertResultSetToBeerInfo(resultSet));
             }
-            //return beers;
             return listBeers;
 
         } catch (Exception e) {
@@ -128,12 +92,11 @@ public class AccessDatabase {
             preparedStatement = connect
                     .prepareStatement("INSERT INTO BeerInfo VALUES " + beer.toTupleValueString());
             resultSet = preparedStatement.executeQuery();
-            //JSONArray beers = new JSONArray();
             ArrayList<BeerInfo> listBeers = new ArrayList<BeerInfo>();
+            BeerService beerService = new BeerService();
             while(resultSet.next()){
-                listBeers.add(convertResultSetToBeerInfo(resultSet));
+                listBeers.add(beerService.convertResultSetToBeerInfo(resultSet));
             }
-            //return beers;
             return true;
 
         } catch (Exception e) {
@@ -154,10 +117,53 @@ public class AccessDatabase {
                     .prepareStatement("Update BeerInfo SET " + "Description=" + jobj.getString("Description") + ", " +
                             "Brewed=" + jobj.getString("Brewed") + " WHERE " + "BName=" + bname);
             resultSet = preparedStatement.executeQuery();
-            //JSONArray beers = new JSONArray();
+
             ArrayList<BeerInfo> listBeers = new ArrayList<BeerInfo>();
+            BeerService beerService = new BeerService();
             while(resultSet.next()){
-                listBeers.add(convertResultSetToBeerInfo(resultSet));
+                listBeers.add(beerService.convertResultSetToBeerInfo(resultSet));
+            }
+            //return beers;
+            return true;
+
+        } catch (Exception e) {
+            throw e;
+        } finally {
+            close();
+        }
+    }
+
+    public Boolean updateToDB(String table, Map<String, String> updateMap, String parameter) throws Exception {
+
+        String searchString = "Update " + table + " SET ";
+        int i = 0;
+        for(Map.Entry<String,String> entry : updateMap.entrySet()){
+            searchString = searchString + entry.getKey() + "=" + entry.getValue();
+
+            if(i!=updateMap.size()-1){
+                searchString = searchString + ", ";
+            }
+            i++;
+        }
+
+        if(parameter!=null){
+            searchString=searchString + "WHERE " + parameter;
+        }
+
+        try{
+            Class.forName("com.mysql.jdbc.Driver");
+
+            connect = DriverManager
+                    .getConnection("jdbc:mysql://localhost/beerinfo?"
+                            + "user=sqluser&password=sqluserpw");
+            preparedStatement = connect
+                    .prepareStatement(searchString);
+            resultSet = preparedStatement.executeQuery();
+
+            ArrayList<BeerInfo> listBeers = new ArrayList<BeerInfo>();
+            BeerService beerService = new BeerService();
+            while(resultSet.next()){
+                listBeers.add(beerService.convertResultSetToBeerInfo(resultSet));
             }
             //return beers;
             return true;
@@ -191,36 +197,6 @@ public class AccessDatabase {
     //  Helper for cleaning a string for queries
     private String splitAndReplace(String inString){
         return inString.split(" ")[0].replace("%20", " ");
-    }
-
-    // Convert a ResultSet to a BeerInfo object
-    public BeerInfo convertResultSetToBeerInfo(ResultSet rs){
-
-        VendorService vs = new VendorService();
-
-        try{
-            String bname = rs.getString("BName");
-            String breweryName = rs.getString("BreweryName");
-            String type = rs.getString("Type");
-            double abv = rs.getDouble("ABV");
-            double ibu = rs.getDouble("IBU");
-            String description = rs.getString("Description");
-//            Boolean brewed = rs.getBoolean("Brewed");
-//            String averageRating; = rs.getString("")
-//		  String imageLocation;
-
-            ArrayList<Vendor> vendors = vs.getVendorsThatSellABeer(bname);
-
-
-            BeerInfo newBI = new BeerInfo(bname, breweryName, type, abv, ibu, description, true, vendors);
-
-//            return obj;
-            return newBI;
-        }
-        catch (Exception e){
-            System.out.println(e);
-        }
-        return null;
     }
 
     public Map createAccount(Map<String, String> createAccountMap) {
