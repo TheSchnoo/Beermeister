@@ -11,8 +11,8 @@ var mockBeers = [
 	  	"ibu": "10 bitterness units",
 	  	"imageLocation": "images/stock-beer.jpg",
 	  	"vendors":[
-	  		{"StoreName":"Legacy Liquor Store"},
-	  		{"StoreName":"BC Liquore Store"}
+	  		{"storeName":"Legacy Liquor Store"},
+	  		{"storeName":"BC Liquore Store"}
 	  	]
   	},
   	{	
@@ -23,8 +23,8 @@ var mockBeers = [
 	  	"ibu": "2 bitterness units",
 	  	"imageLocation": "images/ipa.jpg",
 	  	"vendors":[
-	  		{"StoreName":"Another Liquor Store"},
-	  		{"StoreName":"Darby's"}
+	  		{"storeName":"Another Liquor Store"},
+	  		{"storeName":"Darby's"}
 	  	]
   	},
   	{
@@ -89,17 +89,17 @@ app.controller('AppCtrl', function($scope, $mdDialog, $mdMedia, $rootScope, $htt
 
   		} else if (mockMode){
 			var useFullScreen = ($mdMedia('sm') || $mdMedia('xs'))  && $scope.customFullscreen;
-			    $mdDialog.show({
-			        controller: VendorDialogCtrl,
-			      	templateUrl: 'app/vendordialog.html',
-			      	parent: angular.element(document.body),
-			      	targetEvent: ev,
-			      	clickOutsideToClose:true,
-			      	fullscreen: useFullScreen,
-			      	locals:{
-			      		beer: beer
-			      	}
-			    });
+		    $mdDialog.show({
+		        controller: VendorDialogCtrl,
+		      	templateUrl: 'app/vendordialog.html',
+		      	parent: angular.element(document.body),
+		      	targetEvent: ev,
+		      	clickOutsideToClose:true,
+		      	fullscreen: useFullScreen,
+		      	locals:{
+		      		beer: beer
+		      	}
+		    });
 
   		} else {
  
@@ -118,8 +118,10 @@ app.controller('AppCtrl', function($scope, $mdDialog, $mdMedia, $rootScope, $htt
  
  		function VendorDialogCtrl($scope, $mdDialog, beer){
         	$scope.selectedBeer = beer;
+        	console.log('the selected beer is ' + JSON.stringify(beer));
 
         	$scope.showVendorPage = function(ev, vendor){
+        		console.log('attempting to show vendor page for' + vendor);
         		$mdDialog.show({
 			        controller: VendorPageCtrl,
 			      	templateUrl: 'app/vendortemplate.html',
@@ -138,13 +140,25 @@ app.controller('AppCtrl', function($scope, $mdDialog, $mdMedia, $rootScope, $htt
 
 		function VendorPageCtrl($scope, $mdDialog, vendor){
 			$scope.vendor = vendor;
-			$scope.beers = []
+			$scope.beers = [];
 			//$scope.beers = get the beers for this vendor by providing storeName
 			if (mockMode) {
 				$scope.beers = mockBeers;
 
 			} else {
-				//make the http request to the getbeersbyvendor here...
+				///beers?storeName=STORENAME
+				var url = baseURL + '/beers?storeName=' + $scope.vendor.storeName;
+				console.log('making HTTP GET to ' + url);
+				$http({
+				    method: 'GET',
+				    url: url
+				}).then(function successCallback(response) {
+					console.log('received a response of ' + JSON.stringify(response.data));
+				    $scope.beers = response.data;
+				}, function errorCallback(response) {
+				    // called asynchronously if an error occurs
+				    // or server returns response with an error status.
+				});
 
 			}
 		}
@@ -170,7 +184,7 @@ app.controller('AppCtrl', function($scope, $mdDialog, $mdMedia, $rootScope, $htt
 });
 
 //controller used for search functionality
-app.controller('SearchCtrl', function($scope, $http, $timeout, $rootScope) {
+app.controller('SearchCtrl', function($scope, $http, $timeout, $rootScope, $mdMedia, $mdDialog) {
     $scope.beer = {};
     $scope.beerTypeCategories = ["IPA", "Pilsner", "Porter", "Stout", "Lager"];
     $scope.abvCategories = ["<4%", "4-4.99%", "5-5.99%", "6-6.99%", ">7%" ];
@@ -190,8 +204,8 @@ app.controller('SearchCtrl', function($scope, $http, $timeout, $rootScope) {
 				  	"ibu": "10 bitterness units",
 				  	"imageLocation": "images/stock-beer.jpg",
 				  	"vendors":[
-				  		{"StoreName":"Legacy Liquor Store"},
-				  		{"StoreName":"BC Liquor Store"}
+				  		{"storeName":"Legacy Liquor Store"},
+				  		{"storeName":"BC Liquor Store"}
 				  	]
 			  	},
 			  	{	
@@ -202,8 +216,8 @@ app.controller('SearchCtrl', function($scope, $http, $timeout, $rootScope) {
 				  	"ibu": "2 bitterness units",
 				  	"imageLocation": "images/ipa.jpg",
 				  	"vendors":[
-				  		{"StoreName":"UBC Liquor Store"},
-				  		{"StoreName":"BC Liquore Store"}
+				  		{"storeName":"UBC Liquor Store"},
+				  		{"storeName":"BC Liquore Store"}
 				  	]
 
 			  	},
@@ -250,7 +264,7 @@ app.controller('SearchCtrl', function($scope, $http, $timeout, $rootScope) {
 	    }
 
 	    function convertBeerToURL(){
-	    	//!!! implement this
+
 	    	// return 'http://localhost:8020/?/recommendedbeers?userid=1';
 	    	var url = baseURL + '/beers';
 	    	if (Object.keys($scope.beer).length === 0) {
@@ -262,6 +276,45 @@ app.controller('SearchCtrl', function($scope, $http, $timeout, $rootScope) {
 			}
 	    }
 	
+    }
+    $scope.showAdditionalInfo = function(ev, beer){
+    	console.log('showing additional information for ' + beer.bname);
+    	var useFullScreen = ($mdMedia('sm') || $mdMedia('xs'))  && $scope.customFullscreen;
+	    $mdDialog.show({
+	        controller: AdditionalInfoDialogCtrl,
+	      	templateUrl: 'app/additionalinfodialog.html',
+	      	parent: angular.element(document.body),
+	      	targetEvent: ev,
+	      	clickOutsideToClose:true,
+	      	fullscreen: useFullScreen,
+	      	locals:{
+	      		beer: beer
+	      	}
+	    });
+
+
+	    function AdditionalInfoDialogCtrl($scope, $mdDialog, beer){
+        	$scope.beer = beer;
+        	console.log('the selected beer is ' + JSON.stringify(beer));
+
+       //  	$scope.showVendorPage = function(ev, vendor){
+       //  		console.log('attempting to show vendor page for' + vendor);
+       //  		$mdDialog.show({
+			    //     controller: VendorPageCtrl,
+			    //   	templateUrl: 'app/vendortemplate.html',
+			    //   	parent: angular.element(document.body),
+			    //   	targetEvent: ev,
+			    //   	clickOutsideToClose:true,
+			    //   	fullscreen: useFullScreen,
+			    //   	locals:{
+			    //   		vendor: vendor
+			    //   	}
+			    // });
+
+
+       //  	}
+		}
+
     }
 
 });

@@ -1,3 +1,7 @@
+DROP DATABASE beerinfo;
+CREATE DATABASE beerinfo;
+USE beerinfo;
+
 CREATE TABLE Brewery(
 	BName CHAR(30),
 	PRIMARY KEY (BName));

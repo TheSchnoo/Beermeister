@@ -2,14 +2,14 @@
   <form>
     <md-toolbar>
       <div class="md-toolbar-tools">
-        <h2>{{vendor.StoreName}}</h2>
+        <h2>{{vendor.storeName}}</h2>
         <span flex></span>
 <!--         <md-button aria-label="cancel" class="md-icon-button" ng-click="cancel()">
         </md-button> -->
       </div>
     </md-toolbar>
     <md-dialog-content>
-      Beers sold by {{vendor.StoreName}}:
+      Beers sold by {{vendor.storeName}}:
       <div class="md-dialog-content" ng-repeat="beer in beers">
       	{{beer.bname}}
 
