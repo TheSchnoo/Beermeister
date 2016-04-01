@@ -110,7 +110,7 @@
     </div>
 
     <div id="update-area" ng-controller="UpdateCtrl" layout="column" ng-cloak class="md-inline-form container">
-      <md-whiteframe class="md-whiteframe-12dp" flex-sm="45" flex-gt-sm="35" flex-gt-md="25" layout="column">
+      <md-whiteframe class="md-whiteframe-12dp search-whiteframe" flex-sm="45" flex-gt-sm="35" flex-gt-md="25" layout="column">
    
         <md-toolbar class="md-primary">
           <div class="md-toolbar-tools">
@@ -148,7 +148,7 @@
             <div class="md-list-item-text" layout="column">
               <h3>{{beer.bname}}</h3>
               <h4>{{beer.breweryName}}</h4>
-              <p>description will be here</p>
+              <p>{{beer.description}}</p>
             </div>
               <md-button ng-click="updateDescription($event, beer)" class="search-action-button md-primary">Update Description</md-button>
               <md-button ng-click="updateStatus($event, beer)" class="search-action-button md-primary">Update Brew Status</md-button>
