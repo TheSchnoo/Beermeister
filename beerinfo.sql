@@ -6,7 +6,7 @@ CREATE TABLE Brewery(
 
 CREATE TABLE Customer(
 	CID int NOT NULL AUTO_INCREMENT,
-	CName CHAR(40),
+	CName CHAR(40) UNIQUE,
 	CPassword CHAR(40),
 	PRIMARY Key (CID));
 
@@ -24,17 +24,15 @@ CREATE TABLE CustomerSession(
 CREATE TABLE BeerInfo (
 	BName CHAR(30),
 	BType CHAR(30),
-	FName CHAR(20)  NOT NULL UNIQUE,
 	IBU double(5,2),
 	ABV double(5,2),
 	Description CHAR(255),
 	BreweryName CHAR(30),
-	Brewerd BOOLEAN
+	Brewed BOOLEAN
 		DEFAULT 1,
 	AvgRating Double(4,2)
 		DEFAULT 0,
 	PRIMARY KEY(BName),
-	-- CANDIDATE KEY (FName),
 	FOREIGN KEY(BreweryName) REFERENCES Brewery (BName)
 		ON UPDATE CASCADE
 		ON DELETE NO ACTION

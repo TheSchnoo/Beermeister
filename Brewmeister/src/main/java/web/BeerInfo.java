@@ -9,7 +9,7 @@ public class BeerInfo {
     String type;
     double abv;
     double ibu;
-    String averageRating;
+    double averageRating;
     String description;
     boolean brewed;
     ArrayList<Vendor> vendors;
@@ -20,7 +20,7 @@ public class BeerInfo {
         this.type = type;
         this.abv = abv;
         this.ibu = ibu;
-        this.averageRating = null;
+        this.averageRating = 0;
         this.description = description;
         this.brewed = brewed;
         this.vendors = new ArrayList<Vendor>();
@@ -33,7 +33,7 @@ public class BeerInfo {
         this.type = type;
         this.abv = abv;
         this.ibu = ibu;
-        this.averageRating = null;
+        this.averageRating = 0;
         this.description = description;
         this.brewed = brewed;
         this.vendors = vendors;
@@ -67,9 +67,9 @@ public class BeerInfo {
         this.ibu = ibu;
     }
 
-    public String getAverageRating() { return averageRating; }
+    public double getAverageRating() { return averageRating; }
 
-    public void setAverageRating(String averageRating) {
+    public void setAverageRating(double averageRating) {
         this.averageRating = averageRating;
     }
 
@@ -90,8 +90,8 @@ public class BeerInfo {
     }
 
     public String toTupleValueString() {
-        return "(" + this.bname + ", " + this.type + ", " + this.ibu + ", " + this.abv + ", " + this.description + ", " +
-                this.breweryName + ", " + this.averageRating + ")";
+        return "('" + this.bname + "', '" + this.type + "', " + this.ibu + ", " + this.abv + ", '" +
+                this.description + "', '" + this.breweryName + "', " + this.brewed + ", " + this.averageRating + ")";
     }
 
 

@@ -12,7 +12,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 
 @Controller
 public class WebController {
@@ -41,7 +40,7 @@ public class WebController {
             searchBeerMap.put("type", btype);
             searchBeerMap.put("ibu", ibu);
             searchBeerMap.put("abv", abv);
-            //searchBeerMap.put("averageRating", rating);
+//            searchBeerMap.put("averageRating", rating);
             searchBeerMap.put("description", description);
             searchBeerMap.put("breweryName", breweryName);
 
@@ -85,20 +84,21 @@ public class WebController {
         return beers;
     }
 
-
-    @RequestMapping("/signup")
+    @RequestMapping(value = "/signup", method = RequestMethod.POST)
     public
     @ResponseBody
     Map createAccount (
-            @RequestParam(value = "username", required = true) String username,
-            @RequestParam(value = "password", required = true) String password,
-            HttpServletResponse httpResponse) throws IOException {
+            @RequestBody String signupRequestBody,
+            HttpServletResponse httpResponse) throws IOException, JSONException {
 
+            JSONObject bodyJSON = new JSONObject(signupRequestBody);
+            String tempUsername = bodyJSON.getString("username");
+            String tempPassword = bodyJSON.getString("password");
             httpResponse.setStatus(HttpServletResponse.SC_OK);
-            return CustomerAccountService.createAccount(username, password);
+            return CustomerAccountService.createAccount(tempUsername, tempPassword);
     }
 
-    @RequestMapping("/login")
+    @RequestMapping(value = "/login", method = RequestMethod.GET)
     public
     @ResponseBody
     Map login (
@@ -110,7 +110,7 @@ public class WebController {
             return CustomerAccountService.login(username, password);
     }
 
-    @RequestMapping("/logout")
+    @RequestMapping(value = "/logout", method = RequestMethod.GET)
     public
     @ResponseBody
     Map logout (
@@ -152,7 +152,7 @@ public class WebController {
 //    POST REQUESTS
 //++++++++++++++++++++++++++++++++++
     @RequestMapping(value = "/beers", method = RequestMethod.POST)
-    public @ResponseBody JSONObject postBeer(@RequestBody String body,
+    public @ResponseBody String postBeer(@RequestBody String body,
                                              @RequestParam(value="bname", required=false) String beerName) throws JSONException {
         // Add a beer
         if(beerName == null){
@@ -165,39 +165,43 @@ public class WebController {
             String description = bodyJSON.getString("description");
             Boolean brewed = bodyJSON.getBoolean("brewed");
 
-            BeerInfo newBI = new BeerInfo(bname, breweryName, type, abv, ibu, description, brewed);
+            BeerInfo newBI = new BeerInfo(bname, breweryName, type, abv, ibu, description, true);
 
             AccessDatabase accessDB = new AccessDatabase();
 
+            System.out.println(newBI.toTupleValueString());
+
             try {
-                accessDB.addBeer(newBI);
+                accessDB.InsertToDB("BeerInfo", newBI.toTupleValueString());
             } catch (Exception e) {
-                return new JSONObject().append("created", false);
+                return "{'created':false}";
             }
 
-            return new JSONObject().append("created", true);
+            return "{'created':true}";
         }
 
         // Update a beer
         else {
-            HashMap<String,String> updateMap;
+            HashMap updateMap = new HashMap();
             JSONObject bodyJSON = new JSONObject(body);
-            try {
-                updateMap = new ObjectMapper().readValue(bodyJSON.toString(), HashMap.class);
-            } catch (IOException e) {
-                updateMap = null;
-                e.printStackTrace();
+            updateMap.put("Description", bodyJSON.getString("description"));
+            if(bodyJSON.getBoolean("brewed")){
+                updateMap.put("Brewed", 1);
+            }
+            else {
+                updateMap.put("Brewed", 0);
             }
             AccessDatabase accessDB = new AccessDatabase();
 
             try {
-                beerName = "beerName=" + beerName;
+                beerName = "BName LIKE '%" + beerName + "%'";
                 accessDB.updateToDB("BeerInfo", updateMap, beerName);
             } catch (Exception e) {
-                return new JSONObject().append("updated", false);
+                System.out.println("Error1:" + e);
+                return "{'updated':false}";
             }
 
-            return new JSONObject().append("updated", true);
+            return "{'updated':true}";
         }
 
     }
