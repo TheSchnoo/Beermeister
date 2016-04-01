@@ -1,6 +1,6 @@
 CREATE TABLE Brewery(
-	bname CHAR(30),
-	PRIMARY KEY (bname));
+	BName CHAR(30),
+	PRIMARY KEY (BName));
 
 -- grant select on Brewery to public;
 
@@ -33,7 +33,7 @@ CREATE TABLE BeerInfo (
 		DEFAULT 0,
 	PRIMARY KEY(BName),
 	-- CANDIDATE KEY (FName),
-	FOREIGN KEY(BreweryName) REFERENCES Brewery (bname)
+	FOREIGN KEY(BreweryName) REFERENCES Brewery (BName)
 		ON UPDATE CASCADE
 		ON DELETE NO ACTION
 );
