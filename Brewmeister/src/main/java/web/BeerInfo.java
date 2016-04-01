@@ -1,32 +1,98 @@
 package web;
 
+import java.util.ArrayList;
+
 public class BeerInfo {
 
-    String name;
-    String brewery;
+    String bname;
+    String breweryName;
     String type;
-    float abv;
-    float ibu;
+    double abv;
+    double ibu;
     String averageRating;
+    String description;
+    boolean brewed;
+    ArrayList<Vendor> vendors;
 
-    public BeerInfo(String name, String brewery, String type, float abv, float ibu) {
-        this.name = name;
-        this.brewery = brewery;
+    public BeerInfo(String bname, String breweryName, String type, double abv, double ibu, String description, boolean brewed) {
+        this.bname = bname;
+        this.breweryName = breweryName;
         this.type = type;
         this.abv = abv;
         this.ibu = ibu;
         this.averageRating = null;
+        this.description = description;
+        this.brewed = brewed;
+        this.vendors = new ArrayList<Vendor>();
     }
 
-    public String getName() { return name; }
+    public BeerInfo(String bname, String breweryName, String type, double abv, double ibu, String description,
+                    boolean brewed, ArrayList<Vendor> vendors) {
+        this.bname = bname;
+        this.breweryName = breweryName;
+        this.type = type;
+        this.abv = abv;
+        this.ibu = ibu;
+        this.averageRating = null;
+        this.description = description;
+        this.brewed = brewed;
+        this.vendors = vendors;
+    }
 
-    public String getBrewery() { return brewery; }
+    public String getBName() { return bname; }
+
+    public void setBname(String bname) {
+        this.bname = bname;
+    }
+
+    public String getBreweryName() { return breweryName; }
+
+    //I think we decided you can't change the brewery of a beer?
 
     public String getType() { return  type; }
 
-    public float getAbv() { return abv; }
+    public void setType(String type) {
+        this.type = type;
+    }
 
-    public float getIbu() { return ibu; }
+    public double getAbv() { return abv; }
+
+    public void setAbv(double abv)  {
+        this.abv = abv;
+    }
+
+    public double getIbu() { return ibu; }
+
+    public void setIbu(double ibu) {
+        this.ibu = ibu;
+    }
 
     public String getAverageRating() { return averageRating; }
+
+    public void setAverageRating(String averageRating) {
+        this.averageRating = averageRating;
+    }
+
+    public String getDescription() { return description; }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public boolean isBrewed() { return brewed; }
+
+    public void addVendor(Vendor vendor){
+        vendors.add(vendor);
+    }
+
+    public ArrayList<Vendor> getVendors(){
+        return vendors;
+    }
+
+    public String toTupleValueString() {
+        return "(" + this.bname + ", " + this.type + ", " + this.ibu + ", " + this.abv + ", " + this.description + ", " +
+                this.breweryName + ", " + this.averageRating + ")";
+    }
+
+
 }

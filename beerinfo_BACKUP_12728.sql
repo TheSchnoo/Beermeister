@@ -25,11 +25,11 @@ CREATE TABLE BeerInfo (
 	BName CHAR(30),
 	Type CHAR(30),
 	FName CHAR(20)  NOT NULL UNIQUE,		
-	IBU double(5,2),
-	ABV double(5,2),
+	IBU FLOAT,
+	ABV FLOAT,
 	Description CHAR(255),
 	BreweryName CHAR(30),
-	AvgRating Double(4,2)
+	AvgRating FLOAT(4,2)
 		DEFAULT 0,
 	PRIMARY KEY(BName),
 	-- CANDIDATE KEY (FName),
@@ -147,6 +147,7 @@ values('Jerkface 9000', 'Wheat Ale', 'JF Profile', 37, 5.0, 'Citrus, floral, mal
 
 insert into BeerInStock
 values('Gypsy Tears',0);
+<<<<<<< HEAD
 
 insert into customer values(1,'Paul');
 
@@ -165,6 +166,28 @@ MODIFIES SQL DATA
 		WHERE beername = BName;
 	END $$
 DELIMITER ;
+=======
+-- -- Procedure;
+-- DELIMITER $$
+-- CREATE PROCEDURE insertBeer
+-- 	(IN beerName CHAR(30))
+-- MODIFIES SQL DATA
+-- BEGIN
+-- 	INSERT into Ratings (Bname, Avg_Rating) VALUES (beerName,0);
+-- END $$
+
+-- CREATE PROCEDURE update_avg_ratings_table
+-- 	(IN beername CHAR(30))
+-- MODIFIES SQL DATA
+-- 	BEGIN
+-- 		UPDATE Ratings
+-- 		SET Avg_Rating = (SELECT AVG(Rates.BRate)
+-- 									 FROM Ratings
+-- 									 WHERE BName=beername)
+-- 		WHERE beername = BName;
+-- 	END $$
+-- DELIMITER ;
+>>>>>>> adce3af145667653cb0337fdafeeef037dc45639
 
 CREATE TRIGGER the_average_insert AFTER INSERT ON Rates
 FOR EACH ROW CALL update_avg_ratings_table(New.BName);
