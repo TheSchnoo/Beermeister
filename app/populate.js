@@ -6,7 +6,7 @@ app.config(function($mdThemingProvider) {
 
 app.controller('PopulateCtrl', function($scope, $mdDialog, $mdMedia, $rootScope, $http) {
 	$scope.populateDB = function(ev){
-		$http
+
 	}
 
 });

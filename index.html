@@ -157,7 +157,7 @@
                 <p>{{beer.description}}</p>
               </div>
                 <md-button class="search-action-button md-primary">More Info</md-button>
-                <md-button class="search-action-button md-primary">Vendors</md-button>
+                <md-button ng-click="showVendors($event, beer)" class="search-action-button md-primary">Vendors</md-button>
                 <md-button class="search-action-button md-primary">Ratings</md-button>
               <md-divider ng-if="!$last"></md-divider>
             </md-list-item>
