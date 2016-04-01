@@ -1,7 +1,51 @@
-var mockMode = false;
+var mockMode = true;
 var debugMode = false;
 var baseURL = 'http://localhost:8080'
 var userid = 1;
+var mockBeers = [
+ 	{
+	  	"bname": "Thunderbird Lager",
+	  	"breweryName": "UBC Brewery",
+	  	"type": "Lager",
+	  	"abv": "5.1%",
+	  	"ibu": "10 bitterness units",
+	  	"imageLocation": "images/stock-beer.jpg",
+	  	"vendors":[
+	  		{"StoreName":"Legacy Liquor Store"},
+	  		{"StoreName":"BC Liquore Store"}
+	  	]
+  	},
+  	{	
+	  	"bname": "Passive Aggressive",
+	  	"breweryName": "Brassneck",
+	  	"type": "IPA",
+	  	"abv": "5.3%",
+	  	"ibu": "2 bitterness units",
+	  	"imageLocation": "images/ipa.jpg",
+	  	"vendors":[
+	  		{"StoreName":"Another Liquor Store"},
+	  		{"StoreName":"Darby's"}
+	  	]
+  	},
+  	{
+	  	"bname": "Southern Hop",
+	  	"breweryName": "Main Street Brewery",
+	  	"type": "IPA",
+	  	"abv": "6.1%",
+	  	"ibu": "20 bitterness units",
+	  	"imageLocation": "images/stock-beer.jpg",
+	  	"vendors":[]
+	},
+	{
+	  	"bname": "Sun God Wheat Ale",
+	  	"breweryName": "R&B Brewery",
+	  	"type": "Hefeweizen",
+	  	"abv": "5.6%",
+	  	"ibu": "2 bitterness units",
+	  	"imageLocation": "images/TownHallHefeweizen.jpg",
+	  	"vendors":[]
+	}
+]
 
 var app = angular.module('Brewmaster', ['ngMaterial']);
 app.config(function($mdThemingProvider) {
@@ -11,44 +55,12 @@ app.config(function($mdThemingProvider) {
 
 
 app.controller('AppCtrl', function($scope, $mdDialog, $mdMedia, $rootScope, $http) {
+
 	$rootScope.uuid = null;
 	$rootScope.loading = false;
 	//this block used to get the recommended beers, and set to a scope variable
 	if (mockMode) {
-		$scope.recommendedBeers = [
-		 	{
-			  	"bname": "Thunderbird Lager",
-			  	"breweryName": "UBC Brewery",
-			  	"type": "Lager",
-			  	"abv": "5.1%",
-			  	"ibu": "10 bitterness units",
-			  	"imageLocation": "images/stock-beer.jpg"
-		  	},
-		  	{	
-			  	"bname": "Passive Aggressive",
-			  	"breweryName": "Brassneck",
-			  	"type": "IPA",
-			  	"abv": "5.3%",
-			  	"ibu": "2 bitterness units",
-			  	"imageLocation": "images/ipa.jpg"
-		  	},
-		  	{
-			  	"bname": "Southern Hop",
-			  	"breweryName": "Main Street Brewery",
-			  	"type": "IPA",
-			  	"abv": "6.1%",
-			  	"ibu": "20 bitterness units",
-			  	"imageLocation": "images/stock-beer.jpg"
-			},
-			{
-			  	"bname": "Sun God Wheat Ale",
-			  	"breweryName": "R&B Brewery",
-			  	"type": "Hefeweizen",
-			  	"abv": "5.6%",
-			  	"ibu": "2 bitterness units",
-			  	"imageLocation": "images/TownHallHefeweizen.jpg"
-			}
-	  	]
+		$scope.recommendedBeers = mockBeers;
   	} else {
   		$http({
 		    method: 'GET',
@@ -64,52 +76,78 @@ app.controller('AppCtrl', function($scope, $mdDialog, $mdMedia, $rootScope, $htt
 
   	//called when a vendor is clicked
   	$scope.showVendors = function(ev, beer) {
-  		if (mockMode){
-  			$rootScope.vendors = [
-				{
-					"storeName":"Darby's Liquor Store"
-				},
-				{
-					"storeName":"UBC Liquor Store"
-				},
-				{	
-					"storeName":"Legacy Liquor Store"
-				}
-			];
+  		if (beer.vendors.length === 0){
+  			$mdDialog.show(
+				$mdDialog.alert()
+					.parent(angular.element(document.querySelector('#popupContainer')))
+					.clickOutsideToClose(true)
+					.textContent('No vendors found for ' + beer.bname)
+					.ariaLabel('Alert Dialog Demo')
+					.ok('Got it!')
+					.targetEvent(ev)
+	    	);
+
+  		} else if (mockMode){
 			var useFullScreen = ($mdMedia('sm') || $mdMedia('xs'))  && $scope.customFullscreen;
 			    $mdDialog.show({
-			        controller: DialogController,
+			        controller: VendorDialogCtrl,
 			      	templateUrl: 'app/vendordialog.html',
 			      	parent: angular.element(document.body),
 			      	targetEvent: ev,
 			      	clickOutsideToClose:true,
-			      	fullscreen: useFullScreen
+			      	fullscreen: useFullScreen,
+			      	locals:{
+			      		beer: beer
+			      	}
 			    });
 
   		} else {
-  	// 		console.log('making HTTP GET Request');
-  	// 		var baseURL =  'http://localhost:8020/?/vendors/'
-  	// 		$http({
-			//   method: 'GET',
-			//   url: baseURL + beer.name
-			// }).then(function successCallback(response) {
-			//     $rootScope.vendors = response.data;
-			//     console.log(JSON.stringify(response.data));
-			//     console.log('successfully got vendors of' + response.data);
-			//     var useFullScreen = ($mdMedia('sm') || $mdMedia('xs'))  && $scope.customFullscreen;
-			//     $mdDialog.show({
-			//         controller: DialogController,
-			//       	templateUrl: 'app/vendordialog.html',
-			//       	parent: angular.element(document.body),
-			//       	targetEvent: ev,
-			//       	clickOutsideToClose:true,
-			//       	fullscreen: useFullScreen
-			//     });
-			//   }, function errorCallback(response) {
-			//   	//called when an error is produced
-			   
-			//   });
-  		}
+ 
+		    $mdDialog.show({
+		        controller: VendorDialogCtrl,
+		      	templateUrl: 'app/vendordialog.html',
+		      	parent: angular.element(document.body),
+		      	targetEvent: ev,
+		      	clickOutsideToClose:true,
+		      	fullscreen: useFullScreen,
+		      	locals:{
+                    beer: beer
+                }
+		    });
+	    }
+ 
+ 		function VendorDialogCtrl($scope, $mdDialog, beer){
+        	$scope.selectedBeer = beer;
+
+        	$scope.showVendorPage = function(ev, vendor){
+        		$mdDialog.show({
+			        controller: VendorPageCtrl,
+			      	templateUrl: 'app/vendortemplate.html',
+			      	parent: angular.element(document.body),
+			      	targetEvent: ev,
+			      	clickOutsideToClose:true,
+			      	fullscreen: useFullScreen,
+			      	locals:{
+			      		vendor: vendor
+			      	}
+			    });
+
+
+        	}
+		}
+
+		function VendorPageCtrl($scope, $mdDialog, vendor){
+			$scope.vendor = vendor;
+			$scope.beers = []
+			//$scope.beers = get the beers for this vendor by providing storeName
+			if (mockMode) {
+				$scope.beers = mockBeers;
+
+			} else {
+				//make the http request to the getbeersbyvendor here...
+
+			}
+		}
 	}
 
 	//called when the ratings button is clicked
@@ -150,7 +188,11 @@ app.controller('SearchCtrl', function($scope, $http, $timeout, $rootScope) {
 				  	"type": "Lager",
 				  	"abv": "5.1%",
 				  	"ibu": "10 bitterness units",
-				  	"imageLocation": "images/stock-beer.jpg"
+				  	"imageLocation": "images/stock-beer.jpg",
+				  	"vendors":[
+				  		{"StoreName":"Legacy Liquor Store"},
+				  		{"StoreName":"BC Liquor Store"}
+				  	]
 			  	},
 			  	{	
 				  	"bname": "Passive Aggressive",
@@ -158,7 +200,12 @@ app.controller('SearchCtrl', function($scope, $http, $timeout, $rootScope) {
 				  	"type": "IPA",
 				  	"abv": "5.3%",
 				  	"ibu": "2 bitterness units",
-				  	"imageLocation": "images/ipa.jpg"
+				  	"imageLocation": "images/ipa.jpg",
+				  	"vendors":[
+				  		{"StoreName":"UBC Liquor Store"},
+				  		{"StoreName":"BC Liquore Store"}
+				  	]
+
 			  	},
 			  	{
 				  	"bname": "Southern Hop",
@@ -166,7 +213,8 @@ app.controller('SearchCtrl', function($scope, $http, $timeout, $rootScope) {
 				  	"type": "IPA",
 				  	"abv": "6.1%",
 				  	"ibu": "20 bitterness units",
-				  	"imageLocation": "images/stock-beer.jpg"
+				  	"imageLocation": "images/stock-beer.jpg",
+				  	"vendors":[]
 				},
 				{
 				  	"bname": "Sun God Wheat Ale",
@@ -174,11 +222,13 @@ app.controller('SearchCtrl', function($scope, $http, $timeout, $rootScope) {
 				  	"type": "Hefeweizen",
 				  	"abv": "5.6%",
 				  	"ibu": "2 bitterness units",
-				  	"imageLocation": "images/TownHallHefeweizen.jpg"
+				  	"imageLocation": "images/TownHallHefeweizen.jpg",
+				  	"vendors":[]
 				}
 	  		];
 	  		console.log('the search results are ' + JSON.stringify($scope.searchResults));
 	  		console.log('searchResults[0].name is now ' + $scope.searchResults[0].name);
+
 	    } else {
 	    	var url = convertBeerToURL();
 	    	$rootScope.loading = true;
@@ -217,19 +267,7 @@ app.controller('SearchCtrl', function($scope, $http, $timeout, $rootScope) {
 });
 
 
-//controller used for advanced dialog windows
-function DialogController($scope, $mdDialog, $rootScope) {
-  	$scope.hide = function() {
-    	$mdDialog.hide();
-  	};
-  	$scope.cancel = function() {
-    	$mdDialog.cancel();
-  	};
-  	$scope.answer = function(answer) {
-    	$mdDialog.hide(answer);
-  	}
 
-}
 
 // renee-->all login/authentication functionality should sit here
 app.controller('LoginCtrl', function($scope, $mdDialog, $mdMedia, $rootScope, $http) {
@@ -402,16 +440,3 @@ app.controller('LoginCtrl', function($scope, $mdDialog, $mdMedia, $rootScope, $h
 	}
 
 });
-
-// function LoginPromtController($scope, $mdDialog, $rootScope) {
-//   	$scope.hide = function() {
-//     	$mdDialog.hide();
-//   	};
-//   	$scope.cancel = function() {
-//     	$mdDialog.cancel();
-//   	};
-//   	$scope.answer = function(answer) {
-//     	$mdDialog.hide(answer);
-//   	}
-
-// }
