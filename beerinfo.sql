@@ -29,6 +29,8 @@ CREATE TABLE BeerInfo (
 	ABV double(5,2),
 	Description CHAR(255),
 	BreweryName CHAR(30),
+	Brewerd BOOLEAN
+		DEFAULT 1,
 	AvgRating Double(4,2)
 		DEFAULT 0,
 	PRIMARY KEY(BName),
@@ -76,6 +78,8 @@ CREATE TABLE Rates (
 	CID INTEGER,
 	BName CHAR(30),
 	BRate INTEGER,
+	Review CHAR(255)
+		DEFAULT '',
 	PRIMARY KEY (CID, BName),
 	FOREIGN KEY (CID) REFERENCES Customer (CID),
 	FOREIGN KEY (BName) REFERENCES BeerInfo (BName)

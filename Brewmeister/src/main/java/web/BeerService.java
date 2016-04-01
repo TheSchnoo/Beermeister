@@ -85,18 +85,17 @@ public class BeerService {
         try{
             String bname = rs.getString("BName");
             String breweryName = rs.getString("BreweryName");
-            String type = rs.getString("Type");
+            String type = rs.getString("BType");
             float abv = rs.getFloat("ABV");
             float ibu = rs.getFloat("IBU");
             String description = rs.getString("Description");
-//            Boolean brewed = rs.getBoolean("Brewed");
-//            String averageRating; = rs.getString("")
-//		  String imageLocation;
+            Boolean brewed = rs.getBoolean("Brewed");
+            double averageRating = rs.getDouble("AvgRating");
 
             ArrayList<Vendor> vendors = vs.getVendorsThatSellABeer(bname);
 
 
-            BeerInfo newBI = new BeerInfo(bname, breweryName, type, abv, ibu, description, true, vendors);
+            BeerInfo newBI = new BeerInfo(bname, breweryName, type, abv, ibu, description, brewed, vendors);
 
 //            return obj;
             return newBI;
