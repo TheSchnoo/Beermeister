@@ -73,6 +73,9 @@ public class WebController {
     ArrayList<BeerInfo> recs (
             @RequestParam(value="userid", required = false) String userid,
             HttpServletResponse httpResponse) throws IOException {
+
+        // TODO: ADD FUNCTIONALITY
+
         AccessDatabase accessDB = new AccessDatabase();
         ArrayList<BeerInfo> beers;
         try {
@@ -155,7 +158,7 @@ public class WebController {
 
 //    Creating and updating beers
     @RequestMapping(value = "/beers", method = RequestMethod.POST)
-    public @ResponseBody String postBeer(@RequestBody String body,
+    public @ResponseBody CharSequence postBeer(@RequestBody String body,
                                              @RequestParam(value="bname",
                                                      required=false) String beerName) throws JSONException {
         // Add a beer
@@ -178,10 +181,10 @@ public class WebController {
             try {
                 accessDB.insertToDB("BeerInfo", newBI.toTupleValueString());
             } catch (Exception e) {
-                return "{'created':false}";
+                return "{\"created\":false}";
             }
 
-            return "{'created':true}";
+            return "{\"created\":true}";
         }
 
         // Update a beer
@@ -202,13 +205,14 @@ public class WebController {
                 accessDB.updateToDB("BeerInfo", updateMap, beerName);
             } catch (Exception e) {
                 System.out.println("Error1:" + e);
-                return "{'updated':false}";
+                return "{\"updated\":false}";
             }
 
-            return "{'updated':true}";
+            return "{\"updated\":true}";
         }
     }
 
+//    Add Beer to vendor inventory
     @RequestMapping(value = "/vendors", method = RequestMethod.POST)
     public @ResponseBody String addBeerToVendor(@RequestParam(value="bname", required=false) String bname,
                                                 @RequestParam(value="storeid", required=false) String storeID) throws JSONException {
@@ -221,12 +225,13 @@ public class WebController {
             accessDatabase.insertToDB("BeerInStock", insertValues);
         } catch (Exception e){
             System.out.println("Error2:" + e);
-            return "{'created':false}";
+            return "{\"created\":false}";
         }
 
-        return "{'created':true}";
+        return "{\"created'\":true}";
     }
 
+//    Remove beer from vendor inventory
     @RequestMapping(value = "/vendors", method = RequestMethod.DELETE)
     public @ResponseBody String removeBeerFromVendorStock(@RequestParam(value="bname", required=false) String bname,
                                                 @RequestParam(value="storeid", required=false) int storeID) throws JSONException {
@@ -241,10 +246,10 @@ public class WebController {
             accessDatabase.deleteTuple("BeerInStock", removeBeerTuple);
         } catch (Exception e){
             System.out.println("Error2:" + e);
-            return "{'removed':false}";
+            return "{\"removed\":false}";
         }
 
-    return "{'removed':true}";
+    return "{\"removed\":true}";
 
     }
 }
