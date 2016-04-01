@@ -47,7 +47,7 @@ public class BeerService {
                 }
             }
             else {
-                searchString = searchString + entry.getKey() + " LIKE " + "'%" + entry.getValue() + "%'";
+                searchString = searchString + entry.getKey() + " LIKE '%" + entry.getValue() + "%'";
             }
             i++;
         }

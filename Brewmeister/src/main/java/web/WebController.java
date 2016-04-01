@@ -12,6 +12,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 @Controller
 public class WebController {
@@ -151,9 +152,12 @@ public class WebController {
 
 //    POST REQUESTS
 //++++++++++++++++++++++++++++++++++
+
+//    Creating and updating beers
     @RequestMapping(value = "/beers", method = RequestMethod.POST)
     public @ResponseBody String postBeer(@RequestBody String body,
-                                             @RequestParam(value="bname", required=false) String beerName) throws JSONException {
+                                             @RequestParam(value="bname",
+                                                     required=false) String beerName) throws JSONException {
         // Add a beer
         if(beerName == null){
             JSONObject bodyJSON = new JSONObject(body);
@@ -172,7 +176,7 @@ public class WebController {
             System.out.println(newBI.toTupleValueString());
 
             try {
-                accessDB.InsertToDB("BeerInfo", newBI.toTupleValueString());
+                accessDB.insertToDB("BeerInfo", newBI.toTupleValueString());
             } catch (Exception e) {
                 return "{'created':false}";
             }
@@ -203,6 +207,44 @@ public class WebController {
 
             return "{'updated':true}";
         }
+    }
+
+    @RequestMapping(value = "/vendors", method = RequestMethod.POST)
+    public @ResponseBody String addBeerToVendor(@RequestParam(value="bname", required=false) String bname,
+                                                @RequestParam(value="storeid", required=false) String storeID) throws JSONException {
+
+        try {
+            AccessDatabase accessDatabase = new AccessDatabase();
+
+            // Add beer to vendor inventory
+            String insertValues = "('" + bname + "', " + storeID + ")";
+            accessDatabase.insertToDB("BeerInStock", insertValues);
+        } catch (Exception e){
+            System.out.println("Error2:" + e);
+            return "{'created':false}";
+        }
+
+        return "{'created':true}";
+    }
+
+    @RequestMapping(value = "/vendors", method = RequestMethod.DELETE)
+    public @ResponseBody String removeBeerFromVendorStock(@RequestParam(value="bname", required=false) String bname,
+                                                @RequestParam(value="storeid", required=false) int storeID) throws JSONException {
+
+        try {
+            AccessDatabase accessDatabase = new AccessDatabase();
+
+            // Remove beer from vendor inventory
+            HashMap<String,Object> removeBeerTuple = new HashMap<>();
+            removeBeerTuple.put("BName", bname);
+            removeBeerTuple.put("StoreID", storeID);
+            accessDatabase.deleteTuple("BeerInStock", removeBeerTuple);
+        } catch (Exception e){
+            System.out.println("Error2:" + e);
+            return "{'removed':false}";
+        }
+
+    return "{'removed':true}";
 
     }
 }
