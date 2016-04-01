@@ -19,16 +19,11 @@ CREATE TABLE BeerInfo (
 	ABV FLOAT,
 	Description CHAR(255),
 	BreweryName CHAR(30),
-	AvgRating FLOAT NOT NULL ,
+	AvgRating FLOAT(4,2)
+		DEFAULT 0,
 	PRIMARY KEY(BName),
 	-- CANDIDATE KEY (FName),
-	FOREIGN KEY (BName) REFERENCES Ratings (Bname)
-		ON UPDATE CASCADE
-		ON DELETE NO ACTION,
 	FOREIGN KEY(BreweryName) REFERENCES Brewery (bname)
-		ON UPDATE CASCADE
-		ON DELETE NO ACTION,
-	FOREIGN KEY(AvgRating) REFERENCES Ratings (Avg_rating)
 		ON UPDATE CASCADE
 		ON DELETE NO ACTION
 );
@@ -38,6 +33,7 @@ CREATE TABLE BeerInfo (
 CREATE TABLE BeerVendor (
 	StoreID INTEGER,
 	StoreName CHAR(30),
+    Address CHAR(255),
 	PRIMARY KEY (StoreID)
 	-- CANDIDATE KEY (StoreName, StoreID) UNIQUE,
 	-- ON UPDATE CASCADE
@@ -72,7 +68,7 @@ CREATE TABLE Rates (
 	BRate INTEGER,
 	PRIMARY KEY (CID, BName),
 	FOREIGN KEY (CID) REFERENCES Customer (CID),
-	FOREIGN KEY (BName) REFERENCES Ratings (BName)
+	FOREIGN KEY (BName) REFERENCES BeerInfo (BName)
 );
 
 -- grant select on Rates to public;
@@ -83,7 +79,7 @@ CREATE TABLE Updates(
 	StoreID INTEGER,
 	EmpID INTEGER,
 	PRIMARY KEY(BName, StoreID, EmpID),
-	FOREIGN KEY (BName) REFERENCES Ratings (BName),
+	FOREIGN KEY (BName) REFERENCES BeerInfo (BName),
 	FOREIGN KEY(StoreID) REFERENCES BeerVendor (StoreID),
 	FOREIGN KEY(EmpID) REFERENCES StoreEmployeeHasA(EmpID)
 );
@@ -105,20 +101,13 @@ CREATE TABLE Searches(
 	BName CHAR(30),
 	PRIMARY KEY (CID, BName),
 	FOREIGN KEY (CID) REFERENCES Customer (CID),
-	FOREIGN KEY (BName) REFERENCES Ratings (BName)
+	FOREIGN KEY (BName) REFERENCES BeerInfo (BName)
 );
 
-CREATE TABLE Ratings(
-	Bname CHAR(30),
-	Avg_Rating FLOAT,
-	PRIMARY KEY(Bname)
-);
 
-CREATE TRIGGER the_averages BEFORE INSERT ON BeerInfo
-FOR EACH ROW CALL insertBeer(BName);
 
-CREATE TRIGGER the_averages AFTER INSERT ON Rates
-FOR EACH ROW CALL update_avg_ratings_table(BName);
+
+
 
 -- grant select on Searches to public;
 
@@ -126,16 +115,16 @@ insert into Brewery
 values('Parallel 49');
 
 insert into BeerVendor
-values(0, 'Legacy Liquor Store');
+values(0, 'Legacy Liquor Store','24 W. Elm');
 
 insert into BeerVendor
-values(1, 'BC Liquor Store');
+values(1, 'BC Liquor Store','99 E. 1st');
 
 insert into BeerVendor
-values(2, 'UBC Liquor Store');
+values(2, 'UBC Liquor Store','300 St. Catherine');
 
 insert into BeerVendor
-values(3, 'Darby\'s Liquor Store');
+values(3, 'Darby\'s Liquor Store','Vancouver City Center');
 
 insert into BeerInfo
 values('Gypsy Tears', 'Ruby Ale', 'GT Profile', 40, 6.0, 'Caramel', 'Parallel 49',0);
@@ -148,25 +137,27 @@ values('Jerkface 9000', 'Wheat Ale', 'JF Profile', 37, 5.0, 'Citrus, floral, mal
 
 insert into BeerInStock
 values('Gypsy Tears',0);
+
+insert into customer values(1,'Paul');
+
+insert into customer values(2,'Jim');
 -- Procedure;
 DELIMITER $$
-CREATE PROCEDURE insertBeer
-	(IN beerName CHAR(30))
-MODIFIES SQL DATA
-BEGIN
-	INSERT into Ratings (Bname, Avg_Rating) VALUES (beerName,0);
-END $$
 
 CREATE PROCEDURE update_avg_ratings_table
 	(IN beername CHAR(30))
 MODIFIES SQL DATA
 	BEGIN
-		UPDATE Ratings
-		SET Avg_Rating = (SELECT AVG(Rates.BRate)
-									 FROM Ratings
+		UPDATE BeerInfo
+		SET AvgRating = (SELECT AVG(Rates.BRate)
+									 FROM Rates
 									 WHERE BName=beername)
 		WHERE beername = BName;
 	END $$
 DELIMITER ;
 
--- example of the above 2 procedures in use update_average(update_avg_ratings_table("Parallel 49"));
+CREATE TRIGGER the_average_insert AFTER INSERT ON Rates
+FOR EACH ROW CALL update_avg_ratings_table(New.BName);
+
+CREATE TRIGGER the_average_update AFTER UPDATE ON Rates
+FOR EACH ROW CALL update_avg_ratings_table(New.BName);
