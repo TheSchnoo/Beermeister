@@ -82,6 +82,43 @@ public class WebController {
         return beers;
     }
 
+
+    @RequestMapping("/signup")
+    public
+    @ResponseBody
+    Map createAccount (
+            @RequestParam(value = "username", required = true) String username,
+            @RequestParam(value = "password", required = true) String password,
+            HttpServletResponse httpResponse) throws IOException {
+
+            httpResponse.setStatus(HttpServletResponse.SC_OK);
+            return CustomerAccountService.createAccount(username, password);
+    }
+
+    @RequestMapping("/login")
+    public
+    @ResponseBody
+    Map login (
+            @RequestParam(value = "username", required = true) String username,
+            @RequestParam(value = "password", required = true) String password,
+            HttpServletResponse httpResponse) throws IOException {
+
+            httpResponse.setStatus(HttpServletResponse.SC_OK);
+            return CustomerAccountService.login(username, password);
+    }
+
+    @RequestMapping("/logout")
+    public
+    @ResponseBody
+    Map logout (
+            @RequestParam(value = "sessionId", required = true) String sessionId,
+            HttpServletResponse httpResponse) throws IOException {
+
+            httpResponse.setStatus(HttpServletResponse.SC_OK);
+            return CustomerAccountService.logout(sessionId);
+    }
+
+
     @RequestMapping(value = "/reviews", method = RequestMethod.GET)
     public
     @ResponseBody
@@ -167,5 +204,4 @@ public class WebController {
 //    }
 
     }
-
 }

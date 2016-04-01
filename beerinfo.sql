@@ -5,11 +5,21 @@ CREATE TABLE Brewery(
 -- grant select on Brewery to public;
 
 CREATE TABLE Customer(
-	CID INTEGER,		
+	CID int NOT NULL AUTO_INCREMENT,		
 	CName CHAR(40),
-	PRIMARY KEY(CID));
+	CPassword CHAR(40),
+	PRIMARY Key (CID));
 
 -- grant select on Customer to public;
+
+CREATE TABLE CustomerSession(
+	CID int NOT NULL,
+	SID CHAR(40) NOT NULL,
+	PRIMARY KEY (CID),
+	FOREIGN KEY (CID) REFERENCES Customer (CID)
+		ON DELETE CASCADE);
+
+-- grant select on CustomerSession to public;
 
 CREATE TABLE BeerInfo (
 	BName CHAR(30),
