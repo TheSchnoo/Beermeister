@@ -109,32 +109,6 @@ public class WebController {
         return new ArrayList<BeerInfo>();
     }
 
-    // Get vendors by beer name
-    @RequestMapping(value = "/vendors", method = RequestMethod.GET)
-    public
-    @ResponseBody
-    ArrayList<BeerInfo> vendors (
-            @RequestParam(value="bname", required = false) String bname,
-            HttpServletResponse httpResponse) throws IOException {
-//        VendorService vendorService = new VendorService();
-//        ArrayList<Vendor> vendors;
-//
-//        try {
-//            vendors = vendorService.getVendorsThatSellABeer(bname);
-//        }
-
-        //TODO: ADD FUNCTIONALITY FOR GETTING VENDORS THAT SELL A BEER
-
-//        try {
-//            httpResponse.setStatus(HttpServletResponse.SC_OK);
-//        } catch (Exception e) {
-//            reviews = null;
-//            httpResponse.setStatus(HttpServletResponse.SC_NOT_FOUND);
-//        }
-        return new ArrayList<BeerInfo>();
-    }
-
-
 //    POST REQUESTS
 //++++++++++++++++++++++++++++++++++
     @RequestMapping(value = "/beers", method = RequestMethod.POST)
