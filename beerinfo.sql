@@ -6,7 +6,7 @@ CREATE TABLE Brewery(
 
 CREATE TABLE Customer(
 	CID int NOT NULL AUTO_INCREMENT,
-	CName CHAR(40),
+	CName CHAR(40) UNIQUE,
 	CPassword CHAR(40),
 	PRIMARY Key (CID));
 
