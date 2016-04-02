@@ -97,6 +97,22 @@ public class WebController {
         return beers;
     }
 
+    @RequestMapping(value = "/most-rated-beer", method = RequestMethod.GET)
+    public
+    @ResponseBody ArrayList mostRated(HttpServletResponse httpResponse) throws IOException {
+
+        AccessDatabase accessDB = new AccessDatabase();
+        ArrayList mostRatedBeer;
+        try {
+            mostRatedBeer = accessDB.getMostRated();
+            httpResponse.setStatus(HttpServletResponse.SC_OK);
+        } catch (Exception e) {
+            mostRatedBeer = null;
+            httpResponse.setStatus(HttpServletResponse.SC_NOT_FOUND);
+        }
+        return mostRatedBeer;
+    }
+
     @RequestMapping(value = "/customer-signup", method = RequestMethod.POST)
     public
     @ResponseBody
