@@ -12,6 +12,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 @Controller
 public class WebController {
@@ -19,20 +20,20 @@ public class WebController {
     @RequestMapping(value = "/beers", method = RequestMethod.GET)
     public
     @ResponseBody
-    ArrayList<BeerInfo> searchBeers (@RequestParam(value="bname", required = false) String bname,
-                                     @RequestParam(value="type", required = false) String btype,
-                                     @RequestParam(value="vendor", required = false) String vendor,
-                                     @RequestParam(value="ibu", required = false) String ibu,
-                                     @RequestParam(value="abv", required = false) String abv,
-                                     @RequestParam(value="rating", required = false) String rating,
-                                     @RequestParam(value="description", required = false) String description,
-                                     @RequestParam(value="breweryName", required = false) String breweryName,
-                                     @RequestParam(value="storeName", required = false) String storeName,
-                                     HttpServletResponse httpResponse) throws IOException {
+    ArrayList<BeerInfo> searchBeers(@RequestParam(value = "bname", required = false) String bname,
+                                    @RequestParam(value = "type", required = false) String btype,
+                                    @RequestParam(value = "vendor", required = false) String vendor,
+                                    @RequestParam(value = "ibu", required = false) String ibu,
+                                    @RequestParam(value = "abv", required = false) String abv,
+                                    @RequestParam(value = "rating", required = false) String rating,
+                                    @RequestParam(value = "description", required = false) String description,
+                                    @RequestParam(value = "breweryName", required = false) String breweryName,
+                                    @RequestParam(value = "storeName", required = false) String storeName,
+                                    HttpServletResponse httpResponse) throws IOException {
         ArrayList<BeerInfo> beers;
         AccessDatabase accessDatabase = new AccessDatabase();
 
-        if(storeName == null) {
+        if (storeName == null) {
 
             Map<String, String> searchBeerMap = new HashMap<>();
 
@@ -52,15 +53,24 @@ public class WebController {
             }
 
 
-        }
-        else{
-            try {
-                VendorService vendorService = new VendorService();
-                beers = accessDatabase.searchBeers(vendorService.getBeersByVendor(storeName));
-            } catch (Exception e) {
-                beers = null;
-                e.printStackTrace();
-            }
+        } else {
+//            if (bname==null) {
+//                try {
+//                    VendorService vendorService = new VendorService();
+//                    beers = accessDatabase.searchBeers(vendorService.getBeersByVendor(storeName));
+//                } catch (Exception e) {
+//                    beers = null;
+//                    e.printStackTrace();
+//                }
+//            } else {
+                try {
+                    VendorService vendorService = new VendorService();
+                    beers = accessDatabase.searchBeersByVendor(vendorService.getBeersByVendorStocked(storeName));
+                } catch (Exception e) {
+                    beers = null;
+                    e.printStackTrace();
+                }
+//            }
         }
         httpResponse.setStatus(HttpServletResponse.SC_OK);
         return beers;
@@ -69,9 +79,12 @@ public class WebController {
     @RequestMapping(value = "/recommendedbeers", method = RequestMethod.GET)
     public
     @ResponseBody
-    ArrayList<BeerInfo> recs (
-            @RequestParam(value="userid", required = false) String userid,
+    ArrayList<BeerInfo> recs(
+            @RequestParam(value = "userid", required = false) String userid,
             HttpServletResponse httpResponse) throws IOException {
+
+        // TODO: ADD FUNCTIONALITY
+
         AccessDatabase accessDB = new AccessDatabase();
         ArrayList<BeerInfo> beers;
         try {
@@ -87,7 +100,7 @@ public class WebController {
     @RequestMapping(value = "/signup", method = RequestMethod.POST)
     public
     @ResponseBody
-    Map createAccount (
+    Map createAccount(
             @RequestBody String signupRequestBody,
             HttpServletResponse httpResponse) throws IOException, JSONException {
 
@@ -101,7 +114,7 @@ public class WebController {
     @RequestMapping(value = "/login", method = RequestMethod.GET)
     public
     @ResponseBody
-    Map login (
+    Map login(
             @RequestParam(value = "username", required = true) String username,
             @RequestParam(value = "password", required = true) String password,
             HttpServletResponse httpResponse) throws IOException {
@@ -113,7 +126,7 @@ public class WebController {
     @RequestMapping(value = "/logout", method = RequestMethod.GET)
     public
     @ResponseBody
-    Map logout (
+    Map logout(
             @RequestParam(value = "sessionId", required = true) String sessionId,
             HttpServletResponse httpResponse) throws IOException {
 
@@ -125,9 +138,9 @@ public class WebController {
     @RequestMapping(value = "/reviews", method = RequestMethod.GET)
     public
     @ResponseBody
-    ArrayList<BeerInfo> revs (
-            @RequestParam(value="userid", required = false) String userid,
-            @RequestParam(value="bname", required = false) String bname,
+    ArrayList<BeerInfo> revs(
+            @RequestParam(value = "userid", required = false) String userid,
+            @RequestParam(value = "bname", required = false) String bname,
             HttpServletResponse httpResponse) throws IOException {
         AccessDatabase accessDB = new AccessDatabase();
         ArrayList<BeerInfo> reviews;
@@ -161,11 +174,21 @@ public class WebController {
     }
         //    POST REQUESTS
 //++++++++++++++++++++++++++++++++++
+
+    //    Creating and updating beers
     @RequestMapping(value = "/beers", method = RequestMethod.POST)
-    public @ResponseBody String postBeer(@RequestBody String body,
-                                         @RequestParam(value="bname", required=false) String beerName) throws JSONException {
+
+    public
+    @ResponseBody
+    Map postBeer(@RequestBody String body,
+                          @RequestParam(value = "bname",
+                                  required = false) String beerName) throws JSONException {
+
+        Map<String, Object> returnStatus = new HashMap<>();
+        int rowsAffected = 0;
+
         // Add a beer
-        if(beerName == null){
+        if (beerName == null) {
             JSONObject bodyJSON = new JSONObject(body);
             String bname = bodyJSON.getString("bname");
             String breweryName = bodyJSON.getString("breweryName");
@@ -175,45 +198,131 @@ public class WebController {
             String description = bodyJSON.getString("description");
             Boolean brewed = bodyJSON.getBoolean("brewed");
 
-            BeerInfo newBI = new BeerInfo(bname, breweryName, type, abv, ibu, description, true);
+            BeerInfo newBI = new BeerInfo(bname, breweryName, type, abv, ibu, description, 0, true);
 
             AccessDatabase accessDB = new AccessDatabase();
 
             System.out.println(newBI.toTupleValueString());
 
             try {
-                accessDB.InsertToDB("BeerInfo", newBI.toTupleValueString());
+                rowsAffected = accessDB.insertToDB("BeerInfo", newBI.toTupleValueString());
             } catch (Exception e) {
-                return "{'created':false}";
+                returnStatus.put("status", e);
+                returnStatus.put("created", false);
+                System.out.println("AddBeerError:" + e);
+                return returnStatus;
             }
 
-            return "{'created':true}";
+            if (rowsAffected == 0) {
+                returnStatus.put("status", "beer already exists");
+                returnStatus.put("created", false);
+            } else {
+                returnStatus.put("status", "beer added");
+                returnStatus.put("created", true);
+            }
+
+            return returnStatus;
         }
 
         // Update a beer
         else {
             HashMap updateMap = new HashMap();
             JSONObject bodyJSON = new JSONObject(body);
-            updateMap.put("Description", bodyJSON.getString("description"));
-            if(bodyJSON.getBoolean("brewed")){
-                updateMap.put("Brewed", 1);
+            if(body.contains("brewed")){
+                updateMap.put("Brewed", bodyJSON.getBoolean("brewed"));
             }
-            else {
-                updateMap.put("Brewed", 0);
+            if(body.contains("description")){
+                updateMap.put("Description", bodyJSON.getString("description"));
             }
             AccessDatabase accessDB = new AccessDatabase();
 
             try {
                 beerName = "BName LIKE '%" + beerName + "%'";
-                accessDB.updateToDB("BeerInfo", updateMap, beerName);
+                rowsAffected = accessDB.updateToDB("BeerInfo", updateMap, beerName);
             } catch (Exception e) {
-                System.out.println("Error1:" + e);
-                return "{'updated':false}";
+                returnStatus.put("status", e);
+                returnStatus.put("created", false);
+                System.out.println("UpdateBeerError:" + e);
+                return returnStatus;
             }
 
-            return "{'updated':true}";
+            if (rowsAffected == 0) {
+                returnStatus.put("status", "no such beer");
+                returnStatus.put("created", false);
+            } else {
+                returnStatus.put("status", "beer updated");
+                returnStatus.put("created", true);
+            }
+
+            return returnStatus;
+        }
+    }
+
+    //    Add Beer to vendor inventory
+    @RequestMapping(value = "/vendors", method = RequestMethod.POST)
+    public
+    @ResponseBody
+    Map addBeerToVendor(@RequestParam(value = "bname", required = false) String bname,
+                        @RequestParam(value = "storeid", required = false) String storeID) throws JSONException {
+        Map<String, Object> returnStatus = new HashMap<>();
+        int rowsAffected = 0;
+        try {
+            AccessDatabase accessDatabase = new AccessDatabase();
+            // Add beer to vendor inventory
+            String insertValues = "('" + bname + "', " + storeID + ")";
+            rowsAffected = accessDatabase.insertToDB("BeerInStock", insertValues);
+        } catch (Exception e) {
+            returnStatus.put("status", e);
+            returnStatus.put("created", false);
+            System.out.println("AddToInventoryError:" + e);
+            return returnStatus;
         }
 
+        if (rowsAffected == 0) {
+            returnStatus.put("status", "beer already in inventory");
+            returnStatus.put("created", false);
+        } else {
+            returnStatus.put("status", "beer added to inventory");
+            returnStatus.put("created", true);
+        }
+
+        return returnStatus;
+    }
+
+    //    Remove beer from vendor inventory
+    @RequestMapping(value = "/vendors", method = RequestMethod.DELETE)
+    public
+    @ResponseBody
+    Map removeBeerFromVendorStock(@RequestParam(value = "bname", required = false) String bname,
+                                  @RequestParam(value = "storeid", required = false) int storeID) throws JSONException {
+
+        Map<String, Object> returnStatus = new HashMap<>();
+        int rowsAffected = 0;
+
+        try {
+            AccessDatabase accessDatabase = new AccessDatabase();
+
+            // Remove beer from vendor inventory
+            HashMap<String, Object> removeBeerTuple = new HashMap<>();
+            removeBeerTuple.put("BName", bname);
+            removeBeerTuple.put("StoreID", storeID);
+            rowsAffected = accessDatabase.deleteTuple("BeerInStock", removeBeerTuple);
+        } catch (Exception e) {
+            returnStatus.put("status", e);
+            returnStatus.put("created", false);
+            System.out.println("UpdateInventoryError:" + e);
+            return returnStatus;
+        }
+
+        if (rowsAffected == 0) {
+            returnStatus.put("status", "beer not in inventory");
+            returnStatus.put("created", false);
+        } else {
+            returnStatus.put("status", "beer removed from inventory");
+            returnStatus.put("created", true);
+        }
+
+        return returnStatus;
     }
     // Add or Update a Review
     @RequestMapping(value = "/rating", method = RequestMethod.POST)
