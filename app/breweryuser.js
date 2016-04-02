@@ -162,7 +162,7 @@ app.controller('UpdateCtrl', function($scope, $http, $timeout, $rootScope, $mdDi
             } else {
                 //TODO: modify t back to bname
                 console.log('$scope.selectedBeer is ' + JSON.stringify($scope.selectedBeer));
-                var url = baseURL + '/beer/' + $scope.selectedBeer.name;
+                var url = baseURL + '/beers?bname=' + $scope.selectedBeer.bname;
                 var payload = {'description':$scope.newDescription};
 
                 console.log('Making HTTP POST to ' + url + ' with a payload of ' + JSON.stringify(payload)); //!!!
