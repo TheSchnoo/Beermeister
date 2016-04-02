@@ -11,8 +11,8 @@
     <md-dialog-content>
       <div class="md-dialog-content">
     
-        <div data-ng-repeat="vendor in selectedBeer.vendors">
-          <a ng-click='showVendorPage($event, vendor)'>{{vendor.StoreName}}</a>
+        <div ng-repeat="vendor in selectedBeer.vendors">
+          <a ng-click='showVendorPage($event, vendor)'>{{vendor.storeName}}</a>
         </div>
           
       </div>

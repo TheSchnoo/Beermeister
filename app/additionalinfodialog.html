@@ -1,0 +1,47 @@
+<md-dialog aria-label="Signup" ng-cloak ng-controller="LoginCtrl">
+ 
+  <md-toolbar>
+    <div class="md-toolbar-tools">
+      <h2>{{beer.bname}}</h2>
+      <span flex></span>
+      <!-- <md-button aria-label="cancel" class="md-icon-button" ng-click="cancel()">
+      </md-button> -->
+    </div>
+  </md-toolbar>
+  <md-dialog-content>
+    <div class="md-dialog-content">
+
+      <md-card class="beer-card">
+        <md-card-title>
+          <md-card-title-text>
+            <span class="md-headline beer-name">{{beer.bname}}</span>
+            <span class="md-subhead beer-info">
+              <p>Brewery: {{beer.breweryName}}</p>
+              <p>Type: {{beer.type}}</p>
+              <p>ABV: {{beer.abv}}</p>
+              <p>IBU: {{beer.ibu}}</p>
+            </span>
+          </md-card-title-text>
+          <md-card-title-media>
+            <div class="md-media-lg card-media">
+              <img class="beer-image" src="images/stock-beer.jpg"> 
+            </div>
+          </md-card-title-media>
+        </md-card-title>
+        <md-card-actions layout="row" layout-align="end center">
+          <md-button class="md-primary"ng-click="showVendors($event, beer)">Vendors</md-button>
+          <md-button class="md-primary" ng-click="showRatings($event, beer)">Ratings</md-button>
+        </md-card-actions>
+      </md-card>
+
+    </div>
+  </md-dialog-content>
+
+    <!-- <md-dialog-actions layout="row">
+      <md-button ng-click="sendSignupInfo($event)" target="_blank" md-autofocus>
+        Sign Me Up Captain!
+      </md-button>
+      <span flex></span>
+    </md-dialog-actions -->
+
+</md-dialog>

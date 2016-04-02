@@ -1,3 +1,7 @@
+DROP DATABASE beerinfo;
+CREATE DATABASE beerinfo;
+USE beerinfo;
+
 CREATE TABLE Brewery(
 	BName CHAR(30),
 	PRIMARY KEY (BName));
@@ -11,15 +15,6 @@ CREATE TABLE Customer(
 	PRIMARY Key (CID));
 
 -- grant select on Customer to public;
-
-CREATE TABLE CustomerSession(
-	CID int NOT NULL,
-	SID CHAR(40) NOT NULL,
-	PRIMARY KEY (CID),
-	FOREIGN KEY (CID) REFERENCES Customer (CID)
-		ON DELETE CASCADE);
-
--- grant select on CustomerSession to public;
 
 CREATE TABLE BeerInfo (
 	BName CHAR(30),
@@ -42,8 +37,9 @@ CREATE TABLE BeerInfo (
 
 CREATE TABLE BeerVendor (
 	StoreID int NOT NULL AUTO_INCREMENT,
-	StoreName CHAR(30),
+	StoreName CHAR(30) UNIQUE,
 	Address CHAR(255),
+	SPassword CHAR(40),
 	PRIMARY KEY (StoreID)
 	-- CANDIDATE KEY (StoreName, StoreID) UNIQUE,
 	-- ON UPDATE CASCADE
