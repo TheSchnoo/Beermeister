@@ -1,6 +1,4 @@
-INSERT into rates values(2,'Watermelon Witbier', 3, 'Bad');
-INSERT into rates values(1,'Jerkface 9000', 8, 'Excellent');
-INSERT into rates values(2,'Jerkface 9000', 6, 'Good');
+
 
 insert into Brewery
 values('Parallel 49');
@@ -35,3 +33,6 @@ insert into customer(CName,CPassword) values('Jim','theendofthings2');
 
 INSERT into rates values(2,'Gypsy Tears', 7, 'Great!');
 INsert into rates values(1,'Gypsy Tears', 3, 'Suboptimal');
+INSERT into rates values(2,'Watermelon Witbier', 3, 'Bad');
+INSERT into rates values(1,'Jerkface 9000', 8, 'Excellent');
+INSERT into rates values(2,'Jerkface 9000', 6, 'Good');

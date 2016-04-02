@@ -22,60 +22,28 @@ app.controller('SearchCtrl', function($scope, $http, $timeout, $rootScope, $mdMe
 
 
     $scope.submitSearch = function(ev){
-  
-    	if (mockMode){
-	    	$rootScope.searchResults = [
-			 	{
-				  	"bname": "Thunderbird Lager",
-				  	"breweryName": "UBC Brewery",
-				  	"type": "Lager",
-				  	"abv": "5.1%",
-				  	"ibu": "10 bitterness units",
-				  	"imageLocation": "images/stock-beer.jpg",
-				  	"vendors":[
-				  		{"storeName":"Legacy Liquor Store"},
-				  		{"storeName":"BC Liquor Store"}
-				  	]
-			  	},
-			  	{	
-				  	"bname": "Passive Aggressive",
-				  	"breweryName": "Brassneck",
-				  	"type": "IPA",
-				  	"abv": "5.3%",
-				  	"ibu": "2 bitterness units",
-				  	"imageLocation": "images/ipa.jpg",
-				  	"vendors":[
-				  		{"storeName":"UBC Liquor Store"},
-				  		{"storeName":"BC Liquore Store"}
-				  	]
+    	if($rootScope.storeId === null){
+    		$mdDialog.show(
+				$mdDialog.alert()
+					.parent(angular.element(document.querySelector('#popupContainer')))
+					.clickOutsideToClose(true)
+					.textContent('Yo dawg, please sign in first')
+					.ariaLabel('Alert Dialog Demo')
+					.ok('Got it!')
+					.targetEvent(ev)
+	    	);
 
-			  	},
-			  	{
-				  	"bname": "Southern Hop",
-				  	"breweryName": "Main Street Brewery",
-				  	"type": "IPA",
-				  	"abv": "6.1%",
-				  	"ibu": "20 bitterness units",
-				  	"imageLocation": "images/stock-beer.jpg",
-				  	"vendors":[]
-				},
-				{
-				  	"bname": "Sun God Wheat Ale",
-				  	"breweryName": "R&B Brewery",
-				  	"type": "Hefeweizen",
-				  	"abv": "5.6%",
-				  	"ibu": "2 bitterness units",
-				  	"imageLocation": "images/TownHallHefeweizen.jpg",
-				  	"vendors":[]
-				}
-	  		];
-	  		console.log('the search results are ' + JSON.stringify($scope.searchResults));
-	  		console.log('searchResults[0].name is now ' + $scope.searchResults[0].name);
 
-	    } else {
-	    	var url = convertBeerToURL();
-	    	$rootScope.loading = true;
-	    	console.log('rootScope.loading is ' + $rootScope.loading);
+    	} else {
+    		var url = convertBeerToURL();
+	    	if (url === baseURL + '/beers'){
+	    		url = url + '?storeName=' + $rootScope.storeId;
+
+	    	} else {
+	    		url = url + '&storeName=' + $rootScope.storeId;
+
+	    	}
+	    	
 	    	console.log('making HTTP GET request to ' + url);
 	    	$http({
 			    method: 'GET',
@@ -327,7 +295,7 @@ app.controller('VendorLoginCtrl', function($scope, $mdDialog, $mdMedia, $rootSco
 		    	
 					} else {
 						$rootScope.storeId = response.data.storeId;
-						$scope.storeId = response.data.storeId;
+						// $scope.storeId = response.data.storeId;
 						console.log('$scope.storeId is now ' + $rootScope.storeId);
 						console.log('user account created');
 						$mdDialog.show(
