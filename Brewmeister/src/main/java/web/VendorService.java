@@ -82,6 +82,27 @@ public class VendorService {
         return createAccountResult;
     }
 
+    public static Map login(String storeName, String password) {
+        ArrayList<String> loginParams = new ArrayList<String>();
+        loginParams.add("storeName");
+        loginParams.add(storeName);
+
+        //Check db for match values
+        AccessDatabase ad = new AccessDatabase();
+        Map checkCredsResult = new HashMap<>();
+
+        try {
+            checkCredsResult = ad.checkCredentials(loginParams, password, AccessDatabase.BEER_VENDOR_TABLE);
+        } catch (SQLException e) {
+            //Case: some sql error occured
+            checkCredsResult.put("authenticated", false);
+            checkCredsResult.put("error", AccessDatabase.loginErrorTypes.sqlError);
+            return checkCredsResult;
+        }
+
+        return checkCredsResult;
+    }
+
     private void close() {
         try {
             if (resultSet != null) {
