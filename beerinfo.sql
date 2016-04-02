@@ -16,15 +16,6 @@ CREATE TABLE Customer(
 
 -- grant select on Customer to public;
 
-CREATE TABLE CustomerSession(
-	CID int NOT NULL,
-	SID CHAR(40) NOT NULL,
-	PRIMARY KEY (CID),
-	FOREIGN KEY (CID) REFERENCES Customer (CID)
-		ON DELETE CASCADE);
-
--- grant select on CustomerSession to public;
-
 CREATE TABLE BeerInfo (
 	BName CHAR(30),
 	BType CHAR(30),
