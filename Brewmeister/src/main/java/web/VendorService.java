@@ -77,14 +77,15 @@ public class VendorService {
 
         //Insert account into db
         AccessDatabase ad = new AccessDatabase();
-        Map createAccountResult = ad.createAccount(createVendorAccountParams, AccessDatabase.BEER_VENDOR_TABLE);
+        Map createAccountResult = ad.createAccount(createVendorAccountParams, "StoreName",
+                AccessDatabase.BEER_VENDOR_TABLE);
 
         return createAccountResult;
     }
 
     public static Map login(String storeName, String password) {
         ArrayList<String> loginParams = new ArrayList<String>();
-        loginParams.add("storeName");
+        loginParams.add("StoreName");
         loginParams.add(storeName);
 
         //Check db for match values

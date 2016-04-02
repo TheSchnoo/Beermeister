@@ -17,7 +17,7 @@ public class CustomerAccountService {
 
         //Insert account into db
         AccessDatabase ad = new AccessDatabase();
-        Map createAccountResult = ad.createAccount(createAccountParams, AccessDatabase.CUSTOMER_TABLE);
+        Map createAccountResult = ad.createAccount(createAccountParams, "CName", AccessDatabase.CUSTOMER_TABLE);
 
         return createAccountResult;
     }
@@ -25,7 +25,7 @@ public class CustomerAccountService {
     public static Map login(String username, String password) {
         ArrayList<String> loginParams = new ArrayList<String>();
 
-        loginParams.add("cname");
+        loginParams.add("CName");
         loginParams.add(username);
 
         //Check db for match values

@@ -14,11 +14,6 @@ public class AccessDatabase {
     public final static String CUSTOMER_TABLE = "Customer";
     public final static String BEER_VENDOR_TABLE = "BeerVendor";
 
-    //keep track of the current highest Id of each object type in the db
-    //id gets incremented even when an insert fails, need to account for this
-    public static int numCustomersInserted = 0;
-    public static int numBeerVendorsInserted = 0;
-
     public static enum loginErrorTypes {
         noAccountFound, wrongPassword, sqlError;
     }
@@ -243,31 +238,63 @@ public class AccessDatabase {
         }
     }
 
-    public Map createAccount(ArrayList<String> createAccountParams, String tableName) {
+    public Map createAccount(ArrayList<String> createAccountParams, String nameLabel,String tableName) {
 
         Map createAccountResponse = new HashMap();
         String insertAccountString = this.generateInsertString(createAccountParams, tableName);
-
-        //because the id increments in db regardless of whether insert works
-        if (tableName.equals(CUSTOMER_TABLE)) {
-            numCustomersInserted++;
-        } else if (tableName.equals(BEER_VENDOR_TABLE)) {
-            numBeerVendorsInserted++;
-        }
 
         try {
             int createAccountResult = insertNewEntry(insertAccountString);
         } catch (Exception e) {
             createAccountResponse.put("created", false);
+            close();
             return createAccountResponse;
         }
 
         createAccountResponse.put("created", true);
 
+        //GET the id of the entry just made in database
+        //include label of object name column in input arraylist (in order)
         if (tableName.equals(CUSTOMER_TABLE)) {
-            createAccountResponse.put("cid", numCustomersInserted);
+            createAccountParams.set(1, createAccountParams.get(0));
+            createAccountParams.set(0, nameLabel);
+        } else {
+            createAccountParams.set(1, createAccountParams.get(0));
+            createAccountParams.set(0, nameLabel);
+            createAccountParams.remove(2);
+        }
+
+        String queryAccountIdString= this.generateSearchString(createAccountParams, tableName);
+        ResultSet getAccountIdResult;
+
+        try {
+            getAccountIdResult = queryDatabase(queryAccountIdString);
+        } catch (Exception e) {
+            createAccountResponse.put("error", loginErrorTypes.sqlError);
+            close();
+            return createAccountResponse;
+        }
+
+        String tempId = "";
+        try {
+            while(getAccountIdResult.next()){
+
+                if (tableName.equals(CUSTOMER_TABLE)) {
+                    tempId= resultSet.getString("CID");
+                } else {
+                    tempId = resultSet.getString("StoreID");
+                }
+            }
+        } catch (SQLException e) {
+            createAccountResponse.put("error", loginErrorTypes.sqlError);
+            close();
+            return createAccountResponse;
+        }
+
+        if (tableName.equals(CUSTOMER_TABLE)) {
+            createAccountResponse.put("cid", tempId);
         } else if (tableName.equals(BEER_VENDOR_TABLE)) {
-            createAccountResponse.put("storeId", numBeerVendorsInserted);
+            createAccountResponse.put("storeId", tempId);
         }
         close();
         return createAccountResponse;
@@ -296,29 +323,36 @@ public class AccessDatabase {
         //TODO: need more checks here
         //return noAccountFound if size of result is 0
 
-        while(searchResult.next()){
-            String tempPassword;
-            if (tableName.equals(CUSTOMER_TABLE)) {
-                tempPassword = resultSet.getString("CPassword");
-            } else {
-                tempPassword = resultSet.getString("SPassword");
-            }
-            if (tempPassword.equals(password)) {
-                checkCredentialResponse.put("authenticated", true);
+        try {
+            while (searchResult.next()) {
+                String tempPassword;
                 if (tableName.equals(CUSTOMER_TABLE)) {
-                    checkCredentialResponse.put("cid", resultSet.getString("CID"));
+                    tempPassword = resultSet.getString("CPassword");
                 } else {
-                    checkCredentialResponse.put("storeId", resultSet.getString("StoreID"));
+                    tempPassword = resultSet.getString("SPassword");
                 }
-                return checkCredentialResponse;
+                if (tempPassword.equals(password)) {
+                    checkCredentialResponse.put("authenticated", true);
+                    if (tableName.equals(CUSTOMER_TABLE)) {
+                        checkCredentialResponse.put("cid", resultSet.getString("CID"));
+                    } else {
+                        checkCredentialResponse.put("storeId", resultSet.getString("StoreID"));
+                    }
+                    close();
+                    return checkCredentialResponse;
+                }
             }
+        } catch (SQLException e) {
+            checkCredentialResponse.put("authenticated", false);
+            checkCredentialResponse.put("error", loginErrorTypes.sqlError);
+            close();
+            return checkCredentialResponse;
         }
 
         checkCredentialResponse.put("authenticated", false);
-        checkCredentialResponse.put("error", AccessDatabase.loginErrorTypes.wrongPassword);
+        checkCredentialResponse.put("error", loginErrorTypes.wrongPassword);
 
         close();
-
         return checkCredentialResponse;
     }
 
@@ -380,9 +414,9 @@ public class AccessDatabase {
             } else {
                 String tempKey = searchParams.get(i - 1);
                 switch (tempKey) {
-                    case "cname":
+                    case "CName":
                     case "cpassword":
-                    case "storeName":
+                    case "StoreName":
                     case "password":
                         queryString += " like " + "'" + searchParams.get(i) + "'";
                         break;
