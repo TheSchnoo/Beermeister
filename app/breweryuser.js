@@ -99,6 +99,7 @@ app.controller('UpdateCtrl', function($scope, $http, $timeout, $rootScope, $mdDi
     $scope.brewery = '';
     $rootScope.searchResults = [];
     $scope.newDescription = '';
+    $scope.brewedStatus = true;
     // $scope.selectedBeer = {"a-fake":"beer"};
 
     $scope.searchBeer = function(ev){
@@ -163,7 +164,7 @@ app.controller('UpdateCtrl', function($scope, $http, $timeout, $rootScope, $mdDi
                 //TODO: modify t back to bname
                 console.log('$scope.selectedBeer is ' + JSON.stringify($scope.selectedBeer));
                 var url = baseURL + '/beers?bname=' + $scope.selectedBeer.bname;
-                var payload = {'description':$scope.newDescription};
+                var payload = {'description':$scope.newDescription, 'brewed':$scope.brewedStatus}; //!!!
 
                 console.log('Making HTTP POST to ' + url + ' with a payload of ' + JSON.stringify(payload)); //!!!
                 $http({
@@ -172,27 +173,18 @@ app.controller('UpdateCtrl', function($scope, $http, $timeout, $rootScope, $mdDi
                     data: payload
                 }).then(function successCallback(response) {
                     console.log('received a response of ' + JSON.stringify(response.data));
-                    if (response.data.updated === true){
-                        $mdDialog.show(
-                            $mdDialog.alert()
-                                .parent(angular.element(document.querySelector('#popupContainer')))
-                                .clickOutsideToClose(true)
-                                .textContent('Successfully updated description.')
-                                .ariaLabel('Alert Dialog Demo')
-                                .ok('Got it!')
-                                .targetEvent(ev)
+                
+                    $mdDialog.show(
+                        $mdDialog.alert()
+                            .parent(angular.element(document.querySelector('#popupContainer')))
+                            .clickOutsideToClose(true)
+                            .textContent(response.data.status)
+                            .ariaLabel('Alert Dialog Demo')
+                            .ok('Got it!')
+                            .targetEvent(ev)
                         );
-                    } else {
-                        $mdDialog.show(
-                            $mdDialog.alert()
-                                .parent(angular.element(document.querySelector('#popupContainer')))
-                                .clickOutsideToClose(true)
-                                .textContent('Update failed.')
-                                .ariaLabel('Alert Dialog Demo')
-                                .ok('Got it!')
-                                .targetEvent(ev)
-                        );
-                    }
+                    
+                    
 
                     // $scope.newDescription = '';
                     // $scope.selectedBeer = {};
