@@ -207,11 +207,11 @@ public class WebController {
         else {
             HashMap updateMap = new HashMap();
             JSONObject bodyJSON = new JSONObject(body);
-            updateMap.put("Description", bodyJSON.getString("description"));
-            if (bodyJSON.getBoolean("brewed")) {
-                updateMap.put("Brewed", 1);
-            } else {
-                updateMap.put("Brewed", 0);
+            if(body.contains("brewed")){
+                updateMap.put("Brewed", bodyJSON.getBoolean("brewed"));
+            }
+            if(body.contains("description")){
+                updateMap.put("Description", bodyJSON.getString("description"));
             }
             AccessDatabase accessDB = new AccessDatabase();
 
