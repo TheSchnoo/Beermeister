@@ -177,7 +177,7 @@ app.controller('AppCtrl', function($scope, $mdDialog, $mdMedia, $rootScope, $htt
 	}
 
 	//called when the ratings button is clicked
-  	$scope.showRatings = function(ev, beer) { //!!!
+  	$scope.showRatings = function(ev, beer) {
   		var useFullScreen = ($mdMedia('sm') || $mdMedia('xs'))  && $scope.customFullscreen;
 
 	    $mdDialog.show({
@@ -377,6 +377,20 @@ app.controller('LoginCtrl', function($scope, $mdDialog, $mdMedia, $rootScope, $h
 		}
 	}
 
+	$scope.showLogoutPrompt = function(ev){
+		$rootScope.cid = null;
+		$mdDialog.show(
+				$mdDialog.alert()
+					.parent(angular.element(document.querySelector('#popupContainer')))
+					.clickOutsideToClose(true)
+					.textContent('Logout Successful')
+					.ariaLabel('Alert Dialog Demo')
+					.ok('Got it!')
+					.targetEvent(ev)
+	    	);
+	}
+
+
 	$scope.sendLoginInfo = function(ev){
 		console.log('sending login info of: ' + JSON.stringify($scope.loginInfo));
 		if (!$scope.loginInfo.hasOwnProperty('username') || !$scope.loginInfo.hasOwnProperty('password')){
@@ -393,30 +407,35 @@ app.controller('LoginCtrl', function($scope, $mdDialog, $mdMedia, $rootScope, $h
 		//THE FOLLOWING CODE BLOCK IS UNTESTED, WAITING FOR LOGIN API IMPLEMENTATION
 		} else {
 			var str = jQuery.param($scope.loginInfo);
-			var url = baseURL + '/login?' + str
+			var url = baseURL + '/customer-login?' + str
 			console.log('Making GET request to ' + url);
 			$http({
 		    	method: 'GET',
 		    	url: url
 			}).then(function successCallback(response) {
+				console.log('received a response of ' + JSON.stringify(response.data));
 				if (response.data.authenticated === false){
-					$mdDialog.alert()
-						.parent(angular.element(document.querySelector('#popupContainer')))
-						.clickOutsideToClose(true)
-						.textContent('Login Failed. Check that username and password are correct.')
-						.ariaLabel('Alert Dialog Demo')
-						.ok('Got it!')
-						.targetEvent(ev)
+					$mdDialog.show(
+						$mdDialog.alert()
+							.parent(angular.element(document.querySelector('#popupContainer')))
+							.clickOutsideToClose(true)
+							.textContent('Login Failed. Check that username and password are correct.')
+							.ariaLabel('Alert Dialog Demo')
+							.ok('Got it!')
+							.targetEvent(ev)
+					);
 	    	
 				} else {
 					$rootScope.cid = response.data.cid;
-					$mdDialog.alert()
-						.parent(angular.element(document.querySelector('#popupContainer')))
-						.clickOutsideToClose(true)
-						.textContent('Login info authenticated. Welcome back.')
-						.ariaLabel('Alert Dialog Demo')
-						.ok('Got it!')
-						.targetEvent(ev)
+					$mdDialog.show(
+						$mdDialog.alert()
+							.parent(angular.element(document.querySelector('#popupContainer')))
+							.clickOutsideToClose(true)
+							.textContent('Login info authenticated. Welcome back.')
+							.ariaLabel('Alert Dialog Demo')
+							.ok('Got it!')
+							.targetEvent(ev)
+					);
 	    		
 				}
 
@@ -494,7 +513,7 @@ app.controller('LoginCtrl', function($scope, $mdDialog, $mdMedia, $rootScope, $h
 					);
 	    	
 				} else {
-					$rootScope.cid = response.data.cid;
+					$rootScope.cid = response.data.cid; 
 					console.log('user account created');
 					$mdDialog.show(
 						$mdDialog.alert()
