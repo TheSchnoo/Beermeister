@@ -91,11 +91,11 @@ public class WebController {
             @RequestBody String signupRequestBody,
             HttpServletResponse httpResponse) throws IOException, JSONException {
 
-            JSONObject bodyJSON = new JSONObject(signupRequestBody);
-            String tempUsername = bodyJSON.getString("username");
-            String tempPassword = bodyJSON.getString("password");
-            httpResponse.setStatus(HttpServletResponse.SC_OK);
-            return CustomerAccountService.createAccount(tempUsername, tempPassword);
+        JSONObject bodyJSON = new JSONObject(signupRequestBody);
+        String tempUsername = bodyJSON.getString("username");
+        String tempPassword = bodyJSON.getString("password");
+        httpResponse.setStatus(HttpServletResponse.SC_OK);
+        return CustomerAccountService.createAccount(tempUsername, tempPassword);
     }
 
     @RequestMapping(value = "/login", method = RequestMethod.GET)
@@ -106,8 +106,8 @@ public class WebController {
             @RequestParam(value = "password", required = true) String password,
             HttpServletResponse httpResponse) throws IOException {
 
-            httpResponse.setStatus(HttpServletResponse.SC_OK);
-            return CustomerAccountService.login(username, password);
+        httpResponse.setStatus(HttpServletResponse.SC_OK);
+        return CustomerAccountService.login(username, password);
     }
 
     @RequestMapping(value = "/logout", method = RequestMethod.GET)
@@ -117,8 +117,8 @@ public class WebController {
             @RequestParam(value = "sessionId", required = true) String sessionId,
             HttpServletResponse httpResponse) throws IOException {
 
-            httpResponse.setStatus(HttpServletResponse.SC_OK);
-            return CustomerAccountService.logout(sessionId);
+        httpResponse.setStatus(HttpServletResponse.SC_OK);
+        return CustomerAccountService.logout(sessionId);
     }
 
 
@@ -149,11 +149,21 @@ public class WebController {
         return new ArrayList<BeerInfo>();
     }
 
-//    POST REQUESTS
+    @RequestMapping(value = "/rates", method = RequestMethod.GET)
+    public
+    @ResponseBody
+    BeerReview revs (
+            @RequestParam(value="cid", required = true) int cid,
+            @RequestParam(value="bname", required = true) String bname,
+            HttpServletResponse httpResponse) throws Exception {
+        AccessDatabase accessDB = new AccessDatabase();
+        return accessDB.checkForReview(cid, bname);
+    }
+        //    POST REQUESTS
 //++++++++++++++++++++++++++++++++++
     @RequestMapping(value = "/beers", method = RequestMethod.POST)
     public @ResponseBody String postBeer(@RequestBody String body,
-                                             @RequestParam(value="bname", required=false) String beerName) throws JSONException {
+                                         @RequestParam(value="bname", required=false) String beerName) throws JSONException {
         // Add a beer
         if(beerName == null){
             JSONObject bodyJSON = new JSONObject(body);
@@ -205,51 +215,29 @@ public class WebController {
         }
 
     }
+    // Add or Update a Review
     @RequestMapping(value = "/rating", method = RequestMethod.POST)
     public @ResponseBody JSONObject postRating(@RequestBody String body,
-                                             @RequestParam(value="bname", required=true) String beerName) throws JSONException {
-        // Add a rating
+                                               @RequestParam(value="bname", required=true) String beerName) throws JSONException {
 
-            JSONObject bodyJSON = new JSONObject(body);
-            String bname = bodyJSON.getString("bname");
-            int rating = bodyJSON.getInt("brate");
-            String review = bodyJSON.getString("review");
-            int cid = bodyJSON.getInt("uuid");
+        JSONObject bodyJSON = new JSONObject(body);
+        String bname = bodyJSON.getString("bname");
+        int rating = bodyJSON.getInt("brate");
+        String review = bodyJSON.getString("review");
+        int cid = bodyJSON.getInt("cid");
+        boolean newReview = bodyJSON.getBoolean("newReview");
 
-            BeerReview newBR = new BeerReview(bname, review,rating,cid);
+        BeerReview newBR = new BeerReview(bname, review, rating, cid, newReview);
 
-            AccessDatabase accessDB = new AccessDatabase();
-        if(beerName == null){
-            try {
-                accessDB.addReview(newBR);
-            } catch (Exception e) {
-                return new JSONObject().append("created", false);
-            }
-
-            return new JSONObject().append("created", true);
+        AccessDatabase accessDB = new AccessDatabase();
+        try {
+            accessDB.addOrModifyReview(newBR);
+        } catch (Exception e) {
+            return new JSONObject().append("created", false);
         }
 
-        // Update a rating
-        else {
-            HashMap<String,String> updateMap;
-            JSONObject bodyJSON = new JSONObject(body);
-            try {
-                updateMap = new ObjectMapper().readValue(bodyJSON.toString(), HashMap.class);
-            } catch (IOException e) {
-                updateMap = null;
-                e.printStackTrace();
-            }
-            AccessDatabase accessDB = new AccessDatabase();
-
-            try {
-                beerName = "beerName=" + beerName;
-                accessDB.updateToDB("BeerInfo", updateMap, beerName);
-            } catch (Exception e) {
-                return new JSONObject().append("updated", false);
-            }
-
-            return new JSONObject().append("updated", true);
-        }
-
+        return new JSONObject().append("created", true);
     }
 }
+
+

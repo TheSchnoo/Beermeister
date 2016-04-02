@@ -14,6 +14,7 @@ public class AccessDatabase {
     private Statement statement = null;
     private PreparedStatement preparedStatement = null;
     private ResultSet resultSet = null;
+    private boolean success;
     private final String CUSTOMERTABLE = "Customer";
     private final String SESSIONTABLE = "CustomerSession";
 
@@ -167,7 +168,8 @@ public class AccessDatabase {
 
         }
     }
-    public Boolean checkForReview(int cid, String bname) throws Exception {
+    public BeerReview checkForReview(int cid, String bname) throws Exception {
+        BeerReview beerReview = new BeerReview(bname, " ",0,cid,true);
         try{
             Class.forName("com.mysql.jdbc.Driver");
 
@@ -177,35 +179,38 @@ public class AccessDatabase {
             preparedStatement = connect
                     .prepareStatement("Select * FROM Rates WWHERE bname like " + bname + " AND CID = " + cid);
             resultSet = preparedStatement.executeQuery();
-            ArrayList<BeerInfo> listBeers = new ArrayList<BeerInfo>();
-            BeerService beerService = new BeerService();
+            BeerReviewService beerReviewService = new BeerReviewService();
+
             while(resultSet.next()){
-                listBeers.add(beerService.convertResultSetToBeerInfo(resultSet));
+                beerReview = beerReviewService.convertResultSetToBeerReview(resultSet);
             }
-            return true;
+
 
         } catch (Exception e) {
-            throw e;
+            System.out.println("broken");
         } finally {
             close();
         }
+        return beerReview;
     }
-    public Boolean addReview(BeerReview review) throws Exception {
+    public Boolean addOrModifyReview(BeerReview review) throws Exception {
         try{
             Class.forName("com.mysql.jdbc.Driver");
 
             connect = DriverManager
                     .getConnection("jdbc:mysql://localhost/review?"
                             + "user=sqluser&password=sqluserpw");
-            preparedStatement = connect
-                    .prepareStatement("INSERT INTO Rates VALUES " + review.toTupleValueString());
-            resultSet = preparedStatement.executeQuery();
-            ArrayList<BeerInfo> listBeers = new ArrayList<BeerInfo>();
-            BeerService beerService = new BeerService();
-            while(resultSet.next()){
-                listBeers.add(beerService.convertResultSetToBeerInfo(resultSet));
+            if (review.isNewReview()) {
+                preparedStatement = connect
+                        .prepareStatement("INSERT INTO Rates VALUES " + review.toTupleValueString());
+                success = preparedStatement.execute();
+            }else{
+                preparedStatement = connect.prepareStatement("UPDATE Rates SET BRate = " + review.getRating() + " WHERE " + " BNAME LIKE " + review.getBname() + " AND CID = " + review.getCid() + ";");
+                success = preparedStatement.execute();
+                preparedStatement = connect.prepareStatement("UPDATE Rates SET Review = " + review.getReview() + " WHERE " + " BNAME LIKE " + review.getBname() + " AND CID = " + review.getCid() + ";");
+                success = (success && preparedStatement.execute());
             }
-            return true;
+            return success;
 
         } catch (Exception e) {
             throw e;
@@ -214,32 +219,7 @@ public class AccessDatabase {
         }
     }
 
-    public Boolean updateReviewToDB(String bname, JSONObject jobj) throws Exception {
-        try{
-            Class.forName("com.mysql.jdbc.Driver");
 
-            connect = DriverManager
-                    .getConnection("jdbc:mysql://localhost/beerinfo?"
-                            + "user=sqluser&password=sqluserpw");
-            preparedStatement = connect
-                    .prepareStatement("Update BeerInfo SET " + "Description=" + jobj.getString("Description") + ", " +
-                            "Brewed=" + jobj.getString("Brewed") + " WHERE " + "BName=" + bname);
-            resultSet = preparedStatement.executeQuery();
-
-            ArrayList<BeerInfo> listBeers = new ArrayList<BeerInfo>();
-            BeerService beerService = new BeerService();
-            while(resultSet.next()){
-                listBeers.add(beerService.convertResultSetToBeerInfo(resultSet));
-            }
-            //return beers;
-            return true;
-
-        } catch (Exception e) {
-            throw e;
-        } finally {
-            close();
-        }
-    }
     //  Helper for cleaning a string for queries
     private String splitAndReplace(String inString){
         return inString.split(" ")[0].replace("%20", " ");
