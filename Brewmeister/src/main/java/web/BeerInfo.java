@@ -13,8 +13,10 @@ public class BeerInfo {
     String description;
     boolean brewed;
     ArrayList<Vendor> vendors;
+    boolean stocked = false;
 
-    public BeerInfo(String bname, String breweryName, String type, double abv, double ibu, String description, boolean brewed) {
+    public BeerInfo(String bname, String breweryName, String type, double abv, double ibu, String description,
+                    double averageRating, boolean brewed) {
         this.bname = bname;
         this.breweryName = breweryName;
         this.type = type;
@@ -24,10 +26,26 @@ public class BeerInfo {
         this.description = description;
         this.brewed = brewed;
         this.vendors = new ArrayList<Vendor>();
+        this.averageRating = averageRating;
     }
 
     public BeerInfo(String bname, String breweryName, String type, double abv, double ibu, String description,
-                    boolean brewed, ArrayList<Vendor> vendors) {
+                    double averageRating, boolean brewed, boolean stocked) {
+        this.bname = bname;
+        this.breweryName = breweryName;
+        this.type = type;
+        this.abv = abv;
+        this.ibu = ibu;
+        this.averageRating = 0;
+        this.description = description;
+        this.brewed = brewed;
+        this.vendors = new ArrayList<Vendor>();
+        this.stocked = stocked;
+        this.averageRating = averageRating;
+    }
+
+    public BeerInfo(String bname, String breweryName, String type, double abv, double ibu, String description,
+                    double averageRating, boolean brewed, ArrayList<Vendor> vendors) {
         this.bname = bname;
         this.breweryName = breweryName;
         this.type = type;
@@ -37,6 +55,7 @@ public class BeerInfo {
         this.description = description;
         this.brewed = brewed;
         this.vendors = vendors;
+        this.averageRating = averageRating;
     }
 
     public String getBName() { return bname; }
@@ -83,6 +102,10 @@ public class BeerInfo {
 
     public void addVendor(Vendor vendor){
         vendors.add(vendor);
+    }
+
+    public boolean getStocked(){
+        return stocked;
     }
 
     public ArrayList<Vendor> getVendors(){

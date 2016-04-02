@@ -11,10 +11,14 @@ public class AccessDatabase {
     private Statement statement = null;
     private PreparedStatement preparedStatement = null;
     private ResultSet resultSet = null;
-    private final String CUSTOMERTABLE = "Customer";
-    private final String SESSIONTABLE = "CustomerSession";
+    public final static String CUSTOMER_TABLE = "Customer";
+    public final static String SESSION_TABLE = "CustomerSession";
+    public final static String BEER_VENDOR_TABLE = "BeerVendor";
 
-    public static int numAccounts = 0;
+    //keep track of the current highest Id of each object type in the db
+    //id gets incremented even when an insert fails, need to account for this
+    public static int numCustomersInserted = 0;
+    public static int numBeerVendorsInserted = 0;
 
 
     public AccessDatabase(){
@@ -43,6 +47,45 @@ public class AccessDatabase {
 
         while(resultSet.next()){
             listBeers.add(bs.convertResultSetToBeerInfo(resultSet));
+        }
+        return listBeers;
+    }
+
+    public ArrayList<BeerInfo> searchBeersByVendor(String searchString) throws Exception {
+        open();
+        System.out.println(searchString);
+
+        //Beer search by vendor
+        if(searchString.contains("SELECT")){
+            preparedStatement = connect
+                    .prepareStatement(searchString);
+        }
+
+        // Normal beer search
+        else {
+            preparedStatement = connect
+                    .prepareStatement("SELECT * FROM beerinfo " + searchString);
+        }
+        resultSet = preparedStatement.executeQuery();
+
+        BeerService bs = new BeerService();
+
+        ArrayList<BeerInfo> listBeers = new ArrayList<BeerInfo>();
+
+        while(resultSet.next()){
+            String bname = resultSet.getString("BName");
+            String breweryName = resultSet.getString("BreweryName");
+            String type = resultSet.getString("BType");
+            float abv = resultSet.getFloat("ABV");
+            float ibu = resultSet.getFloat("IBU");
+            String description = resultSet.getString("Description");
+            Boolean brewed = resultSet.getBoolean("Brewed");
+            double averageRating = resultSet.getDouble("AvgRating");
+            Boolean stocked = resultSet.getBoolean("stocked");
+
+            BeerInfo newBI = new BeerInfo(bname, breweryName, type, abv, ibu,
+                    description, averageRating, brewed, stocked);
+            listBeers.add(newBI);
         }
         return listBeers;
     }
@@ -198,10 +241,17 @@ public class AccessDatabase {
         }
     }
 
-    public Map createAccount(Map<String, String> createAccountMap) {
+    public Map createAccount(ArrayList<String> createAccountParams, String tableName) {
 
         Map createAccountResponse = new HashMap();
-        String insertAccountString = this.generateInsertString(createAccountMap, CUSTOMERTABLE);
+        String insertAccountString = this.generateInsertString(createAccountParams, tableName);
+
+        //because the id increments in db regardless of whether insert works
+        if (tableName.equals(CUSTOMER_TABLE)) {
+            numCustomersInserted++;
+        } else if (tableName.equals(BEER_VENDOR_TABLE)) {
+            numBeerVendorsInserted++;
+        }
 
         try {
             int createAccountResult = insertNewEntry(insertAccountString);
@@ -210,18 +260,22 @@ public class AccessDatabase {
             return createAccountResponse;
         }
 
-        numAccounts++;
         createAccountResponse.put("created", true);
-        createAccountResponse.put("uuid", numAccounts);
+
+        if (tableName.equals(CUSTOMER_TABLE)) {
+            createAccountResponse.put("cid", numCustomersInserted);
+        } else if (tableName.equals(BEER_VENDOR_TABLE)) {
+            createAccountResponse.put("storeId", numBeerVendorsInserted);
+        }
         close();
         return createAccountResponse;
     }
 
-    public Map checkCredentials(Map<String, String> checkCredentials, String password) throws SQLException{
+    public Map checkCredentials(ArrayList<String> checkCredentialsParams, String password) throws SQLException{
 
         Map checkCredentialResponse = new HashMap();
 
-        String searchAccountString = this.generateSearchString(checkCredentials, CUSTOMERTABLE);
+        String searchAccountString = this.generateSearchString(checkCredentialsParams, CUSTOMER_TABLE);
         ResultSet searchResult;
 
         try {
@@ -232,18 +286,7 @@ public class AccessDatabase {
             return checkCredentialResponse;
         }
         //TODO: need more checks here
-        /*int sizeResult;
-        try {
-            sizeResult = resultSet.getFetchSize();
-        } catch (SQLException e) {
-            sizeResult = 0;
-        }
-
-        if (sizeResult == 0) {
-            checkCredentialResponse.put("matchFound", false);
-            checkCredentialResponse.put("error", CustomerAccountService.loginErrorTypes.noAccountFound);
-            return checkCredentialResponse;
-        }*/
+        //return noAccountFound if size of result is 0
 
         while(searchResult.next()){
             String cPassword = resultSet.getString("CPassword");
@@ -262,11 +305,11 @@ public class AccessDatabase {
         return checkCredentialResponse;
     }
 
-    public Map createCustomerSession(Map<String, String> createSessionParams) {
+    public Map createCustomerSession(ArrayList<String> createSessionParams) {
 
         Map createSessionResponse = new HashMap<String, Integer>();
 
-        String insertNewSessionString = generateInsertString(createSessionParams, SESSIONTABLE);
+        String insertNewSessionString = generateInsertString(createSessionParams, SESSION_TABLE);
         int insertResult;
 
         try {
@@ -280,9 +323,9 @@ public class AccessDatabase {
         return createSessionResponse;
     }
 
-    private String generateInsertString(Map<String, String> searchParams, String tableName) {
+    private String generateInsertString(ArrayList<String> insertParams, String tableName) {
 
-        if (searchParams.isEmpty()) {
+        if (insertParams.isEmpty()) {
             //return an error? should this ever happen?
         }
 
@@ -290,37 +333,19 @@ public class AccessDatabase {
 
         String insertString = "INSERT INTO " + tableName + " VALUES (";
 
-        if (tableName.equals(CUSTOMERTABLE)) {
+        if (tableName.equals(CUSTOMER_TABLE) || tableName.equals(BEER_VENDOR_TABLE)) {
             //insert NULL for id, table will change it to next available id number upon insertion
             insertString += "'" + "0" + "'";
             multipleParams = true;
         }
 
-        for(Map.Entry<String,String> entry : searchParams.entrySet()) {
-
-            if (entry.getValue() == null){
-                continue;
-            }
+        for (String temp : insertParams) {
 
             if (multipleParams) {
                 insertString += ", ";
             }
-
             multipleParams = true;
-
-            String tempKey = entry.getKey();
-
-            //need to treat null values differently depending on what key is
-            if (entry.getValue() == null) {
-                switch (tempKey) {
-                    case "cname":
-                    case "cpassword":
-                        insertString += "NULL"; //TODO: not right way to handle, temporary only
-                        break;
-                }
-            } else {
-                insertString += "'" + entry.getValue() + "'";
-            }
+            insertString += "'" + temp + "'";
         }
 
         insertString += ")";
@@ -328,7 +353,7 @@ public class AccessDatabase {
         return insertString;
     }
 
-    private String generateSearchString(Map<String, String> searchParams, String tableName) {
+    private String generateSearchString(ArrayList<String> searchParams, String tableName) {
         String queryString = "SELECT * FROM " + tableName; //change * later to be customizable
 
         if (searchParams.isEmpty()) {
@@ -339,25 +364,27 @@ public class AccessDatabase {
 
         boolean multipleParams = false;
 
-        for(Map.Entry<String,String> entry : searchParams.entrySet()) {
-            if (entry.getValue() == null){
-                continue;
-            }
-            if (multipleParams) {
-                queryString += " AND ";
+        for (int i = 0; i < searchParams.size(); i++) {
+            //searchParams[i] is sql attribute label
+            if (i % 2 == 0) {
+                if (multipleParams) {
+                    queryString += " AND ";
+                }
+                if (searchParams.get(i+1) != null) {
+                    queryString += searchParams.get(i);
+                }
+            //searchParams[i] is sql attribute value
+            } else {
+                String tempKey = searchParams.get(i - 1);
+                switch (tempKey) {
+                    case "cname":
+                    case "cpassword":
+                        queryString += " like " + "'" + searchParams.get(i) + "'";
+                        break;
+                }
             }
             multipleParams = true;
-
-            String tempKey = entry.getKey();
-
-            switch (tempKey) {
-                case "cname":
-                case "cpassword":
-                    queryString += tempKey + " like " + "'" + entry.getValue() + "'";
-                    break;
-            }
         }
-
         return queryString;
     }
 

@@ -54,13 +54,23 @@ public class WebController {
 
 
         } else {
-            try {
-                VendorService vendorService = new VendorService();
-                beers = accessDatabase.searchBeers(vendorService.getBeersByVendor(storeName));
-            } catch (Exception e) {
-                beers = null;
-                e.printStackTrace();
-            }
+//            if (bname==null) {
+//                try {
+//                    VendorService vendorService = new VendorService();
+//                    beers = accessDatabase.searchBeers(vendorService.getBeersByVendor(storeName));
+//                } catch (Exception e) {
+//                    beers = null;
+//                    e.printStackTrace();
+//                }
+//            } else {
+                try {
+                    VendorService vendorService = new VendorService();
+                    beers = accessDatabase.searchBeersByVendor(vendorService.getBeersByVendorStocked(storeName));
+                } catch (Exception e) {
+                    beers = null;
+                    e.printStackTrace();
+                }
+//            }
         }
         httpResponse.setStatus(HttpServletResponse.SC_OK);
         return beers;
@@ -87,7 +97,7 @@ public class WebController {
         return beers;
     }
 
-    @RequestMapping(value = "/signup", method = RequestMethod.POST)
+    @RequestMapping(value = "/customer-signup", method = RequestMethod.POST)
     public
     @ResponseBody
     Map createAccount(
@@ -101,7 +111,7 @@ public class WebController {
         return CustomerAccountService.createAccount(tempUsername, tempPassword);
     }
 
-    @RequestMapping(value = "/login", method = RequestMethod.GET)
+    @RequestMapping(value = "/customer-login", method = RequestMethod.GET)
     public
     @ResponseBody
     Map login(
@@ -122,6 +132,26 @@ public class WebController {
 
         httpResponse.setStatus(HttpServletResponse.SC_OK);
         return CustomerAccountService.logout(sessionId);
+    }
+
+    @RequestMapping(value = "/vendor-signup", method = RequestMethod.POST)
+    public
+    @ResponseBody
+    Map createVendorAccount(
+            @RequestBody String signupRequestBody,
+            HttpServletResponse httpResponse) throws IOException, JSONException {
+
+        JSONObject bodyJSON = new JSONObject(signupRequestBody);
+        String tempStoreName = bodyJSON.getString("storeName");
+        String tempPassword = bodyJSON.getString("password");
+        String tempAddress = bodyJSON.getString("address");
+
+        if (tempAddress == null) {
+            tempAddress = "";
+        }
+
+        httpResponse.setStatus(HttpServletResponse.SC_OK);
+        return VendorService.createVendorAccount(tempStoreName, tempPassword, tempAddress);
     }
 
 
@@ -177,7 +207,7 @@ public class WebController {
             String description = bodyJSON.getString("description");
             Boolean brewed = bodyJSON.getBoolean("brewed");
 
-            BeerInfo newBI = new BeerInfo(bname, breweryName, type, abv, ibu, description, true);
+            BeerInfo newBI = new BeerInfo(bname, breweryName, type, abv, ibu, description, 0, true);
 
             AccessDatabase accessDB = new AccessDatabase();
 

@@ -2,6 +2,8 @@ package web;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class VendorService {
     private Connection connect = null;
@@ -49,12 +51,35 @@ public class VendorService {
         return searchString;
     }
 
+    public String getBeersByVendorStocked(String storeName) throws SQLException, ClassNotFoundException {
+        String searchString = "SELECT *, CASE WHEN (SELECT BName FROM BeerVendor bv, BeerInStock bis WHERE " +
+                "beerinfo.BName = bis.BName AND bv.storeID = bis.storeID AND " +
+                "bv.storeName like '%"+storeName+"%') is null then 0 else 1 end as stocked from beerinfo";
+
+        System.out.println(searchString);
+        return searchString;
+    }
+
     public Vendor convertResultSetToVendor(ResultSet rs) throws Exception{
         int storeID = rs.getInt("storeID");
         String storeName = rs.getString("storeName");
 //        String address = rs.getString("address");
         Vendor newVendor = new Vendor(storeID, storeName); //, address);
         return newVendor;
+    }
+
+    public static Map createVendorAccount(String storeName, String password, String address) {
+        ArrayList<String> createVendorAccountParams = new ArrayList<>();
+
+        createVendorAccountParams.add(storeName);
+        createVendorAccountParams.add(password);
+        createVendorAccountParams.add(address);
+
+        //Insert account into db
+        AccessDatabase ad = new AccessDatabase();
+        Map createAccountResult = ad.createAccount(createVendorAccountParams, AccessDatabase.BEER_VENDOR_TABLE);
+
+        return createAccountResult;
     }
 
     private void close() {
@@ -74,5 +99,4 @@ public class VendorService {
 
         }
     }
-
 }

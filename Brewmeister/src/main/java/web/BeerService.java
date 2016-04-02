@@ -82,7 +82,8 @@ public class BeerService {
             ArrayList<Vendor> vendors = vs.getVendorsThatSellABeer(bname);
 
 
-            BeerInfo newBI = new BeerInfo(bname, breweryName, type, abv, ibu, description, brewed, vendors);
+            BeerInfo newBI = new BeerInfo(bname, breweryName, type, abv, ibu, description,
+                    averageRating, brewed, vendors);
 
 //            return obj;
             return newBI;

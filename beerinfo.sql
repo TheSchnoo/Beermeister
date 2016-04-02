@@ -46,8 +46,9 @@ CREATE TABLE BeerInfo (
 
 CREATE TABLE BeerVendor (
 	StoreID int NOT NULL AUTO_INCREMENT,
-	StoreName CHAR(30),
+	StoreName CHAR(30) UNIQUE,
 	Address CHAR(255),
+	SPassword CHAR(40),
 	PRIMARY KEY (StoreID)
 	-- CANDIDATE KEY (StoreName, StoreID) UNIQUE,
 	-- ON UPDATE CASCADE
