@@ -51,6 +51,45 @@ public class AccessDatabase {
         return listBeers;
     }
 
+    public ArrayList<BeerInfo> searchBeersByVendor(String searchString) throws Exception {
+        open();
+        System.out.println(searchString);
+
+        //Beer search by vendor
+        if(searchString.contains("SELECT")){
+            preparedStatement = connect
+                    .prepareStatement(searchString);
+        }
+
+        // Normal beer search
+        else {
+            preparedStatement = connect
+                    .prepareStatement("SELECT * FROM beerinfo " + searchString);
+        }
+        resultSet = preparedStatement.executeQuery();
+
+        BeerService bs = new BeerService();
+
+        ArrayList<BeerInfo> listBeers = new ArrayList<BeerInfo>();
+
+        while(resultSet.next()){
+            String bname = resultSet.getString("BName");
+            String breweryName = resultSet.getString("BreweryName");
+            String type = resultSet.getString("BType");
+            float abv = resultSet.getFloat("ABV");
+            float ibu = resultSet.getFloat("IBU");
+            String description = resultSet.getString("Description");
+            Boolean brewed = resultSet.getBoolean("Brewed");
+            double averageRating = resultSet.getDouble("AvgRating");
+            Boolean stocked = resultSet.getBoolean("stocked");
+
+            BeerInfo newBI = new BeerInfo(bname, breweryName, type, abv, ibu,
+                    description, averageRating, brewed, stocked);
+            listBeers.add(newBI);
+        }
+        return listBeers;
+    }
+
     public ArrayList<BeerInfo> getRecommendations(int userid) throws Exception {
         open();
         try{
