@@ -162,7 +162,7 @@ public class WebController {
         return new ArrayList<BeerInfo>();
     }
 
-    @RequestMapping(value = "/rates", method = RequestMethod.GET)
+    @RequestMapping(value = "/rating", method = RequestMethod.GET)
     public
     @ResponseBody
     BeerReview revs (

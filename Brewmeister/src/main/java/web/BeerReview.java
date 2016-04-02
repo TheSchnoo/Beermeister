@@ -40,6 +40,6 @@ public class BeerReview {
         this.newReview = newReview;
     }
     public String toTupleValueString() {
-        return "(" + this.cid + ", " + this.bname + ", " + this.rating + ", " + this.review + ")";
+        return "(" + this.cid + ", '" + this.bname + "', " + this.rating + ", '" + this.review + "')";
     }
 }

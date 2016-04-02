@@ -246,7 +246,7 @@ public class AccessDatabase {
                     .getConnection("jdbc:mysql://localhost/review?"
                             + "user=sqluser&password=sqluserpw");
             preparedStatement = connect
-                    .prepareStatement("Select * FROM Rates WWHERE bname like " + bname + " AND CID = " + cid);
+                    .prepareStatement("Select * FROM Rates WWHERE bname like '" + bname + "' AND CID = " + cid);
             resultSet = preparedStatement.executeQuery();
             BeerReviewService beerReviewService = new BeerReviewService();
 
@@ -267,7 +267,7 @@ public class AccessDatabase {
             Class.forName("com.mysql.jdbc.Driver");
 
             connect = DriverManager
-                    .getConnection("jdbc:mysql://localhost/review?"
+                    .getConnection("jdbc:mysql://localhost/beerinfo?"
                             + "user=sqluser&password=sqluserpw");
             if (review.isNewReview()) {
                 preparedStatement = connect
@@ -276,7 +276,7 @@ public class AccessDatabase {
             }else{
                 preparedStatement = connect.prepareStatement("UPDATE Rates SET BRate = " + review.getRating() + " WHERE " + " BNAME LIKE " + review.getBname() + " AND CID = " + review.getCid() + ";");
                 success = preparedStatement.execute();
-                preparedStatement = connect.prepareStatement("UPDATE Rates SET Review = " + review.getReview() + " WHERE " + " BNAME LIKE " + review.getBname() + " AND CID = " + review.getCid() + ";");
+                preparedStatement = connect.prepareStatement("UPDATE Rates SET Review = '" + review.getReview() + "' WHERE " + " BNAME LIKE '" + review.getBname() + "' AND CID = " + review.getCid() + ";");
                 success = (success && preparedStatement.execute());
             }
             return success;
