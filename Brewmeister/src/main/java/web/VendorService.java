@@ -2,6 +2,8 @@ package web;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class VendorService {
     private Connection connect = null;
@@ -66,6 +68,20 @@ public class VendorService {
         return newVendor;
     }
 
+    public static Map createVendorAccount(String storeName, String password, String address) {
+        ArrayList<String> createVendorAccountParams = new ArrayList<>();
+
+        createVendorAccountParams.add(storeName);
+        createVendorAccountParams.add(password);
+        createVendorAccountParams.add(address);
+
+        //Insert account into db
+        AccessDatabase ad = new AccessDatabase();
+        Map createAccountResult = ad.createAccount(createVendorAccountParams, AccessDatabase.BEER_VENDOR_TABLE);
+
+        return createAccountResult;
+    }
+
     private void close() {
         try {
             if (resultSet != null) {
@@ -83,5 +99,4 @@ public class VendorService {
 
         }
     }
-
 }

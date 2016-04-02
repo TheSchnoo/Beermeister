@@ -1,12 +1,10 @@
-
-
 <html lang="en" >
 <head>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <!-- Angular Material style sheet -->
   <link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/angular_material/1.0.0/angular-material.min.css">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
-  <link rel="stylesheet" type="text/css" href="styles.css">
+  <link rel="stylesheet" type="text/css" href="../styles.css">
 </head>
 
 <body ng-app="Brewmaster" ng-cloak>
@@ -17,14 +15,11 @@
           <span>Brewmeister</span>
         </h2>
         <span flex></span>
-        <md-button ng-show="cid === null" ng-controller="LoginCtrl" id="login" ng-click="showLoginPrompt($event)">
+        <md-button ng-controller="LoginCtrl" id="login" ng-click="showLoginPrompt($event)">
           Login
         </md-button>
-        <md-button ng-show="cid === null" ng-controller="LoginCtrl" id="signup" ng-click="showSignupPrompt($event)">
+        <md-button ng-controller="LoginCtrl" id="signup" ng-click="showSignupPrompt($event)">
           Signup
-        </md-button>
-        <md-button ng-show="cid != null" ng-controller="LoginCtrl" id="signup" ng-click="showLogoutPrompt($event)">
-          Logout
         </md-button>
         <md-button id="browse" ng-click="submitSearch($event)">
           Browse
@@ -62,7 +57,7 @@
         <md-toolbar>
           <div class="md-toolbar-tools">
             <h2>
-              <span>Search for Beers</span>
+              <span>To Update Your Inventory, Search Here</span>
             </h2>
             <span flex></span>
           </div>
@@ -170,82 +165,6 @@
       </md-whiteframe>
     </div>
 
-    <div class="container" id="most-popular-beer">
-      Our Most Popular Beer:
-      <div>
-        <md-card class="beer-card">
-          <md-card-title>
-            <md-card-title-text>
-              <span class="md-headline beer-name">{{mostPopularBeer.bname}}</span>
-              <span class="md-subhead beer-info">
-                <p>Brewery: {{mostPopularBeer.breweryName}}</p>
-                <p>Type: {{mostPopularBeer.type}}</p>
-                <p>ABV: {{mostPopularBeer.abv}}</p>
-                <p>IBU: {{mostPopularBeer.ibu}}</p>
-              </span>
-            </md-card-title-text>
-            <md-card-title-media>
-              <div class="md-media-lg card-media">
-                <img class="beer-image" src="images/stock-beer.jpg"> 
-              </div>
-            </md-card-title-media>
-          </md-card-title>
-          <md-card-actions layout="row" layout-align="end center">
-            <md-button class="md-primary"ng-click="showVendors($event, mostPopularBeer)">Vendors</md-button>
-            <md-button class="md-primary" ng-click="showRatings($event, mostPopularBeer)">Ratings</md-button>
-          </md-card-actions>
-        </md-card>
-      </div>
-    </div>
-
-
-
-    <div class="container" id="recommendations-section">
-
-      <md-subhead class="result-heading" id="recommendations">Our Recommendations:</md-subhead>
-      <md-content class="md-padding" layout-xs="column" layout="row">
-        <!-- <div flex-xs flex-gt-xs="50" layout="row"> -->
-          <div data-ng-repeat="beer in recommendedBeers">
-            <md-card class="beer-card">
-              <md-card-title>
-                <md-card-title-text>
-                  <span class="md-headline beer-name">{{beer.bname}}</span>
-                  <span class="md-subhead beer-info">
-                    <p>Brewery: {{beer.breweryName}}</p>
-                    <p>Type: {{beer.type}}</p>
-                    <p>ABV: {{beer.abv}}</p>
-                    <p>IBU: {{beer.ibu}}</p>
-                  </span>
-                </md-card-title-text>
-                <md-card-title-media>
-                  <div class="md-media-lg card-media">
-                    <img class="beer-image" src="images/stock-beer.jpg"> 
-                  </div>
-                </md-card-title-media>
-              </md-card-title>
-              <md-card-actions layout="row" layout-align="end center">
-                <md-button class="md-primary"ng-click="showVendors($event, beer)">Vendors</md-button>
-                <md-button class="md-primary" ng-click="showRatings($event, beer)">Ratings</md-button>
-              </md-card-actions>
-            </md-card>
-          </div>
-        <!-- </div> -->
-      </md-content>
-    </div>
-    <md-toolbar class="transparent">
-      <div class="md-toolbar-tools">
-<!--         <h2>
-          <span>Brewmeister</span>
-        </h2> -->
-        <span flex></span>
-        <a href="/app/breweryuser.html">
-          <md-button>Are you a brewery user? Click here.</md-button>
-        </a>
-        <a href="/app/vendoruser.html">
-          <md-button>Are you a vendor user? Click here.</md-button>
-        </a>
-      </div>
-    </md-toolbar>
   </div>
    
 
@@ -270,8 +189,7 @@
   
 
 
-  <script src="app.js"></script>
+  <script src="vendoruser.js"></script>
   
 </body>
 </html>
-
