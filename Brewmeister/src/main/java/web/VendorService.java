@@ -49,6 +49,15 @@ public class VendorService {
         return searchString;
     }
 
+    public String getBeersByVendorStocked(String storeName) throws SQLException, ClassNotFoundException {
+        String searchString = "SELECT *, CASE WHEN (SELECT BName FROM BeerVendor bv, BeerInStock bis WHERE " +
+                "beerinfo.BName = bis.BName AND bv.storeID = bis.storeID AND " +
+                "bv.storeName like '%"+storeName+"%') is null then 0 else 1 end as stocked from beerinfo";
+
+        System.out.println(searchString);
+        return searchString;
+    }
+
     public Vendor convertResultSetToVendor(ResultSet rs) throws Exception{
         int storeID = rs.getInt("storeID");
         String storeName = rs.getString("storeName");
