@@ -90,6 +90,9 @@ public class AccessDatabase {
     }
 
     public int updateToDB(String table, Map<String, Object> updateMap, String parameter) throws Exception {
+        if(updateMap.size()==0){
+            return 0;
+        }
         open();
         String searchString = "Update " + table + " SET ";
         int i = 0;
