@@ -62,25 +62,8 @@ public class CustomerAccountService {
             response.put("error", loginErrorTypes.wrongPassword);
         }
 
-        //If reach this point login was legit
-        //Can now create a session id
-
-        //Insert account into db
-        ArrayList<String> sessionInsertParams = new ArrayList<>();
-        String sessionId = CustomerAccountService.generateSessionId();
-        sessionInsertParams.add(checkCredsResult.get("CID").toString());
-        sessionInsertParams.add(sessionId);
-        Map insertSessionResult = ad.createCustomerSession(sessionInsertParams);
-
-        if (insertSessionResult.get("created").equals(false)) {
-            response.put("authenticated", false);
-            response.put("error", loginErrorTypes.sqlError);
-            return response;
-        }
-
         response.put("authenticated", true);
         response.put("cid", checkCredsResult.get("CID"));
-        response.put("sessionId", sessionId);
 
         return response;
     }

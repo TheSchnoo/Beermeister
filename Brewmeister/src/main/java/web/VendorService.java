@@ -72,8 +72,8 @@ public class VendorService {
         ArrayList<String> createVendorAccountParams = new ArrayList<>();
 
         createVendorAccountParams.add(storeName);
-        createVendorAccountParams.add(password);
         createVendorAccountParams.add(address);
+        createVendorAccountParams.add(password);
 
         //Insert account into db
         AccessDatabase ad = new AccessDatabase();

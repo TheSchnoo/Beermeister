@@ -305,24 +305,6 @@ public class AccessDatabase {
         return checkCredentialResponse;
     }
 
-    public Map createCustomerSession(ArrayList<String> createSessionParams) {
-
-        Map createSessionResponse = new HashMap<String, Integer>();
-
-        String insertNewSessionString = generateInsertString(createSessionParams, SESSION_TABLE);
-        int insertResult;
-
-        try {
-            int createAccountResult = insertNewEntry(insertNewSessionString);
-        } catch (Exception e) {
-            createSessionResponse.put("created", false);
-            return createSessionResponse;
-        }
-
-        createSessionResponse.put("created", true);
-        return createSessionResponse;
-    }
-
     private String generateInsertString(ArrayList<String> insertParams, String tableName) {
 
         if (insertParams.isEmpty()) {
@@ -345,7 +327,11 @@ public class AccessDatabase {
                 insertString += ", ";
             }
             multipleParams = true;
-            insertString += "'" + temp + "'";
+            if (temp.length() == 0) {
+                insertString += "'" + "null" + "'";
+            } else {
+                insertString += "'" + temp + "'";
+            }
         }
 
         insertString += ")";
