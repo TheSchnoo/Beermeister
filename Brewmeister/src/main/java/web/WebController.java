@@ -87,7 +87,7 @@ public class WebController {
         return beers;
     }
 
-    @RequestMapping(value = "/signup", method = RequestMethod.POST)
+    @RequestMapping(value = "/customer-signup", method = RequestMethod.POST)
     public
     @ResponseBody
     Map createAccount(
@@ -101,7 +101,7 @@ public class WebController {
         return CustomerAccountService.createAccount(tempUsername, tempPassword);
     }
 
-    @RequestMapping(value = "/login", method = RequestMethod.GET)
+    @RequestMapping(value = "/customer-login", method = RequestMethod.GET)
     public
     @ResponseBody
     Map login(
@@ -122,6 +122,26 @@ public class WebController {
 
         httpResponse.setStatus(HttpServletResponse.SC_OK);
         return CustomerAccountService.logout(sessionId);
+    }
+
+    @RequestMapping(value = "/vendor-signup", method = RequestMethod.POST)
+    public
+    @ResponseBody
+    Map createVendorAccount(
+            @RequestBody String signupRequestBody,
+            HttpServletResponse httpResponse) throws IOException, JSONException {
+
+        JSONObject bodyJSON = new JSONObject(signupRequestBody);
+        String tempStoreName = bodyJSON.getString("storeName");
+        String tempPassword = bodyJSON.getString("password");
+        String tempAddress = bodyJSON.getString("address");
+
+        if (tempAddress == null) {
+            tempAddress = "";
+        }
+
+        httpResponse.setStatus(HttpServletResponse.SC_OK);
+        return VendorService.createVendorAccount(tempStoreName, tempPassword, tempAddress);
     }
 
 
