@@ -5,6 +5,7 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
+import java.util.ArrayList;
 
 public class CustomerAccountService {
 
@@ -15,30 +16,32 @@ public class CustomerAccountService {
 
 
     public static Map createAccount(String username, String password) {
-        Map<String, String> createAccountMap = new HashMap<>();
+        ArrayList<String> createAccountParams = new ArrayList<>();
 
-        createAccountMap.put("cname", username);
-        createAccountMap.put("cpassword", password);
+        createAccountParams.add(username);
+        createAccountParams.add(password);
 
         //Insert account into db
         AccessDatabase ad = new AccessDatabase();
-        Map createAccountResult = ad.createAccount(createAccountMap);
+        Map createAccountResult = ad.createAccount(createAccountParams, AccessDatabase.CUSTOMER_TABLE);
 
         return createAccountResult;
     }
 
     public static Map login(String username, String password) {
         Map response = new HashMap();
-        Map<String, String> loginMap = new HashMap<>();
+        ArrayList<String> loginParams = new ArrayList<String>();
 
-        loginMap.put("cname", username);
-        //loginMap.put("cpassword", password);
+        loginParams.add("cname");
+        loginParams.add(username);
+        //loginParams.add("cpassword");
+        //loginParams.add(password);
 
         //Check db for match values
         AccessDatabase ad = new AccessDatabase();
         Map checkCredsResult;
         try {
-            checkCredsResult = ad.checkCredentials(loginMap, password);
+            checkCredsResult = ad.checkCredentials(loginParams, password);
         } catch (SQLException e) {
             //Case: some sql error occured
             response.put("authenticated", false);
@@ -63,10 +66,10 @@ public class CustomerAccountService {
         //Can now create a session id
 
         //Insert account into db
-        Map sessionInsertParams = new HashMap<>();
+        ArrayList<String> sessionInsertParams = new ArrayList<>();
         String sessionId = CustomerAccountService.generateSessionId();
-        sessionInsertParams.put("CID", checkCredsResult.get("CID"));
-        sessionInsertParams.put("SID", sessionId);
+        sessionInsertParams.add(checkCredsResult.get("CID").toString());
+        sessionInsertParams.add(sessionId);
         Map insertSessionResult = ad.createCustomerSession(sessionInsertParams);
 
         if (insertSessionResult.get("created").equals(false)) {
@@ -76,7 +79,7 @@ public class CustomerAccountService {
         }
 
         response.put("authenticated", true);
-        response.put("uuid", checkCredsResult.get("CID"));
+        response.put("cid", checkCredsResult.get("CID"));
         response.put("sessionId", sessionId);
 
         return response;
