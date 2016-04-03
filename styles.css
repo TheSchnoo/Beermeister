@@ -165,6 +165,7 @@
 /*--Top Navbar Styling --*/
 #top-navbar {
 	padding-left: 20px;
+	padding-right: 20px;
 	padding-top: 10px;
 	padding-bottom: 10px;
 	background-color: rgba(0,0,0,0.3);
@@ -247,13 +248,34 @@
 #panel-3 {
 	background-image: linear-gradient( rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5) ), url('images/craft-beer-edited.jpg');
 	background-size: cover;
-	height:700px;
+	height:600px;
 	padding-top: 60px;
 }
 
 #search-form{
 	opacity:0.9;
 	border-radius: 3px;
+}
+
+/*-- Bottom Navbar Styling --*/
+
+#bottom-navbar {
+	height: 100px;
+	background-color: rgba(0,0,0,0.85);
+	padding-top: 35px;
+}
+
+#bottom-navbar p {
+	display: inline-block;
+	color: #FFFFFF;
+	margin-left: 30px;
+	font-size: 20px;
+}
+
+#course-id {
+	float: right;
+	margin-right: 30px;
+	margin-left: inherit;
 }
 
 
