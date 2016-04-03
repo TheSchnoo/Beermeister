@@ -133,12 +133,6 @@ insert into BeerInStock
 values('Island Lager',2);
 
 insert into BeerInStock
-values('Doan\'s Rye Stout',6);
-
-insert into BeerInStock
-values('Doan\'s Rye India Pale Ale',6);
-
-insert into BeerInStock
 values('Red Racer Belgian Style Wheat Ale',6);
 
 insert into BeerInStock
@@ -169,11 +163,11 @@ insert into beerinstock(bname,storeid)
     from beerinfo
     where bname like "%ale%";
 
-delete from beerinstock
-where storeid = 3 and bname like "%doan%";
+-- delete from beerinstock
+-- where storeid = 3 and bname like "%doan%";
 
-delete from beerinstock
-where storeid = 1 and bname like "%doan%";
+-- delete from beerinstock
+-- where storeid = 1 and bname like "%doan%";
 
 
 -- Customers
