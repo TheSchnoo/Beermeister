@@ -49,7 +49,7 @@ app.controller('SearchCtrl', function($scope, $http, $timeout, $rootScope, $mdMe
 			    method: 'GET',
 			    url: url
 			}).then(function successCallback(response) {
-				console.log('received a response of ' + JSON.stringify(response.data));
+				// console.log('received a response of ' + JSON.stringify(response.data));
 			    $rootScope.searchResults = response.data;
 			    console.log('rootScope.searchResults are now ' + JSON.stringify($rootScope.searchResults));
 			}, function errorCallback(response) {
@@ -102,18 +102,16 @@ app.controller('SearchCtrl', function($scope, $http, $timeout, $rootScope, $mdMe
     }
 
     $scope.addToInventory = function(ev, beer){
-    	var url = baseURL + '/vendors?bname=' + beer.bname + 
-    		'&storeid=' + $rootScope.storeId;
+    	var url = baseURL + '/vendors?bname=' + beer.bname + '&storeId=' + $rootScope.storeId;
 
     	if ($rootScope.storeId === null){
     		//!!! TODO: implement this
     		console.log('login first!!')
     	} else {
-    		console.log('making HTTP POST to ' + url + ' with a payload of ' + JSON.stringify(beer));
+    		console.log('making HTTP POST to ' + url + ' with no payload');
     		$http({
 			    method: 'POST',
 			    url: url,
-			    data: beer
 			}).then(function successCallback(response) {
 				console.log('received a response of ' + JSON.stringify(response.data));
 				console.log('trying to update search information');
@@ -121,10 +119,10 @@ app.controller('SearchCtrl', function($scope, $http, $timeout, $rootScope, $mdMe
 				var url = convertBeerToURL($scope.beer);
 
 		    	if (url === baseURL + '/beers'){
-		    		url = url + '?storeName=' + $rootScope.storeId;
+		    		url = url + '?storeId=' + $rootScope.storeId;
 
 		    	} else {
-		    		url = url + '&storeName=' + $rootScope.storeId;
+		    		url = url + '&storeId=' + $rootScope.storeId;
 
 		    	}
 		    	
@@ -138,14 +136,39 @@ app.controller('SearchCtrl', function($scope, $http, $timeout, $rootScope, $mdMe
 				    console.log("the search results are " + JSON.stringify($scope.searchResults));
 				}, function errorCallback(response) {
 				    // called asynchronously if an error occurs
-				    // or server returns response with an error status.
+			    // or server returns response with an error status.
+				    console.log('received a response of ' + JSON.stringify(response.data));
+					console.log('trying to update search information');
+					
+					var url = convertBeerToURL($scope.beer);
+
+			    	if (url === baseURL + '/beers'){
+			    		url = url + '?storeId=' + $rootScope.storeId;
+
+			    	} else {
+			    		url = url + '&storeId=' + $rootScope.storeId;
+
+			    	}
+			    	
+			    	console.log('making HTTP GET request to ' + url);
+			    	$http({
+					    method: 'GET',
+					    url: url
+					}).then(function successCallback(response) {
+						console.log('received a response of ' + JSON.stringify(response.data));
+					    $rootScope.searchResults = response.data;
+					    console.log("the search results are " + JSON.stringify($scope.searchResults));
+					}, function errorCallback(response) {
+					    // called asynchronously if an error occurs
+					    // or server returns response with an error status.
+					});
+
 				});
 
 
 			
 			}, function errorCallback(response) {
-			    // called asynchronously if an error occurs
-			    // or server returns response with an error status.
+					//error stuff here
 			});
     	}
 
@@ -153,7 +176,42 @@ app.controller('SearchCtrl', function($scope, $http, $timeout, $rootScope, $mdMe
 
     $scope.removeFromInventory = function(ev, beer){
     	console.log('will remove from inventory here');
-    	//!!! implement this
+    	var url = baseURL + '/vendors?bname=' + beer.bname + '&storeid=' + $rootScope.storeId;
+    	console.log('making DELETE request to ' + url);
+    	$http({
+	    	method: 'DELETE',
+	    	url: url
+		}).then(function successCallback(response) { //@@@
+			console.log('received a response of ' + JSON.stringify(response.data));
+			console.log('trying to update search information');
+			
+			var url = convertBeerToURL($scope.beer);
+
+	    	if (url === baseURL + '/beers'){
+	    		url = url + '?storeId=' + $rootScope.storeId;
+
+	    	} else {
+	    		url = url + '&storeId=' + $rootScope.storeId;
+
+	    	}
+	    	
+	    	console.log('making HTTP GET request to ' + url);
+	    	$http({
+			    method: 'GET',
+			    url: url
+			}).then(function successCallback(response) {
+				console.log('received a response of ' + JSON.stringify(response.data));
+			    $rootScope.searchResults = response.data;
+			    console.log("the search results are " + JSON.stringify($scope.searchResults));
+			}, function errorCallback(response) {
+			    // called asynchronously if an error occurs
+			    // or server returns response with an error status.
+			});
+			
+		}, function errorCallback(response) {
+	    // called asynchronously if an error occurs
+	    // or server returns response with an error status.
+		});	
     }
 
 });
@@ -256,6 +314,7 @@ app.controller('VendorLoginCtrl', function($scope, $mdDialog, $mdMedia, $rootSco
 
 	$scope.showLogoutPrompt = function(ev){
 		$rootScope.storeId = null;
+		$rootScope.searchResults = null;
 		$mdDialog.show(
 				$mdDialog.alert()
 					.parent(angular.element(document.querySelector('#popupContainer')))

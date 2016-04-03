@@ -300,7 +300,7 @@ public class WebController {
     public
     @ResponseBody
     Map addBeerToVendor(@RequestParam(value = "bname", required = false) String bname,
-                        @RequestParam(value = "storeid", required = false) String storeID) throws JSONException {
+                        @RequestParam(value = "storeId", required = false) String storeID) throws JSONException {
         Map<String, Object> returnStatus = new HashMap<>();
         int rowsAffected = 0;
         try {

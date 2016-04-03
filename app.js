@@ -200,6 +200,7 @@ app.controller('AppCtrl', function($scope, $mdDialog, $mdMedia, $rootScope, $htt
   	function RatingsDialogCtrl($scope, $mdDialog, beer){
   		$scope.beer = beer;
   		console.log('got to RatingsDialogCtrl');
+  		
   	}
 
 });
