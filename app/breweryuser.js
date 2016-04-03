@@ -64,7 +64,7 @@ app.controller('SearchCtrl', function($scope, $http, $timeout, $rootScope, $mdDi
                         $mdDialog.alert()
                             .parent(angular.element(document.querySelector('#popupContainer')))
                             .clickOutsideToClose(true)
-                            .textContent(response.data.message)
+                            .textContent(response.data.status)
                             .ariaLabel('Alert Dialog Demo')
                             .ok('Got it!')
                             .targetEvent(ev)
