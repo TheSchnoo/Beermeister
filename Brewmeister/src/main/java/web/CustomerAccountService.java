@@ -9,12 +9,6 @@ import java.util.ArrayList;
 
 public class CustomerAccountService {
 
-
-    public static enum loginErrorTypes {
-        noAccountFound, wrongPassword, sqlError;
-    }
-
-
     public static Map createAccount(String username, String password) {
         ArrayList<String> createAccountParams = new ArrayList<>();
 
@@ -23,66 +17,31 @@ public class CustomerAccountService {
 
         //Insert account into db
         AccessDatabase ad = new AccessDatabase();
-        Map createAccountResult = ad.createAccount(createAccountParams, AccessDatabase.CUSTOMER_TABLE);
+        Map createAccountResult = ad.createAccount(createAccountParams, "CName", AccessDatabase.CUSTOMER_TABLE);
 
         return createAccountResult;
     }
 
     public static Map login(String username, String password) {
-        Map response = new HashMap();
         ArrayList<String> loginParams = new ArrayList<String>();
 
-        loginParams.add("cname");
+        loginParams.add("CName");
         loginParams.add(username);
-        //loginParams.add("cpassword");
-        //loginParams.add(password);
 
         //Check db for match values
         AccessDatabase ad = new AccessDatabase();
-        Map checkCredsResult;
+        Map checkCredsResult = new HashMap<>();
+
         try {
-            checkCredsResult = ad.checkCredentials(loginParams, password);
+            checkCredsResult = ad.checkCredentials(loginParams, password, AccessDatabase.CUSTOMER_TABLE);
         } catch (SQLException e) {
             //Case: some sql error occured
-            response.put("authenticated", false);
-            response.put("error", loginErrorTypes.sqlError);
-            return response;
+            checkCredsResult.put("authenticated", false);
+            checkCredsResult.put("error", AccessDatabase.loginErrorTypes.sqlError);
+            return checkCredsResult;
         }
 
-        if (checkCredsResult.get("matchFound").equals(true)) {
-            if (checkCredsResult.containsKey("error")) {
-                //Case: no account with given username found
-                response.put("authenticated", false);
-                response.put("error", loginErrorTypes.noAccountFound);
-                return response;
-            }
-        } else {
-            //Case: account found but wrong password provided
-            response.put("authenticated", false);
-            response.put("error", loginErrorTypes.wrongPassword);
-        }
-
-        //If reach this point login was legit
-        //Can now create a session id
-
-        //Insert account into db
-        ArrayList<String> sessionInsertParams = new ArrayList<>();
-        String sessionId = CustomerAccountService.generateSessionId();
-        sessionInsertParams.add(checkCredsResult.get("CID").toString());
-        sessionInsertParams.add(sessionId);
-        Map insertSessionResult = ad.createCustomerSession(sessionInsertParams);
-
-        if (insertSessionResult.get("created").equals(false)) {
-            response.put("authenticated", false);
-            response.put("error", loginErrorTypes.sqlError);
-            return response;
-        }
-
-        response.put("authenticated", true);
-        response.put("cid", checkCredsResult.get("CID"));
-        response.put("sessionId", sessionId);
-
-        return response;
+        return checkCredsResult;
     }
 
     public static Map logout(String sessionId) {

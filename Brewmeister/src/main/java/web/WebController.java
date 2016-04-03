@@ -170,6 +170,18 @@ public class WebController {
         return VendorService.createVendorAccount(tempStoreName, tempPassword, tempAddress);
     }
 
+    @RequestMapping(value = "/vendor-login", method = RequestMethod.GET)
+    public
+    @ResponseBody
+    Map vendorLogin(
+            @RequestParam(value = "storeName", required = true) String username,
+            @RequestParam(value = "password", required = true) String password,
+            HttpServletResponse httpResponse) throws IOException {
+
+        httpResponse.setStatus(HttpServletResponse.SC_OK);
+        return VendorService.login(username, password);
+    }
+
 
     @RequestMapping(value = "/reviews", method = RequestMethod.GET)
     public

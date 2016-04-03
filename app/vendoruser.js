@@ -7,6 +7,7 @@ app.config(function($mdThemingProvider) {
 });
 
 app.controller('AppCtrl', function($scope, $mdDialog, $mdMedia, $rootScope, $http) {
+	$rootScope.storeId = null;
 
 });
 
@@ -17,7 +18,8 @@ app.controller('SearchCtrl', function($scope, $http, $timeout, $rootScope, $mdMe
     $scope.ibuCategories = ["<10", "10-19", "20-29", "30-39", "40-49", "50-59", "60-69", ">70"];
     $scope.ratingCategories = ["1", "2", "3", "4"];
     $rootScope.searchResults = [];
-    $rootScope.storeName = null;
+
+
 
     $scope.submitSearch = function(ev){
   
@@ -146,19 +148,19 @@ app.controller('SearchCtrl', function($scope, $http, $timeout, $rootScope, $mdMe
 
 });
 
-app.controller('LoginCtrl', function($scope, $mdDialog, $mdMedia, $rootScope, $http) {
+app.controller('VendorLoginCtrl', function($scope, $mdDialog, $mdMedia, $rootScope, $http) {
 	$scope.loginInfo = {};
 	$scope.signupInfo = {};
-	
-
+	console.log('setting storeId to null');
+	// $scope.storeId = null;
 
 	//called when login button is clicked
 	$scope.showLoginPrompt = function(ev){
-		if ($rootScope.storename === null){
+		if ($rootScope.storeId === null){
 			var useFullScreen = ($mdMedia('sm') || $mdMedia('xs'))  && $scope.customFullscreen;
 		    $mdDialog.show({
-		        // controller: LoginPromtController,
-		      	templateUrl: 'app/logindialog.html',
+		        controller: LoginPromptCtrl,
+		      	templateUrl: 'vendorlogindialog.html',
 		      	parent: angular.element(document.body),
 		      	targetEvent: ev,
 		      	clickOutsideToClose:true,
@@ -181,67 +183,85 @@ app.controller('LoginCtrl', function($scope, $mdDialog, $mdMedia, $rootScope, $h
 		}
 	}
 
-	$scope.sendLoginInfo = function(ev){
-		console.log('sending login info of: ' + JSON.stringify($scope.loginInfo));
-		if (!$scope.loginInfo.hasOwnProperty('username') || !$scope.loginInfo.hasOwnProperty('password')){
-			$mdDialog.show(
+	function LoginPromptCtrl($scope, $mdDialog){
+		console.log('got to loginpromptctrl');
+
+		$scope.sendLoginInfo = function(ev){
+			console.log('sending login info of: ' + JSON.stringify($scope.loginInfo));
+			if (!$scope.loginInfo.hasOwnProperty('username') || !$scope.loginInfo.hasOwnProperty('password')){
+				$mdDialog.show(
+					$mdDialog.alert()
+						.parent(angular.element(document.querySelector('#popupContainer')))
+						.clickOutsideToClose(true)
+						.textContent('Yo dawg, you need to provide us with both a username and password.')
+						.ariaLabel('Alert Dialog Demo')
+						.ok('Got it!')
+						.targetEvent(ev)
+		    	);
+
+			//THE FOLLOWING CODE BLOCK IS UNTESTED, WAITING FOR LOGIN API IMPLEMENTATION
+			} else {
+				var str = jQuery.param($scope.loginInfo);
+				var url = baseURL + '/vendor-login?' + str
+				console.log('Making GET request to ' + url);
+				$http({
+			    	method: 'GET',
+			    	url: url
+				}).then(function successCallback(response) {
+					if (response.data.authenticated === false){
+						$mdDialog.alert()
+							.parent(angular.element(document.querySelector('#popupContainer')))
+							.clickOutsideToClose(true)
+							.textContent('Login Failed. Check that username and password are correct.')
+							.ariaLabel('Alert Dialog Demo')
+							.ok('Got it!')
+							.targetEvent(ev)
+		    	
+					} else {
+						$rootScope.storeId = response.data.storeId;
+						$mdDialog.alert()
+							.parent(angular.element(document.querySelector('#popupContainer')))
+							.clickOutsideToClose(true)
+							.textContent('Login info authenticated. Welcome back.')
+							.ariaLabel('Alert Dialog Demo')
+							.ok('Got it!')
+							.targetEvent(ev)
+		    		
+					}
+
+
+
+				}, function errorCallback(response) {
+			    // called asynchronously if an error occurs
+			    // or server returns response with an error status.
+				});	
+			}
+
+		}
+	}
+
+	$scope.showLogoutPrompt = function(ev){
+		$rootScope.storeId = null;
+		$mdDialog.show(
 				$mdDialog.alert()
 					.parent(angular.element(document.querySelector('#popupContainer')))
 					.clickOutsideToClose(true)
-					.textContent('Yo dawg, you need to provide us with both a username and password.')
+					.textContent('Logout Successful')
 					.ariaLabel('Alert Dialog Demo')
 					.ok('Got it!')
 					.targetEvent(ev)
 	    	);
-
-		//THE FOLLOWING CODE BLOCK IS UNTESTED, WAITING FOR LOGIN API IMPLEMENTATION
-		} else {
-			var str = jQuery.param($scope.loginInfo);
-			var url = baseURL + '/login?' + str
-			console.log('Making GET request to ' + url);
-			$http({
-		    	method: 'GET',
-		    	url: url
-			}).then(function successCallback(response) {
-				if (response.data.authenticated === false){
-					$mdDialog.alert()
-						.parent(angular.element(document.querySelector('#popupContainer')))
-						.clickOutsideToClose(true)
-						.textContent('Login Failed. Check that username and password are correct.')
-						.ariaLabel('Alert Dialog Demo')
-						.ok('Got it!')
-						.targetEvent(ev)
-	    	
-				} else {
-					$rootScope.uuid = response.data.uuid;
-					$mdDialog.alert()
-						.parent(angular.element(document.querySelector('#popupContainer')))
-						.clickOutsideToClose(true)
-						.textContent('Login info authenticated. Welcome back.')
-						.ariaLabel('Alert Dialog Demo')
-						.ok('Got it!')
-						.targetEvent(ev)
-	    		
-				}
-
-
-
-			}, function errorCallback(response) {
-		    // called asynchronously if an error occurs
-		    // or server returns response with an error status.
-			});	
-		}
-
-
 	}
 
 
-	$scope.showSignupPrompt = function(ev){
+	$scope.showSignupPrompt = function(ev) {
 		console.log('trying to show signup prompt');
-		if ($rootScope.storeName === null){
+		console.log('$scope.storeId is ' + $scope.storeId); //!!!
+		if ($scope.storeId === null){
+			console.log('null storeid detected');
 			var useFullScreen = ($mdMedia('sm') || $mdMedia('xs'))  && $scope.customFullscreen;
 		    $mdDialog.show({
-		        // controller: LoginPromtController,
+		        controller: SignupPromptCtrl,
 		      	templateUrl: 'vendorsignupdialog.html',
 		      	parent: angular.element(document.body),
 		      	targetEvent: ev,
@@ -251,6 +271,7 @@ app.controller('LoginCtrl', function($scope, $mdDialog, $mdMedia, $rootScope, $h
 
 		//if we already have a UUID, the user has already logged in
 		} else {
+			console.log('$scope.storeName is ' + $scope.storeName);
 			$mdDialog.show(
 				$mdDialog.alert()
 					.parent(angular.element(document.querySelector('#popupContainer')))
@@ -263,63 +284,75 @@ app.controller('LoginCtrl', function($scope, $mdDialog, $mdMedia, $rootScope, $h
 		}
 	}
 
-	$scope.sendSignupInfo = function(ev){
-		console.log('sending signup info of: ' + JSON.stringify($scope.signupInfo));
-		if (!$scope.signupInfo.hasOwnProperty('username') || !$scope.signupInfo.hasOwnProperty('password')){
-			$mdDialog.show(
-				$mdDialog.alert()
-					.parent(angular.element(document.querySelector('#popupContainer')))
-					.clickOutsideToClose(true)
-					.textContent('Yo dawg, you need to provide us with both a username and password.')
-					.ariaLabel('Alert Dialog Demo')
-					.ok('Got it!')
-					.targetEvent(ev)
-	    	);
-
-		//THE FOLLOWING CODE BLOCK IS UNTESTED, WAITING FOR LOGIN API IMPLEMENTATION
-		} else {
-			var url = baseURL + '/vendor-signup'
-			console.log('Making POST request to ' + url + "with a body of " + JSON.stringify($scope.signupInfo));
-			$http({
-		    	method: 'POST',
-		    	url: url,
-		    	//TODO: check that the data payload is correct
-		    	data: $scope.signupInfo
-			}).then(function successCallback(response) {
-				console.log('received a response of' + JSON.stringify(response.data));
-				if (response.data.created === false){
-					$mdDialog.show(
-						$mdDialog.alert()
-							.parent(angular.element(document.querySelector('#popupContainer')))
-							.clickOutsideToClose(true)
-							.textContent('Signup failed. Try a different username.')
-							.ariaLabel('Alert Dialog Demo')
-							.ok('Got it!')
-							.targetEvent(ev)
-					);
-	    	
-				} else {
-					$rootScope.storeName = response.data.storeName;
-					console.log('user account created');
-					$mdDialog.show(
-						$mdDialog.alert()
-							.parent(angular.element(document.querySelector('#popupContainer')))
-							.clickOutsideToClose(true)
-							.textContent('Signup successful. Welcome to Brewmeister.')
-							.ariaLabel('Alert Dialog Demo')
-							.ok('Got it!')
-							.targetEvent(ev)
-					);
-	    		
-				}
+	//!!!
+	function SignupPromptCtrl($scope, $mdDialog){
+   
+        $scope.sendSignupInfo = function(ev){
+			console.log('sending signup info of: ' + JSON.stringify($scope.signupInfo));
+			if (!$scope.signupInfo.hasOwnProperty('storeName') || !$scope.signupInfo.hasOwnProperty('password')
+				|| !$scope.signupInfo.hasOwnProperty('address')){
 
 
+				$mdDialog.show(
+					$mdDialog.alert()
+						.parent(angular.element(document.querySelector('#popupContainer')))
+						.clickOutsideToClose(true)
+						.textContent('Yo dawg, you need to provide us with both a username and password.')
+						.ariaLabel('Alert Dialog Demo')
+						.ok('Got it!')
+						.targetEvent(ev)
+	    		);
 
-			}, function errorCallback(response) {
-		    // called asynchronously if an error occurs
-		    // or server returns response with an error status.
-			});	
+			//THE FOLLOWING CODE BLOCK IS UNTESTED, WAITING FOR LOGIN API IMPLEMENTATION
+			} else {
+				var url = baseURL + '/vendor-signup';
+				console.log('Making POST request to ' + url + " with a body of " + JSON.stringify($scope.signupInfo));
+				$http({
+			    	method: 'POST',
+			    	url: url,
+			    	//TODO: check that the data payload is correct
+			    	data: $scope.signupInfo
+				}).then(function successCallback(response) {
+					console.log('received a response of' + JSON.stringify(response.data));
+					if (response.data.created === false){
+						$mdDialog.show(
+							$mdDialog.alert()
+								.parent(angular.element(document.querySelector('#popupContainer')))
+								.clickOutsideToClose(true)
+								.textContent('Signup failed. Try a different username.')
+								.ariaLabel('Alert Dialog Demo')
+								.ok('Got it!')
+								.targetEvent(ev)
+						);
+		    	
+					} else {
+						$rootScope.storeId = response.data.storeId;
+						$scope.storeId = response.data.storeId;
+						console.log('$scope.storeId is now ' + $rootScope.storeId);
+						console.log('user account created');
+						$mdDialog.show(
+							$mdDialog.alert()
+								.parent(angular.element(document.querySelector('#popupContainer')))
+								.clickOutsideToClose(true)
+								.textContent('Signup successful. Welcome to Brewmeister.')
+								.ariaLabel('Alert Dialog Demo')
+								.ok('Got it!')
+								.targetEvent(ev)
+						);
+		    		
+					}
+
+
+
+				}, function errorCallback(response) {
+			    // called asynchronously if an error occurs
+			    // or server returns response with an error status.
+				});	
+			}
 		}
-	}
+    }
+            
+
+	
 
 });

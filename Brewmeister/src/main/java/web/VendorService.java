@@ -78,14 +78,36 @@ public class VendorService {
         ArrayList<String> createVendorAccountParams = new ArrayList<>();
 
         createVendorAccountParams.add(storeName);
-        createVendorAccountParams.add(password);
         createVendorAccountParams.add(address);
+        createVendorAccountParams.add(password);
 
         //Insert account into db
         AccessDatabase ad = new AccessDatabase();
-        Map createAccountResult = ad.createAccount(createVendorAccountParams, AccessDatabase.BEER_VENDOR_TABLE);
+        Map createAccountResult = ad.createAccount(createVendorAccountParams, "StoreName",
+                AccessDatabase.BEER_VENDOR_TABLE);
 
         return createAccountResult;
+    }
+
+    public static Map login(String storeName, String password) {
+        ArrayList<String> loginParams = new ArrayList<String>();
+        loginParams.add("StoreName");
+        loginParams.add(storeName);
+
+        //Check db for match values
+        AccessDatabase ad = new AccessDatabase();
+        Map checkCredsResult = new HashMap<>();
+
+        try {
+            checkCredsResult = ad.checkCredentials(loginParams, password, AccessDatabase.BEER_VENDOR_TABLE);
+        } catch (SQLException e) {
+            //Case: some sql error occured
+            checkCredsResult.put("authenticated", false);
+            checkCredsResult.put("error", AccessDatabase.loginErrorTypes.sqlError);
+            return checkCredsResult;
+        }
+
+        return checkCredsResult;
     }
 
     private void close() {
