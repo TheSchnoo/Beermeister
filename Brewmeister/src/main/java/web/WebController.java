@@ -33,17 +33,17 @@ public class WebController {
         ArrayList<BeerInfo> beers;
         AccessDatabase accessDatabase = new AccessDatabase();
 
-        if (storeId == null) {
+        Map<String, String> searchBeerMap = new HashMap<>();
 
-            Map<String, String> searchBeerMap = new HashMap<>();
-
-            searchBeerMap.put("bname", bname);
-            searchBeerMap.put("type", btype);
-            searchBeerMap.put("ibu", ibu);
-            searchBeerMap.put("abv", abv);
+        searchBeerMap.put("bname", bname);
+        searchBeerMap.put("btype", btype);
+        searchBeerMap.put("ibu", ibu);
+        searchBeerMap.put("abv", abv);
 //            searchBeerMap.put("averageRating", rating);
-            searchBeerMap.put("description", description);
-            searchBeerMap.put("breweryName", breweryName);
+        searchBeerMap.put("description", description);
+        searchBeerMap.put("breweryName", breweryName);
+
+        if (storeId == null) {
 
             BeerService beerService = new BeerService();
             try {
@@ -54,23 +54,13 @@ public class WebController {
 
 
         } else {
-//            if (bname==null) {
-//                try {
-//                    VendorService vendorService = new VendorService();
-//                    beers = accessDatabase.searchBeers(vendorService.getBeersByVendor(storeId));
-//                } catch (Exception e) {
-//                    beers = null;
-//                    e.printStackTrace();
-//                }
-//            } else {
             try {
                 VendorService vendorService = new VendorService();
-                beers = accessDatabase.searchBeersByVendor(vendorService.getBeersByVendorStocked(storeId));
+                beers = accessDatabase.searchBeersByVendor(vendorService.getBeersByVendorStocked(storeId, searchBeerMap));
             } catch (Exception e) {
                 beers = null;
                 e.printStackTrace();
             }
-//            }
         }
         httpResponse.setStatus(HttpServletResponse.SC_OK);
         return beers;
