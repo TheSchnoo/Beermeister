@@ -68,20 +68,27 @@ public class WebController {
     public
     @ResponseBody
     ArrayList<BeerInfo> recs(
-            @RequestParam(value = "cid", required = false) int cid,
+            @RequestParam(value = "cid", required = false) Integer cid,
             HttpServletResponse httpResponse) throws IOException {
 
         AccessDatabase accessDB = new AccessDatabase();
         ArrayList<BeerInfo> beers;
-        try {
-            BeerService beerService = new BeerService();
-            beers = accessDB.getRecommendations(beerService.getUnratedBeers(cid));
-            httpResponse.setStatus(HttpServletResponse.SC_OK);
-        } catch (Exception e) {
-            beers = null;
-            httpResponse.setStatus(HttpServletResponse.SC_NOT_FOUND);
+        if(cid!=null) {
+            try {
+                BeerService beerService = new BeerService();
+                beers = accessDB.getRecommendations(beerService.getUnratedBeers(cid));
+                httpResponse.setStatus(HttpServletResponse.SC_OK);
+            } catch (Exception e) {
+                beers = null;
+                httpResponse.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            }
+            return beers;
         }
-        return beers;
+        else {
+            beers = accessDB.getHighestRatedBeers(4);
+            return beers;
+        }
+
     }
 
     @RequestMapping(value = "/most-rated-beer", method = RequestMethod.GET)

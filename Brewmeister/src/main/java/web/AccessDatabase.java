@@ -115,9 +115,11 @@ public class AccessDatabase {
             BeerService bs = new BeerService();
 
             ArrayList<BeerInfo> listBeers = new ArrayList<>();
+            int count = 4;
 
-            while(resultSet.next()){
+            while(resultSet.next() && count<4){
                 listBeers.add(bs.convertResultSetToBeerInfo(resultSet));
+                count++;
             }
             return listBeers;
 
@@ -560,4 +562,30 @@ public class AccessDatabase {
         }
         return result;
     }
+
+    public ArrayList<BeerInfo> getHighestRatedBeers(int numBeers){
+        open();
+        ArrayList<BeerInfo> result = new ArrayList<>();
+
+        String searchString = "SELECT * " +
+                "FROM BeerInfo " +
+                "ORDER BY AvgRating DESC LIMIT " + numBeers;
+        System.out.println(searchString);
+
+        try {
+            preparedStatement = connect
+                    .prepareStatement(searchString);
+            resultSet = preparedStatement.executeQuery();
+
+            BeerService bs = new BeerService();
+            while(resultSet.next()){
+                result.add(bs.convertResultSetToBeerInfo(resultSet));
+            }
+        } catch (Exception e){
+            System.out.println("Error getting highest rated");
+        }
+        close();
+        return result;
+    }
+
 }
