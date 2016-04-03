@@ -17,7 +17,7 @@ public class BeerReviewService {
             int cid = rs.getInt("cid");
             int bRate = rs.getInt("brate");
             String review = rs.getString("review");
-            boolean newReview = rs.getBoolean("newreview");
+            boolean newReview = false;
 
             ArrayList<Vendor> vendors = vs.getVendorsThatSellABeer(bname);
 
