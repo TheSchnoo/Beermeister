@@ -10,17 +10,12 @@ public class BeerReviewService {
 
     public BeerReview convertResultSetToBeerReview(ResultSet rs){
 
-        VendorService vs = new VendorService();
-
         try{
             String bname = rs.getString("BName");
             int cid = rs.getInt("cid");
             int bRate = rs.getInt("brate");
             String review = rs.getString("review");
             boolean newReview = false;
-
-            ArrayList<Vendor> vendors = vs.getVendorsThatSellABeer(bname);
-
 
             BeerReview newBR = new BeerReview(bname, review, bRate, cid, newReview);
 
@@ -31,5 +26,10 @@ public class BeerReviewService {
             System.out.println(e);
         }
         return null;
+    }
+
+    public String getReviews(String bname) throws Exception{
+        String searchString = "Select * from Rates Where BName like '" + bname + "');";
+        return searchString;
     }
 }

@@ -175,28 +175,23 @@ public class WebController {
     @RequestMapping(value = "/reviews", method = RequestMethod.GET)
     public
     @ResponseBody
-    ArrayList<BeerInfo> revs(
-            @RequestParam(value = "userid", required = false) String userid,
-            @RequestParam(value = "bname", required = false) String bname,
+    ArrayList<BeerReview> revs(
+            @RequestParam(value = "bname", required = true) String bname,
             HttpServletResponse httpResponse) throws IOException {
-        AccessDatabase accessDB = new AccessDatabase();
-        ArrayList<BeerInfo> reviews;
+        ArrayList<BeerReview> reviews;
 
-        //TODO: ADD FUNCTIONALITY
+        AccessDatabase accessDatabase = new AccessDatabase();
 
-//        try {
-//            if(userid==null){
-//                //TODO search reviews by beer name
-//            }
-//            else{
-//                //TODO search reviews by a user
-//            }
-//            httpResponse.setStatus(HttpServletResponse.SC_OK);
-//        } catch (Exception e) {
-//            reviews = null;
-//            httpResponse.setStatus(HttpServletResponse.SC_NOT_FOUND);
-//        }
-        return new ArrayList<BeerInfo>();
+        BeerReviewService beerReviewService = new BeerReviewService();
+        try {
+            reviews = accessDatabase.searchReviews(beerReviewService.getReviews(bname));
+        } catch (Exception e) {
+            reviews = null;
+        }
+
+
+        httpResponse.setStatus(HttpServletResponse.SC_OK);
+        return reviews;
     }
 
     @RequestMapping(value = "/rating", method = RequestMethod.GET)
@@ -209,7 +204,7 @@ public class WebController {
         AccessDatabase accessDB = new AccessDatabase();
         return accessDB.checkForReview(cid, bname);
     }
-        //    POST REQUESTS
+    //    POST REQUESTS
 //++++++++++++++++++++++++++++++++++
 
     //    Creating and updating beers
@@ -218,8 +213,8 @@ public class WebController {
     public
     @ResponseBody
     Map postBeer(@RequestBody String body,
-                          @RequestParam(value = "bname",
-                                  required = false) String beerName) throws JSONException {
+                 @RequestParam(value = "bname",
+                         required = false) String beerName) throws JSONException {
 
         Map<String, Object> returnStatus = new HashMap<>();
         int rowsAffected = 0;
