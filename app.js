@@ -63,9 +63,17 @@ app.controller('AppCtrl', function($scope, $mdDialog, $mdMedia, $rootScope, $htt
 		$scope.recommendedBeers = mockBeers;
 		$scope.mostPopularBeer = mockBeers[1];
   	} else {
+  		var recURL = baseURL;
+  		if ($rootScope.cid === null){
+  			recURL = recURL + '/recommendedbeers';
+  		} else if ($rootScope.cid != null) {
+  			recURL = recURL + '/recommendedbeers?cid=' + $rootScope;
+  		}
+
+  		console.log('making HTTP GET to ' + recURL);
   		$http({
 		    method: 'GET',
-		    url: baseURL + '/recommendedbeers?userid=' + userid
+		    url: recURL
 		}).then(function successCallback(response) {
 			console.log('recommended beers are ' + JSON.stringify(response.data));
 		    $scope.recommendedBeers = response.data;
@@ -77,8 +85,8 @@ app.controller('AppCtrl', function($scope, $mdDialog, $mdMedia, $rootScope, $htt
 		    method: 'GET',
 		    url: baseURL + '/most-rated-beer'
 		}).then(function successCallback(response) {
-			console.log('recommended beers are ' + JSON.stringify(response.data));
-		    $scope.mostPopularBeer = response.data;
+			console.log('most rated beer is ' + JSON.stringify(response.data));
+		    $scope.mostPopularBeer = response.data[0];
 		}, function errorCallback(response) {
 		    // called asynchronously if an error occurs
 		    // or server returns response with an error status.
@@ -199,14 +207,16 @@ app.controller('AppCtrl', function($scope, $mdDialog, $mdMedia, $rootScope, $htt
 
   	function RatingsDialogCtrl($scope, $mdDialog, beer){
   		$scope.beer = beer;
+  		$scope.reviews = null;
   		console.log('got to RatingsDialogCtrl');
-  		var url = baseURL + '/reviews'
+  		var url = baseURL + '/reviews?bname=' + beer.bname; //###
   		//!!! TODO: implmeent this after backend done
   		$http({
 		    method: 'GET',
 		    url: url
 		}).then(function successCallback(response) {
 			console.log('received response of ' + JSON.stringify(response.data))
+			$scope.reviews = response.data
 		}, function errorCallback(response) {
 		    // called asynchronously if an error occurs
 		    // or server returns response with an error status.

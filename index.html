@@ -153,6 +153,7 @@
           </div>
         </md-toolbar>
         <md-content id="search-content">
+          
           <md-list flex id="search-list">
 
             <md-list-item class="md-3-line" multiple="true" ng-repeat="beer in $root.searchResults track by $index">
@@ -170,10 +171,15 @@
             </md-list-item>
 
           </md-list>
+
+
+
         </md-content>
       </md-whiteframe>
     </div>
 
+
+    <!--!!!-->
     <div class="container" id="most-popular-beer">
       Our Most Popular Beer:
       <div>
@@ -186,6 +192,7 @@
                 <p>Type: {{mostPopularBeer.type}}</p>
                 <p>ABV: {{mostPopularBeer.abv}}</p>
                 <p>IBU: {{mostPopularBeer.ibu}}</p>
+                <p>Average Rating: {{mostPopularBeer.averageRating}}</p>
               </span>
             </md-card-title-text>
             <md-card-title-media>
@@ -220,6 +227,7 @@
                     <p>Type: {{beer.type}}</p>
                     <p>ABV: {{beer.abv}}</p>
                     <p>IBU: {{beer.ibu}}</p>
+                    <p>Average Rating: {{beer.averageRating}}</p>
                   </span>
                 </md-card-title-text>
                 <md-card-title-media>
