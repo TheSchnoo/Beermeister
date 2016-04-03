@@ -32,8 +32,6 @@ app.controller('SearchCtrl', function($scope, $http, $timeout, $rootScope, $mdMe
 					.ok('Got it!')
 					.targetEvent(ev)
 	    	);
-
-
     	} else {
     		var url = convertBeerToURL($scope.beer);
 	    	if (url === baseURL + '/beers'){

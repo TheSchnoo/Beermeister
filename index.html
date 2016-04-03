@@ -162,6 +162,7 @@
                 <md-button ng-click="showAdditionalInfo($event, beer)" class="search-action-button md-primary">More Info</md-button>
                 <md-button ng-click="showVendors($event, beer)" class="search-action-button md-primary">Vendors</md-button>
                 <md-button ng-click="showRatings($event, beer)" class="search-action-button md-primary">Ratings</md-button>
+                <md-button ng-click="showReviewDialog($event, beer)" class="search-action-button md-primary">Submit Review</md-button>
               <md-divider ng-if="!$last"></md-divider>
             </md-list-item>
 
@@ -193,6 +194,7 @@
           <md-card-actions layout="row" layout-align="end center">
             <md-button class="md-primary"ng-click="showVendors($event, mostPopularBeer)">Vendors</md-button>
             <md-button class="md-primary" ng-click="showRatings($event, mostPopularBeer)">Ratings</md-button>
+            <md-button ng-click="showReviewDialog($event, beer)" class="search-action-button md-primary">Submit Review</md-button>
           </md-card-actions>
         </md-card>
       </div>
@@ -226,6 +228,7 @@
               <md-card-actions layout="row" layout-align="end center">
                 <md-button class="md-primary"ng-click="showVendors($event, beer)">Vendors</md-button>
                 <md-button class="md-primary" ng-click="showRatings($event, beer)">Ratings</md-button>
+                <md-button ng-click="showReviewDialog($event, beer)" class="search-action-button md-primary">Submit Review</md-button>
               </md-card-actions>
             </md-card>
           </div>

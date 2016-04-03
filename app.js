@@ -200,8 +200,93 @@ app.controller('AppCtrl', function($scope, $mdDialog, $mdMedia, $rootScope, $htt
   	function RatingsDialogCtrl($scope, $mdDialog, beer){
   		$scope.beer = beer;
   		console.log('got to RatingsDialogCtrl');
+  		var url = baseURL + '/reviews'
+  		//!!! TODO: implmeent this after backend done
+  		$http({
+		    method: 'GET',
+		    url: url
+		}).then(function successCallback(response) {
+			console.log('received response of ' + JSON.stringify(response.data))
+		}, function errorCallback(response) {
+		    // called asynchronously if an error occurs
+		    // or server returns response with an error status.
+		});
   		
   	}
+
+  	$scope.showReviewDialog = function (ev, beer){
+    	console.log('got to showReviewDialog');
+
+    	if ($rootScope.cid === null) {
+    		$mdDialog.show(
+				$mdDialog.alert()
+					.parent(angular.element(document.querySelector('#popupContainer')))
+					.clickOutsideToClose(true)
+					.textContent('Yo dawg, login first!')
+					.ariaLabel('Alert Dialog Demo')
+					.ok('Got it!')
+					.targetEvent(ev)
+	    	);
+
+    	} else {
+
+	    	var useFullScreen = ($mdMedia('sm') || $mdMedia('xs'))  && $scope.customFullscreen;
+	    	$mdDialog.show({
+		        controller: RatingSubmissionDialogCtrl,
+		      	templateUrl: 'app/reviewsubmission.html',
+		      	parent: angular.element(document.body),
+		      	targetEvent: ev,
+		      	clickOutsideToClose:true,
+		      	fullscreen: useFullScreen,
+		      	locals:{
+		      		beer: beer,
+		      	}
+		    });
+    	}
+
+    }
+
+    function RatingSubmissionDialogCtrl($scope, $mdDialog, beer){
+    	console.log('got to ratingsubmissiondialogctrl');
+
+    	$scope.beer = beer;
+    	$scope.rating = null
+    	var url = baseURL + '/rating?bname=' + $scope.beer.bname + '&cid=' + $rootScope.cid;
+
+    	console.log('makine HTTP GET to ' + url);
+
+    	$http({
+		    method: 'GET',
+		    url: url
+		}).then(function successCallback(response) {
+			console.log('received a response of ' + JSON.stringify(response.data));
+			$scope.rating = response.data;
+		}, function errorCallback(response) {
+		    // called asynchronously if an error occurs
+		    // or server returns response with an error status.
+		});
+
+		$scope.submitReview = function (ev){
+			var url = baseURL + '/rating?';
+			console.log('making http POST to ' + url + 'with a body of ' + JSON.stringify($scope.rating));
+			$http({
+		    	method: 'POST',
+		    	url: url,
+		    	//TODO: check that the data payload is correct
+		    	data: $scope.rating
+		    	
+			}).then(function successCallback(response) {
+				console.log('received a response of' + JSON.stringify(response.data));
+
+			}, function errorCallback(response) {
+		    // called asynchronously if an error occurs
+		    // or server returns response with an error status.
+			});	
+		
+		}
+
+	}
+
 
 });
 
@@ -311,6 +396,7 @@ app.controller('SearchCtrl', function($scope, $http, $timeout, $rootScope, $mdMe
 	    }
 	
     }
+
     $scope.showAdditionalInfo = function(ev, beer){
     	console.log('showing additional information for ' + beer.bname);
     	var useFullScreen = ($mdMedia('sm') || $mdMedia('xs'))  && $scope.customFullscreen;
@@ -360,7 +446,6 @@ app.controller('SearchCtrl', function($scope, $http, $timeout, $rootScope, $mdMe
 app.controller('LoginCtrl', function($scope, $mdDialog, $mdMedia, $rootScope, $http) {
 	$scope.loginInfo = {};
 	$scope.signupInfo = {};
-	
 
 
 	//called when login button is clicked
