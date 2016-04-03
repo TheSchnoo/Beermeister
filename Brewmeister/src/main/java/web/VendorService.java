@@ -75,8 +75,8 @@ public class VendorService {
     public Vendor convertResultSetToVendor(ResultSet rs) throws Exception{
         int storeID = rs.getInt("storeID");
         String storeName = rs.getString("storeName");
-//        String address = rs.getString("address");
-        Vendor newVendor = new Vendor(storeID, storeName); //, address);
+        String address = rs.getString("address");
+        Vendor newVendor = new Vendor(storeID, storeName, address);
         return newVendor;
     }
 

@@ -85,7 +85,6 @@ public class BeerService {
             BeerInfo newBI = new BeerInfo(bname, breweryName, type, abv, ibu, description,
                     averageRating, brewed, vendors);
 
-//            return obj;
             return newBI;
         }
         catch (Exception e){
