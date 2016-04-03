@@ -1,6 +1,7 @@
 package web;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.mysql.jdbc.exceptions.MySQLIntegrityConstraintViolationException;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.stereotype.Controller;
@@ -8,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -257,7 +259,7 @@ public class WebController {
             try {
                 rowsAffected = accessDB.insertToDB("BeerInfo", newBI.toTupleValueString());
             } catch (Exception e) {
-                returnStatus.put("status", "Brewery does not exist");
+                returnStatus.put("status", "Brewery does not exist or beer already exists");
                 returnStatus.put("created", false);
                 return returnStatus;
             }
