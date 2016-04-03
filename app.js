@@ -272,11 +272,20 @@ app.controller('AppCtrl', function($scope, $mdDialog, $mdMedia, $rootScope, $htt
 			$http({
 		    	method: 'POST',
 		    	url: url,
-		    	//TODO: check that the data payload is correct
 		    	data: $scope.rating
 		    	
 			}).then(function successCallback(response) {
-				console.log('received a response of' + JSON.stringify(response.data));
+				console.log('received a response of ' + JSON.stringify(response.data));
+				$mdDialog.show(
+					$mdDialog.alert()
+						.parent(angular.element(document.querySelector('#popupContainer')))
+						.clickOutsideToClose(true)
+						.textContent('Review submitted.')
+						.ariaLabel('Alert Dialog Demo')
+						.ok('Got it!')
+						.targetEvent(ev)
+		    	);
+
 
 			}, function errorCallback(response) {
 		    // called asynchronously if an error occurs
