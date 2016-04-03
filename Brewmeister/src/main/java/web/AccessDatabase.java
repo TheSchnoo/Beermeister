@@ -28,7 +28,7 @@ public class AccessDatabase {
     public ArrayList<BeerReview> searchReviews(String searchString) throws Exception {
         open();
         preparedStatement = connect
-                .prepareStatement("SELECT * FROM rates " + searchString);
+                .prepareStatement(searchString);
         resultSet = preparedStatement.executeQuery();
 
         BeerReviewService brs = new BeerReviewService();
@@ -289,13 +289,17 @@ public class AccessDatabase {
         }
     }
     public BeerReview checkForReview(int cid, String bname) throws Exception {
-        BeerReview beerReview = new BeerReview(bname, " ",0,cid,true);
+        BeerReview beerReview = new BeerReview(bname, " ",0,cid,true,"fake");
         try{
             Class.forName("com.mysql.jdbc.Driver");
 
             connect = DriverManager
                     .getConnection("jdbc:mysql://localhost/beerinfo?"
                             + "user=sqluser&password=sqluserpw");
+            preparedStatement = connect.prepareStatement("Select Cname from Customer where cid = " + cid);
+            resultSet = preparedStatement.executeQuery();
+            String reviewerName = resultSet.getString("Cname");
+            beerReview = new BeerReview(bname, " ",0,cid,true,reviewerName);
             preparedStatement = connect
                     .prepareStatement("Select * FROM Rates WHERE bname like '" + bname + "' AND CID = " + cid);
             resultSet = preparedStatement.executeQuery();
@@ -328,7 +332,7 @@ public class AccessDatabase {
                 preparedStatement = connect.prepareStatement("UPDATE Rates SET BRate = " + review.getRating() + " WHERE " + " BNAME LIKE '" + review.getBname() + "' AND CID = " + review.getCid() + ";");
                 success = preparedStatement.execute();
                 preparedStatement = connect.prepareStatement("UPDATE Rates SET Review = '" + review.getReview() + "' WHERE " + " BNAME LIKE '" + review.getBname() + "' AND CID = " + review.getCid() + ";");
-                success = (success && preparedStatement.execute());
+                success = (success & preparedStatement.execute());
             }
             return true;
 

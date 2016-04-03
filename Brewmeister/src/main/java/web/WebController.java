@@ -363,12 +363,13 @@ public class WebController {
 
         JSONObject bodyJSON = new JSONObject(body);
         String bname = bodyJSON.getString("bname");
-        int rating = bodyJSON.getInt("brate");
+        int rating = bodyJSON.getInt("rating");
         String review = bodyJSON.getString("review");
         int cid = bodyJSON.getInt("cid");
         boolean newReview = bodyJSON.getBoolean("newReview");
+        String reviewerName = bodyJSON.getString("reviewerName");
 
-        BeerReview newBR = new BeerReview(bname, review, rating, cid, newReview);
+        BeerReview newBR = new BeerReview(bname, review, rating, cid, newReview, reviewerName);
 
         AccessDatabase accessDB = new AccessDatabase();
         Map<String,Boolean> returnMap = new HashMap<>();

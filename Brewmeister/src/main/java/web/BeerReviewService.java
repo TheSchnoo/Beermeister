@@ -15,9 +15,10 @@ public class BeerReviewService {
             int cid = rs.getInt("cid");
             int bRate = rs.getInt("brate");
             String review = rs.getString("review");
+            String reviewerName = rs.getString("reviewerName");
             boolean newReview = false;
 
-            BeerReview newBR = new BeerReview(bname, review, bRate, cid, newReview);
+            BeerReview newBR = new BeerReview(bname, review, bRate, cid, newReview, reviewerName);
 
 
             return newBR;
@@ -29,7 +30,7 @@ public class BeerReviewService {
     }
 
     public String getReviews(String bname) throws Exception{
-        String searchString = "Select * from Rates Where BName like '" + bname + "');";
+        String searchString = "Select * from Rates Where BName like '%" + bname + "%';";
         return searchString;
     }
 }
