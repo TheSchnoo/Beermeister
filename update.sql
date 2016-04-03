@@ -24,23 +24,23 @@ VALUES ('Doan\'s Craft Brewing Company');
 
 
 -- Vendors
-insert into BeerVendor(StoreName,Address)
-values('Legacy Liquor Store','24 W. Elm');
+insert into BeerVendor(StoreName,Address,SPassword)
+values('Legacy Liquor Store','24 W. Elm','admin');
 
-insert into BeerVendor(StoreName,Address)
-values('Granville Island Brewing Retail Store','1441 Cartwright St');
+insert into BeerVendor(StoreName,Address,SPassword)
+values('Granville Island Brewing Retail Store','1441 Cartwright St','admin');
 
-insert into BeerVendor(StoreName,Address)
-values('BC Liquor Store','99 E. 1st');
+insert into BeerVendor(StoreName,Address,SPassword)
+values('BC Liquor Store','99 E. 1st','admin');
 
-insert into BeerVendor(StoreName,Address)
-values('UBC Liquor Store','300 St. Catherine');
+insert into BeerVendor(StoreName,Address,SPassword)
+values('UBC Liquor Store','300 St. Catherine','admin');
 
-insert into BeerVendor(StoreName,Address)
-values('Darby\'s Liquor Store','Vancouver City Center');
+insert into BeerVendor(StoreName,Address,SPassword)
+values('Darby\'s Liquor Store','Vancouver City Center','admin');
 
-insert into BeerVendor(StoreName,Address)
-values('Liberty Liquor Store','1622 Commercial Drive');
+insert into BeerVendor(StoreName,Address,SPassword)
+values('Liberty Liquor Store','1622 Commercial Drive','admin');
 
 -- Beers
 insert into BeerInfo(BName,	BType, IBU, ABV, Description, BreweryName)
