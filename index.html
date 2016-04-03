@@ -181,7 +181,7 @@
 
     <!--!!!-->
     <div class="container" id="most-popular-beer">
-      Our Most Popular Beer:
+      <md-subhead class="result-heading">Our Most Popular Beer:</md-subhead>
       <div>
         <md-card class="beer-card">
           <md-card-title>
@@ -204,7 +204,7 @@
           <md-card-actions layout="row" layout-align="end center">
             <md-button class="md-primary"ng-click="showVendors($event, mostPopularBeer)">Vendors</md-button>
             <md-button class="md-primary" ng-click="showRatings($event, mostPopularBeer)">Ratings</md-button>
-            <md-button ng-click="showReviewDialog($event, beer)" class="search-action-button md-primary">Submit Review</md-button>
+            <md-button ng-click="showReviewDialog($event, mostPopularBeer)" class="search-action-button md-primary">Submit Review</md-button>
           </md-card-actions>
         </md-card>
       </div>
