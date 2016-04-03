@@ -363,7 +363,7 @@ public class WebController {
 
         JSONObject bodyJSON = new JSONObject(body);
         String bname = bodyJSON.getString("bname");
-        int rating = bodyJSON.getInt("brate");
+        int rating = bodyJSON.getInt("rating");
         String review = bodyJSON.getString("review");
         int cid = bodyJSON.getInt("cid");
         boolean newReview = bodyJSON.getBoolean("newReview");

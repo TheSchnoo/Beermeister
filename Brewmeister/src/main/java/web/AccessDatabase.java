@@ -39,7 +39,7 @@ public class AccessDatabase {
         }
         return listReviews;
     }
-    
+
     public ArrayList<BeerInfo> searchBeers(String searchString) throws Exception {
         open();
 
