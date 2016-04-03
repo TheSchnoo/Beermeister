@@ -257,17 +257,16 @@ public class WebController {
             try {
                 rowsAffected = accessDB.insertToDB("BeerInfo", newBI.toTupleValueString());
             } catch (Exception e) {
-                returnStatus.put("status", e);
+                returnStatus.put("status", "Brewery does not exist");
                 returnStatus.put("created", false);
-                System.out.println("AddBeerError:" + e);
                 return returnStatus;
             }
 
             if (rowsAffected == 0) {
-                returnStatus.put("status", "beer already exists");
+                returnStatus.put("status", "Beer already exists");
                 returnStatus.put("created", false);
             } else {
-                returnStatus.put("status", "beer added");
+                returnStatus.put("status", "Beer added");
                 returnStatus.put("created", true);
             }
 
@@ -290,17 +289,17 @@ public class WebController {
                 beerName = "BName LIKE '%" + beerName + "%'";
                 rowsAffected = accessDB.updateToDB("BeerInfo", updateMap, beerName);
             } catch (Exception e) {
-                returnStatus.put("status", e);
+                returnStatus.put("status", "Brewery does not exist");
                 returnStatus.put("created", false);
                 System.out.println("UpdateBeerError:" + e);
                 return returnStatus;
             }
 
             if (rowsAffected == 0) {
-                returnStatus.put("status", "no such beer");
+                returnStatus.put("status", "No such beer");
                 returnStatus.put("created", false);
             } else {
-                returnStatus.put("status", "beer updated");
+                returnStatus.put("status", "Beer updated");
                 returnStatus.put("created", true);
             }
 
@@ -329,10 +328,10 @@ public class WebController {
         }
 
         if (rowsAffected == 0) {
-            returnStatus.put("status", "beer already in inventory");
+            returnStatus.put("status", "Beer already in inventory");
             returnStatus.put("created", false);
         } else {
-            returnStatus.put("status", "beer added to inventory");
+            returnStatus.put("status", "Beer added to inventory");
             returnStatus.put("created", true);
         }
 
