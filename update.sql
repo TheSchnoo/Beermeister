@@ -19,9 +19,6 @@ VALUES ('Central City');
 insert into Brewery
 VALUES ('Granville Island Brewing');
 
-insert into Brewery
-VALUES ('Doan\'s Craft Brewing Company');
-
 
 -- Vendors
 insert into BeerVendor(StoreName,Address,SPassword)
@@ -37,7 +34,7 @@ insert into BeerVendor(StoreName,Address,SPassword)
 values('UBC Liquor Store','300 St. Catherine','admin');
 
 insert into BeerVendor(StoreName,Address,SPassword)
-values('Darby\'s Liquor Store','Vancouver City Center','admin');
+values('Darbys Liquor Store','Vancouver City Center','admin');
 
 insert into BeerVendor(StoreName,Address,SPassword)
 values('Liberty Liquor Store','1622 Commercial Drive','admin');
@@ -114,12 +111,6 @@ VALUES ('Red Racer Stout','Stout',55,4.2,'Red Racer Oatmeal Stout is deep, dark,
 
 insert into BeerInfo(BName,	BType, IBU, ABV, Description, BreweryName)
 VALUES ('Red Racer Belgian Style Wheat Ale','Wheat Beer',16,5,'Traditionally cloudy, our Belgian style Red Racer White Ale is brewed with coriander seed and dried orange peel producing a beer light in body with a refreshing citrus-spice aroma.','Central City');
-
-insert into BeerInfo(BName,	BType, IBU, ABV, Description, BreweryName)
-VALUES ('Doan\'s Rye India Pale Ale','IPA',60,6,'Containing large quantities of one of our favourite ingredients, this IPA is pleased to showcase RYE! With its delicious spice and contribution to mouth feel, we feel Rye enhances all of our favourite characteristics of a North West IPA.','Doan\'s Craft Brewing Company');
-
-insert into BeerInfo(BName,	BType, IBU, ABV, Description, BreweryName)
-VALUES ('Doan\'s Rye Stout','Stout',53,6.2,'As a Pacific Northwest Rye Stout, you can get an idea of what we brewed here. It’s dark, its roasty and has a hint of chocolate followed by hop bitterness and the spiciness of rye!','Doan\'s Craft Brewing Company');
 
 insert into BeerInfo(BName,	BType, IBU, ABV, Description, BreweryName)
 VALUES ('Island Lager','Lager',19,5,'Light and malty with hints of grassy hop aromas and a crisp hoppy bitterness.','Granville Island Brewing');
