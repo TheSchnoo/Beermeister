@@ -25,10 +25,22 @@ public class AccessDatabase {
 
     public AccessDatabase(){
     }
+    public ArrayList<BeerReview> searchReviews(String searchString) throws Exception {
+        open();
+        preparedStatement = connect
+                .prepareStatement("SELECT * FROM rates " + searchString);
+        resultSet = preparedStatement.executeQuery();
 
+        BeerReviewService brs = new BeerReviewService();
+        ArrayList<BeerReview> listReviews = new ArrayList<>();
+
+        while(resultSet.next()){
+            listReviews.add(brs.convertResultSetToBeerReview(resultSet));
+        }
+        return listReviews;
+    }
     public ArrayList<BeerInfo> searchBeers(String searchString) throws Exception {
         open();
-        System.out.println(searchString);
 
         //Beer search by vendor
         if(searchString.contains("SELECT")){
