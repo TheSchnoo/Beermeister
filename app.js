@@ -60,7 +60,7 @@ app.controller('AppCtrl', function($scope, $mdDialog, $mdMedia, $rootScope, $htt
 	$rootScope.loading = false;
 	//this block used to get the recommended beers, and set to a scope variable
 	if (mockMode) {
-		$scope.recommendedBeers = mockBeers;
+		$rootScope.recommendedBeers = mockBeers;
 		$scope.mostPopularBeer = mockBeers[1];
   	} else {
   		var recURL = baseURL;
@@ -76,7 +76,7 @@ app.controller('AppCtrl', function($scope, $mdDialog, $mdMedia, $rootScope, $htt
 		    url: recURL
 		}).then(function successCallback(response) {
 			console.log('recommended beers are ' + JSON.stringify(response.data));
-		    $scope.recommendedBeers = response.data;
+		    $rootScope.recommendedBeers = response.data;
 		}, function errorCallback(response) {
 		    // called asynchronously if an error occurs
 		    // or server returns response with an error status.
@@ -160,6 +160,7 @@ app.controller('AppCtrl', function($scope, $mdDialog, $mdMedia, $rootScope, $htt
 
 		function VendorPageCtrl($scope, $mdDialog, vendor){
 			$scope.vendor = vendor;
+			console.log('in VendorPageCtrl, the vendor object is ' + JSON.stringify($scope.vendor));
 			$scope.beers = [];
 			//$scope.beers = get the beers for this vendor by providing storeName
 			if (mockMode) {
@@ -226,6 +227,7 @@ app.controller('AppCtrl', function($scope, $mdDialog, $mdMedia, $rootScope, $htt
 
   	$scope.showReviewDialog = function (ev, beer){
     	console.log('got to showReviewDialog');
+    	console.log('the current beer is ' + JSON.stringify(beer));
 
     	if ($rootScope.cid === null) {
     		$mdDialog.show(
@@ -260,7 +262,7 @@ app.controller('AppCtrl', function($scope, $mdDialog, $mdMedia, $rootScope, $htt
     	console.log('got to ratingsubmissiondialogctrl');
 
     	$scope.beer = beer;
-    	$scope.rating = null
+    	$scope.rating = null;
     	var url = baseURL + '/rating?bname=' + $scope.beer.bname + '&cid=' + $rootScope.cid;
 
     	console.log('makine HTTP GET to ' + url);
@@ -546,6 +548,28 @@ app.controller('LoginCtrl', function($scope, $mdDialog, $mdMedia, $rootScope, $h
 	    	
 				} else {
 					$rootScope.cid = response.data.cid;
+					//###
+
+					console.log('attempting to update recommended beers');
+					var recURL = baseURL;
+					if ($rootScope.cid === null){
+			  			recURL = recURL + '/recommendedbeers';
+			  		} else if ($rootScope.cid != null) {
+			  			recURL = recURL + '/recommendedbeers?cid=' + $rootScope.cid;
+			  		}
+
+			  		console.log('making HTTP GET to ' + recURL);
+			  		$http({
+					    method: 'GET',
+					    url: recURL
+					}).then(function successCallback(response) {
+						console.log('recommended beers are ' + JSON.stringify(response.data));
+					    $rootScope.recommendedBeers = response.data;
+					}, function errorCallback(response) {
+					    // called asynchronously if an error occurs
+					    // or server returns response with an error status.
+					});
+					
 					$mdDialog.show(
 						$mdDialog.alert()
 							.parent(angular.element(document.querySelector('#popupContainer')))

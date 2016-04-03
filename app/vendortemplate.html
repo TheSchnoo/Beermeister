@@ -11,36 +11,25 @@
   <body ng-app="Brewmaster" ng-cloak>
     <div ng-controller="AppCtrl" ng-cloak >
       <div id="vendor-top-panel">
-        <div class="container">
-          <div class="row">
-            <div class="col-md-8">
-              <h2 class="white-text tw-cen-text" id="beer-vendor-name">Beer Vendor Name</h2>
-            </div>
-            <div class="col-md-4" id="vendor-address-section">
-              <h6 class="white-text tw-cen-text" id="vendor-address">367 West Broadway </h6>
-              <img id="location-icon" src="../images/white-location-icon.png">
-            </div>
-          </div>
+        <img id="vendor-top-panel-image" src="../images/vendor-info-top-banner.jpg">
+        <h2 class="white-text tw-cen-text" id="beer-vendor-name">{{vendor.storeName}}</h2>
+        <div id="vendor-address-section">
+          <h6 class="white-text tw-cen-text" id="vendor-address">{{vendor.address}}</h6>
+          <img id="location-icon" src="../images/white-location-icon.png">
         </div>
       </div>
       <div id="vendor-panel-2">
-        <div class="container" id="vendor-beers-section">
-          <div class="row text-center">
-            <h3 id="beers-available-header">Beers Available at this Vendor</h3>
-          </div>
-          <div class="row">
-            <div class="col-md-10 col-md-offset-1">
-              <hr id="vendor-divide-line">
+        <div id="vendor-beers-section">
+          <div class="text-center">
+            <h3 id="beers-available-header">Beers Available at {{vendor.storeName}}</h3>
+            <div ng-repeat="beer in beers">
+              {{beer.bname}}
             </div>
           </div>
+          <div class="row">
+              <hr id="vendor-divide-line">
+          </div>
         </div>
-      </div>
-    </div>
-
-    <div class="tw-cen-text" id="bottom-navbar">
-      <div class="container">
-        <p>&copy; Brewmeister 2016</p>
-        <p id="course-id">CPSC 304 - University of British Columbia</p>
       </div>
     </div>
   </body>
