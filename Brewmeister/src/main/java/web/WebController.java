@@ -210,11 +210,22 @@ public class WebController {
         return new ArrayList<BeerInfo>();
     }
 
-//    POST REQUESTS
+    @RequestMapping(value = "/rating", method = RequestMethod.GET)
+    public
+    @ResponseBody
+    BeerReview revs (
+            @RequestParam(value="cid", required = true) int cid,
+            @RequestParam(value="bname", required = true) String bname,
+            HttpServletResponse httpResponse) throws Exception {
+        AccessDatabase accessDB = new AccessDatabase();
+        return accessDB.checkForReview(cid, bname);
+    }
+        //    POST REQUESTS
 //++++++++++++++++++++++++++++++++++
 
     //    Creating and updating beers
     @RequestMapping(value = "/beers", method = RequestMethod.POST)
+
     public
     @ResponseBody
     Map postBeer(@RequestBody String body,
@@ -361,4 +372,28 @@ public class WebController {
 
         return returnStatus;
     }
+    // Add or Update a Review
+    @RequestMapping(value = "/rating", method = RequestMethod.POST)
+    public @ResponseBody JSONObject postRating(@RequestBody String body) throws JSONException {
+
+        JSONObject bodyJSON = new JSONObject(body);
+        String bname = bodyJSON.getString("bname");
+        int rating = bodyJSON.getInt("brate");
+        String review = bodyJSON.getString("review");
+        int cid = bodyJSON.getInt("cid");
+        boolean newReview = bodyJSON.getBoolean("newReview");
+
+        BeerReview newBR = new BeerReview(bname, review, rating, cid, newReview);
+
+        AccessDatabase accessDB = new AccessDatabase();
+        try {
+            accessDB.addOrModifyReview(newBR);
+        } catch (Exception e) {
+            return new JSONObject().append("created", false);
+        }
+
+        return new JSONObject().append("created", true);
+    }
 }
+
+
