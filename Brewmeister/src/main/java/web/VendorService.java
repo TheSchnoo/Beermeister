@@ -54,13 +54,17 @@ public class VendorService {
         return searchString;
     }
 
-    public String getBeersByVendorStocked(String storeId) throws SQLException, ClassNotFoundException {
+    public String getBeersByVendorStocked(String storeId, Map searchBeerMap) throws Exception {
         String searchString =
                 "SELECT *, CASE WHEN " +
                         "(SELECT BName " +
                         "FROM BeerVendor bv, BeerInStock bis " +
                         "WHERE beerinfo.BName = bis.BName AND bv.storeID = bis.storeID " +
                         "AND bv.storeId="+storeId+") IS NULL THEN 0 ELSE 1 END AS stocked FROM beerinfo";
+        if(searchBeerMap.size()>0){
+            BeerService beerService = new BeerService();
+            searchString = searchString + " " + beerService.getBeers(searchBeerMap);
+        }
 
         System.out.println(searchString);
         return searchString;
