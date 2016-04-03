@@ -1,3 +1,4 @@
+-- TODO update these
 insert into Brewery(BName)
 values('brewery name as a string');
 

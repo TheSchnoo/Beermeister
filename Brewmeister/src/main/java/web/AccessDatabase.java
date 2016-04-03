@@ -12,21 +12,36 @@ public class AccessDatabase {
     private PreparedStatement preparedStatement = null;
     private ResultSet resultSet = null;
     public final static String CUSTOMER_TABLE = "Customer";
-    public final static String SESSION_TABLE = "CustomerSession";
     public final static String BEER_VENDOR_TABLE = "BeerVendor";
+    private boolean success;
+    private final String CUSTOMERTABLE = "Customer";
+    private final String SESSIONTABLE = "CustomerSession";
 
-    //keep track of the current highest Id of each object type in the db
-    //id gets incremented even when an insert fails, need to account for this
-    public static int numCustomersInserted = 0;
-    public static int numBeerVendorsInserted = 0;
+    public static int numAccounts = 0;
 
+    public static enum loginErrorTypes {
+        noAccountFound, wrongPassword, sqlError;
+    }
 
     public AccessDatabase(){
+    }
+    public ArrayList<BeerReview> searchReviews(String searchString) throws Exception {
+        open();
+        preparedStatement = connect
+                .prepareStatement(searchString);
+        resultSet = preparedStatement.executeQuery();
+
+        BeerReviewService brs = new BeerReviewService();
+        ArrayList<BeerReview> listReviews = new ArrayList<>();
+
+        while(resultSet.next()){
+            listReviews.add(brs.convertResultSetToBeerReview(resultSet));
+        }
+        return listReviews;
     }
 
     public ArrayList<BeerInfo> searchBeers(String searchString) throws Exception {
         open();
-        System.out.println(searchString);
 
         //Beer search by vendor
         if(searchString.contains("SELECT")){
@@ -76,8 +91,8 @@ public class AccessDatabase {
             String bname = resultSet.getString("BName");
             String breweryName = resultSet.getString("BreweryName");
             String type = resultSet.getString("BType");
-            float abv = resultSet.getFloat("ABV");
-            float ibu = resultSet.getFloat("IBU");
+            double abv = Math.floor(resultSet.getFloat("ABV")* 100.0) / 100.0;
+            double ibu = resultSet.getFloat("IBU");
             String description = resultSet.getString("Description");
             Boolean brewed = resultSet.getBoolean("Brewed");
             double averageRating = resultSet.getDouble("AvgRating");
@@ -90,11 +105,37 @@ public class AccessDatabase {
         return listBeers;
     }
 
-    public ArrayList<BeerInfo> getRecommendations(int userid) throws Exception {
+    public ArrayList<BeerInfo> searchBeersByVendorNoStock(String searchString) throws Exception {
+        open();
+        preparedStatement = connect
+                .prepareStatement(searchString);
+
+        resultSet = preparedStatement.executeQuery();
+
+        ArrayList<BeerInfo> listBeers = new ArrayList<BeerInfo>();
+
+        while(resultSet.next()){
+            String bname = resultSet.getString("BName");
+            String breweryName = resultSet.getString("BreweryName");
+            String type = resultSet.getString("BType");
+            double abv = Math.floor(resultSet.getFloat("ABV")* 100.0) / 100.0;
+            double ibu = resultSet.getFloat("IBU");
+            String description = resultSet.getString("Description");
+            Boolean brewed = resultSet.getBoolean("Brewed");
+            double averageRating = resultSet.getDouble("AvgRating");
+
+            BeerInfo newBI = new BeerInfo(bname, breweryName, type, abv, ibu,
+                    description, averageRating, brewed);
+            listBeers.add(newBI);
+        }
+        return listBeers;
+    }
+
+    public ArrayList<BeerInfo> getRecommendations(String searchString) throws Exception {
         open();
         try{
             preparedStatement = connect
-                    .prepareStatement("SELECT * FROM beerinfo");
+                    .prepareStatement(searchString);
             resultSet = preparedStatement.executeQuery();
 
             BeerService bs = new BeerService();
@@ -111,6 +152,40 @@ public class AccessDatabase {
         } finally {
             close();
         }
+    }
+
+    public ArrayList<Object> getMostRated() throws SQLException{
+        open();
+       ArrayList<Object> returnArray = new ArrayList<>();
+        String searchString =
+                "SELECT b1.*, rates_count " +
+                "FROM BeerInfo b1 JOIN " +
+                        "(SELECT b2.BName, COUNT(r1.BName) rates_count " +
+                        "FROM BeerInfo b2, rates r1 " +
+                        "WHERE b2.BName = r1.BName " +
+                        "GROUP BY b2.BName) " +
+                "CountRatings ON b1.BName = CountRatings.BName " +
+                        "WHERE rates_count = " +
+                        "(SELECT MAX(rates_count) " +
+                        "FROM (SELECT b2.BName, COUNT(r1.BName) rates_count " +
+                        "FROM BeerInfo b2, rates r1 " +
+                        "WHERE b2.BName = r1.BName GROUP BY b2.BName) CountRating)";
+        try{
+            preparedStatement = connect
+                    .prepareStatement(searchString);
+            resultSet = preparedStatement.executeQuery();
+            BeerService bs = new BeerService();
+            while(resultSet.next() && returnArray.size()<1) {
+                BeerInfo newBI = bs.convertResultSetToBeerInfo(resultSet);
+                returnArray.add(newBI);
+                returnArray.add(resultSet.getInt("rates_count"));
+            }
+        } catch (Exception e){
+            System.out.println("Most rated error:" + e);
+            throw e;
+        }
+        close();
+        return returnArray;
     }
 
     public int insertToDB(String table, String values) throws Exception {
@@ -240,68 +315,178 @@ public class AccessDatabase {
 
         }
     }
+    public BeerReview checkForReview(int cid, String bname) throws Exception {
+        BeerReview beerReview = new BeerReview(bname, " ",0,cid,true,"fake");
+        try{
+            Class.forName("com.mysql.jdbc.Driver");
 
-    public Map createAccount(ArrayList<String> createAccountParams, String tableName) {
+            connect = DriverManager
+                    .getConnection("jdbc:mysql://localhost/beerinfo?"
+                            + "user=sqluser&password=sqluserpw");
+            preparedStatement = connect.prepareStatement("Select Cname from Customer where cid = " + cid);
+            resultSet = preparedStatement.executeQuery();
+            String reviewerName = resultSet.getString("Cname");
+            beerReview = new BeerReview(bname, " ",0,cid,true,reviewerName);
+            preparedStatement = connect
+                    .prepareStatement("Select * FROM Rates WHERE bname like '" + bname + "' AND CID = " + cid);
+            resultSet = preparedStatement.executeQuery();
+            BeerReviewService beerReviewService = new BeerReviewService();
+
+            while(resultSet.next()){
+                beerReview = beerReviewService.convertResultSetToBeerReview(resultSet);
+            }
+
+
+        } catch (Exception e) {
+            System.out.println("broken");
+        } finally {
+            close();
+        }
+        return beerReview;
+    }
+    public Boolean addOrModifyReview(BeerReview review) throws Exception {
+        try{
+            Class.forName("com.mysql.jdbc.Driver");
+
+            connect = DriverManager
+                    .getConnection("jdbc:mysql://localhost/beerinfo?"
+                            + "user=sqluser&password=sqluserpw");
+            if (review.isNewReview()) {
+                preparedStatement = connect
+                        .prepareStatement("INSERT INTO Rates VALUES " + review.toTupleValueString());
+                success = preparedStatement.execute();
+            }else{
+                preparedStatement = connect.prepareStatement("UPDATE Rates SET BRate = " + review.getRating() + " WHERE " + " BNAME LIKE '" + review.getBname() + "' AND CID = " + review.getCid() + ";");
+                success = preparedStatement.execute();
+                preparedStatement = connect.prepareStatement("UPDATE Rates SET Review = '" + review.getReview() + "' WHERE " + "BNAME LIKE '" + review.getBname() + "' AND CID = " + review.getCid() + ";");
+
+                success = (success & preparedStatement.execute());
+            }
+            return true;
+
+        } catch (Exception e) {
+            throw e;
+        } finally {
+            close();
+        }
+    }
+
+
+    public Map createAccount(ArrayList<String> createAccountParams, String nameLabel,String tableName) {
 
         Map createAccountResponse = new HashMap();
         String insertAccountString = this.generateInsertString(createAccountParams, tableName);
-
-        //because the id increments in db regardless of whether insert works
-        if (tableName.equals(CUSTOMER_TABLE)) {
-            numCustomersInserted++;
-        } else if (tableName.equals(BEER_VENDOR_TABLE)) {
-            numBeerVendorsInserted++;
-        }
 
         try {
             int createAccountResult = insertNewEntry(insertAccountString);
         } catch (Exception e) {
             createAccountResponse.put("created", false);
+            close();
             return createAccountResponse;
         }
 
         createAccountResponse.put("created", true);
 
+        //GET the id of the entry just made in database
+        //include label of object name column in input arraylist (in order)
         if (tableName.equals(CUSTOMER_TABLE)) {
-            createAccountResponse.put("cid", numCustomersInserted);
+            createAccountParams.set(1, createAccountParams.get(0));
+            createAccountParams.set(0, nameLabel);
+        } else {
+            createAccountParams.set(1, createAccountParams.get(0));
+            createAccountParams.set(0, nameLabel);
+            createAccountParams.remove(2);
+        }
+
+        String queryAccountIdString= this.generateSearchString(createAccountParams, tableName);
+        ResultSet getAccountIdResult;
+
+        try {
+            getAccountIdResult = queryDatabase(queryAccountIdString);
+        } catch (Exception e) {
+            createAccountResponse.put("error", loginErrorTypes.sqlError);
+            close();
+            return createAccountResponse;
+        }
+
+        String tempId = "";
+        try {
+            while(getAccountIdResult.next()){
+
+                if (tableName.equals(CUSTOMER_TABLE)) {
+                    tempId= resultSet.getString("CID");
+                } else {
+                    tempId = resultSet.getString("StoreID");
+                }
+            }
+        } catch (SQLException e) {
+            createAccountResponse.put("error", loginErrorTypes.sqlError);
+            close();
+            return createAccountResponse;
+        }
+
+        if (tableName.equals(CUSTOMER_TABLE)) {
+            createAccountResponse.put("cid", tempId);
         } else if (tableName.equals(BEER_VENDOR_TABLE)) {
-            createAccountResponse.put("storeId", numBeerVendorsInserted);
+            createAccountResponse.put("storeId", tempId);
         }
         close();
         return createAccountResponse;
     }
 
-    public Map checkCredentials(ArrayList<String> checkCredentialsParams, String password) throws SQLException{
+    public Map checkCredentials(ArrayList<String> checkCredentialsParams, String password, String tableName)
+            throws SQLException{
 
         Map checkCredentialResponse = new HashMap();
+        String searchAccountString;
+        if(tableName.equals(CUSTOMER_TABLE)) {
+            searchAccountString = this.generateSearchString(checkCredentialsParams, CUSTOMER_TABLE);
+        } else {
+            searchAccountString = this.generateSearchString(checkCredentialsParams, BEER_VENDOR_TABLE);
+        }
 
-        String searchAccountString = this.generateSearchString(checkCredentialsParams, CUSTOMER_TABLE);
         ResultSet searchResult;
 
         try {
             searchResult = queryDatabase(searchAccountString);
         } catch (Exception e) {
             checkCredentialResponse.put("matchFound", false);
-            checkCredentialResponse.put("error", CustomerAccountService.loginErrorTypes.sqlError);
+            checkCredentialResponse.put("error", AccessDatabase.loginErrorTypes.sqlError);
             return checkCredentialResponse;
         }
         //TODO: need more checks here
         //return noAccountFound if size of result is 0
 
-        while(searchResult.next()){
-            String cPassword = resultSet.getString("CPassword");
-            if (cPassword.equals(password)) {
-                checkCredentialResponse.put("matchFound", true);
-                checkCredentialResponse.put("CID", resultSet.getString("CID"));
-                return checkCredentialResponse;
+        try {
+            while (searchResult.next()) {
+                String tempPassword;
+                if (tableName.equals(CUSTOMER_TABLE)) {
+                    tempPassword = resultSet.getString("CPassword");
+                } else {
+                    tempPassword = resultSet.getString("SPassword");
+                }
+                if (tempPassword.equals(password)) {
+                    checkCredentialResponse.put("authenticated", true);
+                    if (tableName.equals(CUSTOMER_TABLE)) {
+                        checkCredentialResponse.put("cid", resultSet.getString("CID"));
+                    } else {
+                        checkCredentialResponse.put("storeId", resultSet.getString("StoreID"));
+                    }
+                    close();
+                    return checkCredentialResponse;
+                }
             }
+        } catch (SQLException e) {
+            checkCredentialResponse.put("authenticated", false);
+            checkCredentialResponse.put("error", loginErrorTypes.sqlError);
+            close();
+            return checkCredentialResponse;
         }
 
-        checkCredentialResponse.put("matchFound", true);
-        checkCredentialResponse.put("error", CustomerAccountService.loginErrorTypes.wrongPassword);
+        checkCredentialResponse.put("authenticated", false);
+        checkCredentialResponse.put("error", loginErrorTypes.wrongPassword);
 
         close();
-
         return checkCredentialResponse;
     }
 
@@ -328,7 +513,7 @@ public class AccessDatabase {
             }
             multipleParams = true;
             if (temp.length() == 0) {
-                insertString += "'" + "null" + "'";
+                insertString += "null";
             } else {
                 insertString += "'" + temp + "'";
             }
@@ -363,8 +548,10 @@ public class AccessDatabase {
             } else {
                 String tempKey = searchParams.get(i - 1);
                 switch (tempKey) {
-                    case "cname":
+                    case "CName":
                     case "cpassword":
+                    case "StoreName":
+                    case "password":
                         queryString += " like " + "'" + searchParams.get(i) + "'";
                         break;
                 }
@@ -404,4 +591,30 @@ public class AccessDatabase {
         }
         return result;
     }
+
+    public ArrayList<BeerInfo> getHighestRatedBeers(int numBeers){
+        open();
+        ArrayList<BeerInfo> result = new ArrayList<>();
+
+        String searchString = "SELECT * " +
+                "FROM BeerInfo " +
+                "ORDER BY AvgRating DESC LIMIT " + numBeers;
+        System.out.println(searchString);
+
+        try {
+            preparedStatement = connect
+                    .prepareStatement(searchString);
+            resultSet = preparedStatement.executeQuery();
+
+            BeerService bs = new BeerService();
+            while(resultSet.next()){
+                result.add(bs.convertResultSetToBeerInfo(resultSet));
+            }
+        } catch (Exception e){
+            System.out.println("Error getting highest rated");
+        }
+        close();
+        return result;
+    }
+
 }

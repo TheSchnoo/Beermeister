@@ -1,6 +1,7 @@
 package web;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.mysql.jdbc.exceptions.MySQLIntegrityConstraintViolationException;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.stereotype.Controller;
@@ -12,7 +13,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.ExecutionException;
 
 @Controller
 public class WebController {
@@ -25,52 +25,51 @@ public class WebController {
                                     @RequestParam(value = "vendor", required = false) String vendor,
                                     @RequestParam(value = "ibu", required = false) String ibu,
                                     @RequestParam(value = "abv", required = false) String abv,
-                                    @RequestParam(value = "rating", required = false) String rating,
+                                    @RequestParam(value = "averageRating", required = false) String rating,
                                     @RequestParam(value = "description", required = false) String description,
                                     @RequestParam(value = "breweryName", required = false) String breweryName,
+                                    @RequestParam(value = "storeId", required = false) String storeId,
                                     @RequestParam(value = "storeName", required = false) String storeName,
                                     HttpServletResponse httpResponse) throws IOException {
-        ArrayList<BeerInfo> beers;
+        ArrayList<BeerInfo> beers = new ArrayList<>();
         AccessDatabase accessDatabase = new AccessDatabase();
 
-        if (storeName == null) {
+        Map<String, String> searchBeerMap = new HashMap<>();
 
-            Map<String, String> searchBeerMap = new HashMap<>();
+        searchBeerMap.put("bname", bname);
+        searchBeerMap.put("btype", btype);
+        searchBeerMap.put("ibu", ibu);
+        searchBeerMap.put("abv", abv);
+        searchBeerMap.put("avgRating", rating);
+        searchBeerMap.put("description", description);
+        searchBeerMap.put("breweryName", breweryName);
 
-            searchBeerMap.put("bname", bname);
-            searchBeerMap.put("type", btype);
-            searchBeerMap.put("ibu", ibu);
-            searchBeerMap.put("abv", abv);
-//            searchBeerMap.put("averageRating", rating);
-            searchBeerMap.put("description", description);
-            searchBeerMap.put("breweryName", breweryName);
+        if (storeId == null) {
+            if(storeName == null) {
 
-            BeerService beerService = new BeerService();
-            try {
-                beers = accessDatabase.searchBeers(beerService.getBeers(searchBeerMap));
-            } catch (Exception e) {
-                beers = null;
-            }
-
-
-        } else {
-//            if (bname==null) {
-//                try {
-//                    VendorService vendorService = new VendorService();
-//                    beers = accessDatabase.searchBeers(vendorService.getBeersByVendor(storeName));
-//                } catch (Exception e) {
-//                    beers = null;
-//                    e.printStackTrace();
-//                }
-//            } else {
                 try {
-                    VendorService vendorService = new VendorService();
-                    beers = accessDatabase.searchBeersByVendor(vendorService.getBeersByVendorStocked(storeName));
+                    BeerService beerService = new BeerService();
+                    beers = accessDatabase.searchBeers(beerService.getBeers(searchBeerMap));
                 } catch (Exception e) {
                     beers = null;
-                    e.printStackTrace();
                 }
-//            }
+            }
+            else {
+                try{
+                    VendorService vs = new VendorService();
+                    beers = accessDatabase.searchBeersByVendorNoStock(vs.getBeersByVendor(storeName, searchBeerMap));
+                } catch (Exception e){
+                    System.out.print(e);
+                }
+            }
+        } else {
+            try {
+                VendorService vendorService = new VendorService();
+                beers = accessDatabase.searchBeersByVendor(vendorService.getBeersByVendorStocked(storeId, searchBeerMap));
+            } catch (Exception e) {
+                beers = null;
+                e.printStackTrace();
+            }
         }
         httpResponse.setStatus(HttpServletResponse.SC_OK);
         return beers;
@@ -80,21 +79,47 @@ public class WebController {
     public
     @ResponseBody
     ArrayList<BeerInfo> recs(
-            @RequestParam(value = "userid", required = false) String userid,
+            @RequestParam(value = "cid", required = false) Integer cid,
             HttpServletResponse httpResponse) throws IOException {
-
-        // TODO: ADD FUNCTIONALITY
 
         AccessDatabase accessDB = new AccessDatabase();
         ArrayList<BeerInfo> beers;
+
+        // Get 4 beers not rated by user
+        if(cid!=null) {
+            try {
+                BeerService beerService = new BeerService();
+                beers = accessDB.getRecommendations(beerService.getUnratedBeers(cid));
+                httpResponse.setStatus(HttpServletResponse.SC_OK);
+            } catch (Exception e) {
+                beers = null;
+                httpResponse.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            }
+            return beers;
+        }
+
+        // Get 4 top rated beers
+        else {
+            beers = accessDB.getHighestRatedBeers(4);
+            return beers;
+        }
+
+    }
+
+    @RequestMapping(value = "/most-rated-beer", method = RequestMethod.GET)
+    public
+    @ResponseBody ArrayList mostRated(HttpServletResponse httpResponse) throws IOException {
+
+        AccessDatabase accessDB = new AccessDatabase();
+        ArrayList mostRatedBeer;
         try {
-            beers = accessDB.getRecommendations(Integer.parseInt(userid));
+            mostRatedBeer = accessDB.getMostRated();
             httpResponse.setStatus(HttpServletResponse.SC_OK);
         } catch (Exception e) {
-            beers = null;
+            mostRatedBeer = null;
             httpResponse.setStatus(HttpServletResponse.SC_NOT_FOUND);
         }
-        return beers;
+        return mostRatedBeer;
     }
 
     @RequestMapping(value = "/customer-signup", method = RequestMethod.POST)
@@ -154,44 +179,63 @@ public class WebController {
         return VendorService.createVendorAccount(tempStoreName, tempPassword, tempAddress);
     }
 
+    @RequestMapping(value = "/vendor-login", method = RequestMethod.GET)
+    public
+    @ResponseBody
+    Map vendorLogin(
+            @RequestParam(value = "storeName", required = true) String username,
+            @RequestParam(value = "password", required = true) String password,
+            HttpServletResponse httpResponse) throws IOException {
+
+        httpResponse.setStatus(HttpServletResponse.SC_OK);
+        return VendorService.login(username, password);
+    }
+
 
     @RequestMapping(value = "/reviews", method = RequestMethod.GET)
     public
     @ResponseBody
-    ArrayList<BeerInfo> revs(
-            @RequestParam(value = "userid", required = false) String userid,
-            @RequestParam(value = "bname", required = false) String bname,
+    ArrayList<BeerReview> revs(
+            @RequestParam(value = "bname", required = true) String bname,
             HttpServletResponse httpResponse) throws IOException {
-        AccessDatabase accessDB = new AccessDatabase();
-        ArrayList<BeerInfo> reviews;
+        ArrayList<BeerReview> reviews;
 
-        //TODO: ADD FUNCTIONALITY
+        AccessDatabase accessDatabase = new AccessDatabase();
 
-//        try {
-//            if(userid==null){
-//                //TODO search reviews by beer name
-//            }
-//            else{
-//                //TODO search reviews by a user
-//            }
-//            httpResponse.setStatus(HttpServletResponse.SC_OK);
-//        } catch (Exception e) {
-//            reviews = null;
-//            httpResponse.setStatus(HttpServletResponse.SC_NOT_FOUND);
-//        }
-        return new ArrayList<BeerInfo>();
+        BeerReviewService beerReviewService = new BeerReviewService();
+        try {
+            reviews = accessDatabase.searchReviews(beerReviewService.getReviews(bname));
+        } catch (Exception e) {
+            System.out.println("Review error:" + e);
+            reviews = null;
+        }
+
+
+        httpResponse.setStatus(HttpServletResponse.SC_OK);
+        return reviews;
     }
 
-//    POST REQUESTS
+    @RequestMapping(value = "/rating", method = RequestMethod.GET)
+    public
+    @ResponseBody
+    BeerReview revs (
+            @RequestParam(value="cid", required = true) int cid,
+            @RequestParam(value="bname", required = true) String bname,
+            HttpServletResponse httpResponse) throws Exception {
+        AccessDatabase accessDB = new AccessDatabase();
+        return accessDB.checkForReview(cid, bname);
+    }
+    //    POST REQUESTS
 //++++++++++++++++++++++++++++++++++
 
     //    Creating and updating beers
     @RequestMapping(value = "/beers", method = RequestMethod.POST)
+
     public
     @ResponseBody
     Map postBeer(@RequestBody String body,
-                          @RequestParam(value = "bname",
-                                  required = false) String beerName) throws JSONException {
+                 @RequestParam(value = "bname",
+                         required = false) String beerName) throws JSONException {
 
         Map<String, Object> returnStatus = new HashMap<>();
         int rowsAffected = 0;
@@ -216,17 +260,16 @@ public class WebController {
             try {
                 rowsAffected = accessDB.insertToDB("BeerInfo", newBI.toTupleValueString());
             } catch (Exception e) {
-                returnStatus.put("status", e);
+                returnStatus.put("status", "Brewery does not exist or beer already exists");
                 returnStatus.put("created", false);
-                System.out.println("AddBeerError:" + e);
                 return returnStatus;
             }
 
             if (rowsAffected == 0) {
-                returnStatus.put("status", "beer already exists");
+                returnStatus.put("status", "Beer already exists");
                 returnStatus.put("created", false);
             } else {
-                returnStatus.put("status", "beer added");
+                returnStatus.put("status", "Beer added");
                 returnStatus.put("created", true);
             }
 
@@ -249,17 +292,17 @@ public class WebController {
                 beerName = "BName LIKE '%" + beerName + "%'";
                 rowsAffected = accessDB.updateToDB("BeerInfo", updateMap, beerName);
             } catch (Exception e) {
-                returnStatus.put("status", e);
+                returnStatus.put("status", "Brewery does not exist");
                 returnStatus.put("created", false);
                 System.out.println("UpdateBeerError:" + e);
                 return returnStatus;
             }
 
             if (rowsAffected == 0) {
-                returnStatus.put("status", "no such beer");
+                returnStatus.put("status", "No such beer");
                 returnStatus.put("created", false);
             } else {
-                returnStatus.put("status", "beer updated");
+                returnStatus.put("status", "Beer updated");
                 returnStatus.put("created", true);
             }
 
@@ -272,7 +315,7 @@ public class WebController {
     public
     @ResponseBody
     Map addBeerToVendor(@RequestParam(value = "bname", required = false) String bname,
-                        @RequestParam(value = "storeid", required = false) String storeID) throws JSONException {
+                        @RequestParam(value = "storeId", required = false) String storeID) throws JSONException {
         Map<String, Object> returnStatus = new HashMap<>();
         int rowsAffected = 0;
         try {
@@ -288,10 +331,10 @@ public class WebController {
         }
 
         if (rowsAffected == 0) {
-            returnStatus.put("status", "beer already in inventory");
+            returnStatus.put("status", "Beer already in inventory");
             returnStatus.put("created", false);
         } else {
-            returnStatus.put("status", "beer added to inventory");
+            returnStatus.put("status", "Beer added to inventory");
             returnStatus.put("created", true);
         }
 
@@ -333,51 +376,31 @@ public class WebController {
 
         return returnStatus;
     }
+    // Add or Update a Review
     @RequestMapping(value = "/rating", method = RequestMethod.POST)
-    public @ResponseBody JSONObject postRating(@RequestBody String body,
-                                             @RequestParam(value="bname", required=true) String beerName) throws JSONException {
-        // Add a rating
+    public @ResponseBody Map postRating(@RequestBody String body) throws JSONException {
 
-            JSONObject bodyJSON = new JSONObject(body);
-            String bname = bodyJSON.getString("bname");
-            int rating = bodyJSON.getInt("brate");
-            String review = bodyJSON.getString("review");
-            int cid = bodyJSON.getInt("uuid");
+        JSONObject bodyJSON = new JSONObject(body);
+        String bname = bodyJSON.getString("bname");
+        int rating = bodyJSON.getInt("rating");
+        String review = bodyJSON.getString("review");
+        int cid = bodyJSON.getInt("cid");
+        boolean newReview = bodyJSON.getBoolean("newReview");
+        String reviewerName = bodyJSON.getString("reviewerName");
 
-            BeerReview newBR = new BeerReview(bname, review,rating,cid);
+        BeerReview newBR = new BeerReview(bname, review, rating, cid, newReview, reviewerName);
 
-            AccessDatabase accessDB = new AccessDatabase();
-        if(beerName == null){
-            try {
-                accessDB.addReview(newBR);
-            } catch (Exception e) {
-                return new JSONObject().append("created", false);
-            }
-
-            return new JSONObject().append("created", true);
+        AccessDatabase accessDB = new AccessDatabase();
+        Map<String,Boolean> returnMap = new HashMap<>();
+        try {
+            accessDB.addOrModifyReview(newBR);
+            returnMap.put("created", true);
+        } catch (Exception e) {
+            returnMap.put("created", false);
         }
 
-        // Update a rating
-        else {
-            HashMap<String,String> updateMap;
-            JSONObject bodyJSON = new JSONObject(body);
-            try {
-                updateMap = new ObjectMapper().readValue(bodyJSON.toString(), HashMap.class);
-            } catch (IOException e) {
-                updateMap = null;
-                e.printStackTrace();
-            }
-            AccessDatabase accessDB = new AccessDatabase();
-
-            try {
-                beerName = "beerName=" + beerName;
-                accessDB.updateToDB("BeerInfo", updateMap, beerName);
-            } catch (Exception e) {
-                return new JSONObject().append("updated", false);
-            }
-
-            return new JSONObject().append("updated", true);
-        }
-
+        return returnMap;
     }
 }
+
+

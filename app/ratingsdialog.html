@@ -1,4 +1,4 @@
-<md-dialog aria-label="Login" ng-cloak ng-controller="LoginCtrl">
+<md-dialog aria-label="Login" ng-cloak>
   <form>
     <md-toolbar>
       <div class="md-toolbar-tools">
@@ -11,9 +11,22 @@
     <md-dialog-content>
       <div class="md-dialog-content">
           
-          RATINGS WILL BE SHOWN HERE
+        <md-list flex id="search-list">
+
+          <md-list-item class="md-3-line" multiple="true" ng-repeat="review in reviews">
+            <img ng-src="images/stock-beer.jpg" class="md-avatar" alt="images/stock-beer.jpg" />
+            <div class="md-list-item-text" layout="column">
+              <h3>{{review.reviewerName}}</h3>
+              <h4>{{review.rating}} Stars</h4>
+              <p>{{review.review}}</p>
+            </div>
+            
+            <md-divider ng-if="!$last"></md-divider>
+          </md-list-item>
+
+        </md-list>
           
-          </div>
+      </div>
     </md-dialog-content>
 
     <!-- <md-dialog-actions layout="row">

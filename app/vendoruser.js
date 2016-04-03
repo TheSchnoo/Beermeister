@@ -22,87 +22,40 @@ app.controller('SearchCtrl', function($scope, $http, $timeout, $rootScope, $mdMe
 
 
     $scope.submitSearch = function(ev){
-  
-    	if (mockMode){
-	    	$rootScope.searchResults = [
-			 	{
-				  	"bname": "Thunderbird Lager",
-				  	"breweryName": "UBC Brewery",
-				  	"type": "Lager",
-				  	"abv": "5.1%",
-				  	"ibu": "10 bitterness units",
-				  	"imageLocation": "images/stock-beer.jpg",
-				  	"vendors":[
-				  		{"storeName":"Legacy Liquor Store"},
-				  		{"storeName":"BC Liquor Store"}
-				  	]
-			  	},
-			  	{	
-				  	"bname": "Passive Aggressive",
-				  	"breweryName": "Brassneck",
-				  	"type": "IPA",
-				  	"abv": "5.3%",
-				  	"ibu": "2 bitterness units",
-				  	"imageLocation": "images/ipa.jpg",
-				  	"vendors":[
-				  		{"storeName":"UBC Liquor Store"},
-				  		{"storeName":"BC Liquore Store"}
-				  	]
+    	if($rootScope.storeId === null){
+    		$mdDialog.show(
+				$mdDialog.alert()
+					.parent(angular.element(document.querySelector('#popupContainer')))
+					.clickOutsideToClose(true)
+					.textContent('Yo dawg, please sign in first')
+					.ariaLabel('Alert Dialog Demo')
+					.ok('Got it!')
+					.targetEvent(ev)
+	    	);
+    	} else {
+    		var url = convertBeerToURL($scope.beer);
+	    	if (url === baseURL + '/beers'){
+	    		url = url + '?storeId=' + $rootScope.storeId;
 
-			  	},
-			  	{
-				  	"bname": "Southern Hop",
-				  	"breweryName": "Main Street Brewery",
-				  	"type": "IPA",
-				  	"abv": "6.1%",
-				  	"ibu": "20 bitterness units",
-				  	"imageLocation": "images/stock-beer.jpg",
-				  	"vendors":[]
-				},
-				{
-				  	"bname": "Sun God Wheat Ale",
-				  	"breweryName": "R&B Brewery",
-				  	"type": "Hefeweizen",
-				  	"abv": "5.6%",
-				  	"ibu": "2 bitterness units",
-				  	"imageLocation": "images/TownHallHefeweizen.jpg",
-				  	"vendors":[]
-				}
-	  		];
-	  		console.log('the search results are ' + JSON.stringify($scope.searchResults));
-	  		console.log('searchResults[0].name is now ' + $scope.searchResults[0].name);
+	    	} else {
+	    		url = url + '&storeId=' + $rootScope.storeId;
 
-	    } else {
-	    	var url = convertBeerToURL();
-	    	$rootScope.loading = true;
-	    	console.log('rootScope.loading is ' + $rootScope.loading);
+	    	}
+	    	
 	    	console.log('making HTTP GET request to ' + url);
 	    	$http({
 			    method: 'GET',
 			    url: url
 			}).then(function successCallback(response) {
-				console.log('received a response of ' + JSON.stringify(response.data));
+				// console.log('received a response of ' + JSON.stringify(response.data));
 			    $rootScope.searchResults = response.data;
-			    console.log("the search results are " + JSON.stringify($scope.searchResults));
+			    console.log('rootScope.searchResults are now ' + JSON.stringify($rootScope.searchResults));
 			}, function errorCallback(response) {
 			    // called asynchronously if an error occurs
 			    // or server returns response with an error status.
 			});
 			$rootScope.loading = false;
 			console.log('rootScope.loading is ' + $rootScope.loading);
-	    }
-
-	    function convertBeerToURL(){
-
-	    	// return 'http://localhost:8020/?/recommendedbeers?userid=1';
-	    	var url = baseURL + '/beers';
-	    	if (Object.keys($scope.beer).length === 0) {
-	    		return url;
-	    	} else {
-	    		var str = jQuery.param($scope.beer);
-	    		url = url + '?' + str;
-				return url;
-			}
 	    }
 	
     }
@@ -111,7 +64,7 @@ app.controller('SearchCtrl', function($scope, $http, $timeout, $rootScope, $mdMe
     	var useFullScreen = ($mdMedia('sm') || $mdMedia('xs'))  && $scope.customFullscreen;
 	    $mdDialog.show({
 	        controller: AdditionalInfoDialogCtrl,
-	      	templateUrl: 'app/additionalinfodialog.html',
+	      	templateUrl: 'additionalinfodialog.html',
 	      	parent: angular.element(document.body),
 	      	targetEvent: ev,
 	      	clickOutsideToClose:true,
@@ -126,24 +79,137 @@ app.controller('SearchCtrl', function($scope, $http, $timeout, $rootScope, $mdMe
         	$scope.beer = beer;
         	console.log('the selected beer is ' + JSON.stringify(beer));
 
-       //  	$scope.showVendorPage = function(ev, vendor){
-       //  		console.log('attempting to show vendor page for' + vendor);
-       //  		$mdDialog.show({
-			    //     controller: VendorPageCtrl,
-			    //   	templateUrl: 'app/vendortemplate.html',
-			    //   	parent: angular.element(document.body),
-			    //   	targetEvent: ev,
-			    //   	clickOutsideToClose:true,
-			    //   	fullscreen: useFullScreen,
-			    //   	locals:{
-			    //   		vendor: vendor
-			    //   	}
-			    // });
+        	$scope.showVendorPage = function(ev, vendor){
+        		console.log('attempting to show vendor page for' + vendor);
+        		$mdDialog.show({
+			        controller: VendorPageCtrl,
+			      	templateUrl: '../app/vendortemplate.html',
+			      	parent: angular.element(document.body),
+			      	targetEvent: ev,
+			      	clickOutsideToClose:true,
+			      	fullscreen: useFullScreen,
+			      	locals:{
+			      		vendor: vendor
+			      	}
+			    });
 
 
-       //  	}
+        	}
 		}
 
+    }
+
+    $scope.addToInventory = function(ev, beer){
+    	var url = baseURL + '/vendors?bname=' + beer.bname + '&storeId=' + $rootScope.storeId;
+
+    	if ($rootScope.storeId === null){
+    		//!!! TODO: implement this
+    		console.log('login first!!')
+    	} else {
+    		console.log('making HTTP POST to ' + url + ' with no payload');
+    		$http({
+			    method: 'POST',
+			    url: url,
+			}).then(function successCallback(response) {
+				console.log('received a response of ' + JSON.stringify(response.data));
+				console.log('trying to update search information');
+				
+				var url = convertBeerToURL($scope.beer);
+
+		    	if (url === baseURL + '/beers'){
+		    		url = url + '?storeId=' + $rootScope.storeId;
+
+		    	} else {
+		    		url = url + '&storeId=' + $rootScope.storeId;
+
+		    	}
+		    	
+		    	console.log('making HTTP GET request to ' + url);
+		    	$http({
+				    method: 'GET',
+				    url: url
+				}).then(function successCallback(response) {
+					console.log('received a response of ' + JSON.stringify(response.data));
+				    $rootScope.searchResults = response.data;
+				    console.log("the search results are " + JSON.stringify($scope.searchResults));
+				}, function errorCallback(response) {
+				    // called asynchronously if an error occurs
+			    // or server returns response with an error status.
+				    console.log('received a response of ' + JSON.stringify(response.data));
+					console.log('trying to update search information');
+					
+					var url = convertBeerToURL($scope.beer);
+
+			    	if (url === baseURL + '/beers'){
+			    		url = url + '?storeId=' + $rootScope.storeId;
+
+			    	} else {
+			    		url = url + '&storeId=' + $rootScope.storeId;
+
+			    	}
+			    	
+			    	console.log('making HTTP GET request to ' + url);
+			    	$http({
+					    method: 'GET',
+					    url: url
+					}).then(function successCallback(response) {
+						console.log('received a response of ' + JSON.stringify(response.data));
+					    $rootScope.searchResults = response.data;
+					    console.log("the search results are " + JSON.stringify($scope.searchResults));
+					}, function errorCallback(response) {
+					    // called asynchronously if an error occurs
+					    // or server returns response with an error status.
+					});
+
+				});
+
+
+			
+			}, function errorCallback(response) {
+					//error stuff here
+			});
+    	}
+
+    }
+
+    $scope.removeFromInventory = function(ev, beer){
+    	console.log('will remove from inventory here');
+    	var url = baseURL + '/vendors?bname=' + beer.bname + '&storeid=' + $rootScope.storeId;
+    	console.log('making DELETE request to ' + url);
+    	$http({
+	    	method: 'DELETE',
+	    	url: url
+		}).then(function successCallback(response) { //@@@
+			console.log('received a response of ' + JSON.stringify(response.data));
+			console.log('trying to update search information');
+			
+			var url = convertBeerToURL($scope.beer);
+
+	    	if (url === baseURL + '/beers'){
+	    		url = url + '?storeId=' + $rootScope.storeId;
+
+	    	} else {
+	    		url = url + '&storeId=' + $rootScope.storeId;
+
+	    	}
+	    	
+	    	console.log('making HTTP GET request to ' + url);
+	    	$http({
+			    method: 'GET',
+			    url: url
+			}).then(function successCallback(response) {
+				console.log('received a response of ' + JSON.stringify(response.data));
+			    $rootScope.searchResults = response.data;
+			    console.log("the search results are " + JSON.stringify($scope.searchResults));
+			}, function errorCallback(response) {
+			    // called asynchronously if an error occurs
+			    // or server returns response with an error status.
+			});
+			
+		}, function errorCallback(response) {
+	    // called asynchronously if an error occurs
+	    // or server returns response with an error status.
+		});	
     }
 
 });
@@ -188,7 +254,7 @@ app.controller('VendorLoginCtrl', function($scope, $mdDialog, $mdMedia, $rootSco
 
 		$scope.sendLoginInfo = function(ev){
 			console.log('sending login info of: ' + JSON.stringify($scope.loginInfo));
-			if (!$scope.loginInfo.hasOwnProperty('username') || !$scope.loginInfo.hasOwnProperty('password')){
+			if (!$scope.loginInfo.hasOwnProperty('storeName') || !$scope.loginInfo.hasOwnProperty('password')){
 				$mdDialog.show(
 					$mdDialog.alert()
 						.parent(angular.element(document.querySelector('#popupContainer')))
@@ -209,23 +275,27 @@ app.controller('VendorLoginCtrl', function($scope, $mdDialog, $mdMedia, $rootSco
 			    	url: url
 				}).then(function successCallback(response) {
 					if (response.data.authenticated === false){
-						$mdDialog.alert()
-							.parent(angular.element(document.querySelector('#popupContainer')))
-							.clickOutsideToClose(true)
-							.textContent('Login Failed. Check that username and password are correct.')
-							.ariaLabel('Alert Dialog Demo')
-							.ok('Got it!')
-							.targetEvent(ev)
+						$mdDialog.show(
+							$mdDialog.alert()
+								.parent(angular.element(document.querySelector('#popupContainer')))
+								.clickOutsideToClose(true)
+								.textContent('Login Failed. Check that username and password are correct.')
+								.ariaLabel('Alert Dialog Demo')
+								.ok('Got it!')
+								.targetEvent(ev)
+							);
 		    	
 					} else {
 						$rootScope.storeId = response.data.storeId;
-						$mdDialog.alert()
-							.parent(angular.element(document.querySelector('#popupContainer')))
-							.clickOutsideToClose(true)
-							.textContent('Login info authenticated. Welcome back.')
-							.ariaLabel('Alert Dialog Demo')
-							.ok('Got it!')
-							.targetEvent(ev)
+						$mdDialog.show(
+							$mdDialog.alert()
+								.parent(angular.element(document.querySelector('#popupContainer')))
+								.clickOutsideToClose(true)
+								.textContent('Login info authenticated. Welcome back.')
+								.ariaLabel('Alert Dialog Demo')
+								.ok('Got it!')
+								.targetEvent(ev)
+						);
 		    		
 					}
 
@@ -242,6 +312,7 @@ app.controller('VendorLoginCtrl', function($scope, $mdDialog, $mdMedia, $rootSco
 
 	$scope.showLogoutPrompt = function(ev){
 		$rootScope.storeId = null;
+		$rootScope.searchResults = null;
 		$mdDialog.show(
 				$mdDialog.alert()
 					.parent(angular.element(document.querySelector('#popupContainer')))
@@ -256,7 +327,7 @@ app.controller('VendorLoginCtrl', function($scope, $mdDialog, $mdMedia, $rootSco
 
 	$scope.showSignupPrompt = function(ev) {
 		console.log('trying to show signup prompt');
-		console.log('$scope.storeId is ' + $scope.storeId); //!!!
+		console.log('$scope.storeId is ' + $scope.storeId); 
 		if ($scope.storeId === null){
 			console.log('null storeid detected');
 			var useFullScreen = ($mdMedia('sm') || $mdMedia('xs'))  && $scope.customFullscreen;
@@ -284,7 +355,7 @@ app.controller('VendorLoginCtrl', function($scope, $mdDialog, $mdMedia, $rootSco
 		}
 	}
 
-	//!!!
+
 	function SignupPromptCtrl($scope, $mdDialog){
    
         $scope.sendSignupInfo = function(ev){
@@ -327,7 +398,6 @@ app.controller('VendorLoginCtrl', function($scope, $mdDialog, $mdMedia, $rootSco
 		    	
 					} else {
 						$rootScope.storeId = response.data.storeId;
-						$scope.storeId = response.data.storeId;
 						console.log('$scope.storeId is now ' + $rootScope.storeId);
 						console.log('user account created');
 						$mdDialog.show(
@@ -351,8 +421,23 @@ app.controller('VendorLoginCtrl', function($scope, $mdDialog, $mdMedia, $rootSco
 			}
 		}
     }
-            
-
-	
-
+   
 });
+
+
+//HELPERS
+
+function convertBeerToURL(beer){
+
+	    	// return 'http://localhost:8020/?/recommendedbeers?userid=1';
+	    	var url = baseURL + '/beers';
+	    	if (Object.keys(beer).length === 0) {
+	    		console.log('the converted URL is ' + url);
+	    		return url;
+	    	} else {
+	    		var str = jQuery.param(beer);
+	    		url = url + '?' + str;
+	    		console.log('the converted URL is ' + url);
+				return url;
+			}
+	    }

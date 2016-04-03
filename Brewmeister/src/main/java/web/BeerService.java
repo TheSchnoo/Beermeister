@@ -15,6 +15,8 @@ public class BeerService {
         searchString = "WHERE ";
         int i=0;
         for(Map.Entry<String,String> entry : searchBeerMap.entrySet()){
+            System.out.println(entry.getKey());
+            System.out.println(entry.getValue());
             if(entry.getValue() == null){
                 continue;
             }
@@ -46,6 +48,10 @@ public class BeerService {
                     searchString = searchString + entry.getKey() + " BETWEEN " + value + " AND " + upperRange;
                 }
             }
+            else if(entry.getKey()=="avgRating"){
+                Double value = Double.parseDouble(entry.getValue());
+                searchString = searchString + entry.getKey() + " > " + entry.getValue();
+                }
             else {
                 searchString = searchString + entry.getKey() + " LIKE '%" + entry.getValue() + "%'";
             }
@@ -54,14 +60,8 @@ public class BeerService {
         if(i==0){
             searchString = "";
         }
-        System.out.println(searchString);
 
         return searchString;
-    }
-
-    public String getRecommendations(int userid) throws Exception {
-        String searchString = "";
-            return searchString;
     }
 
     // Convert a ResultSet to a BeerInfo object
@@ -73,7 +73,7 @@ public class BeerService {
             String bname = rs.getString("BName");
             String breweryName = rs.getString("BreweryName");
             String type = rs.getString("BType");
-            float abv = rs.getFloat("ABV");
+            double abv = Math.floor(rs.getDouble("ABV")*100.0)/100.0;
             float ibu = rs.getFloat("IBU");
             String description = rs.getString("Description");
             Boolean brewed = rs.getBoolean("Brewed");
@@ -85,12 +85,23 @@ public class BeerService {
             BeerInfo newBI = new BeerInfo(bname, breweryName, type, abv, ibu, description,
                     averageRating, brewed, vendors);
 
-//            return obj;
             return newBI;
         }
         catch (Exception e){
-            System.out.println(e);
+            System.out.println("Error in converting to BeerInfo:"+ e);
         }
         return null;
+    }
+
+    public String getUnratedBeers(int cid){
+        String searchString =
+                "SELECT bi.* " +
+                        "FROM beerinfo bi " +
+                        "WHERE not exists " +
+                        "(SELECT beerinfo.*, r.cid " +
+                        "FROM BeerInfo, rates r, customer c " +
+                        "WHERE r.bname = bi.bname AND c.cid = " + cid + " AND r.cid=c.cid) " +
+                        "ORDER BY bi.AvgRating DESC LIMIT 4";
+        return searchString;
     }
 }

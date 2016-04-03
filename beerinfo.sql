@@ -1,34 +1,42 @@
-DROP DATABASE beerinfo;
-CREATE DATABASE beerinfo;
+DROP Database beerinfo;
+CREATE database beerinfo;
 USE beerinfo;
-
 CREATE TABLE Brewery(
-	BName CHAR(30),
-	PRIMARY KEY (BName));
+	BreweryName CHAR(255),
+	PRIMARY KEY (BreweryName));
 
 -- grant select on Brewery to public;
 
 CREATE TABLE Customer(
 	CID int NOT NULL AUTO_INCREMENT,
-	CName CHAR(40) UNIQUE,
+	CName CHAR(255) UNIQUE,
 	CPassword CHAR(40),
 	PRIMARY Key (CID));
 
 -- grant select on Customer to public;
 
+CREATE TABLE CustomerSession(
+	CID int NOT NULL,
+	SID CHAR(40) NOT NULL,
+	PRIMARY KEY (CID),
+	FOREIGN KEY (CID) REFERENCES Customer (CID)
+		ON DELETE CASCADE);
+
+-- grant select on CustomerSession to public;
+
 CREATE TABLE BeerInfo (
-	BName CHAR(30),
-	BType CHAR(30),
+	BName CHAR(255),
+	BType CHAR(50),
 	IBU double(5,2),
-	ABV double(5,2),
+	ABV double(5,1),
 	Description CHAR(255),
-	BreweryName CHAR(30),
+	BreweryName CHAR(255),
 	Brewed BOOLEAN
 		DEFAULT 1,
 	AvgRating Double(4,2)
 		DEFAULT 0,
 	PRIMARY KEY(BName),
-	FOREIGN KEY(BreweryName) REFERENCES Brewery (BName)
+	FOREIGN KEY(BreweryName) REFERENCES Brewery (BreweryName)
 		ON UPDATE CASCADE
 		ON DELETE NO ACTION
 );
@@ -37,7 +45,7 @@ CREATE TABLE BeerInfo (
 
 CREATE TABLE BeerVendor (
 	StoreID int NOT NULL AUTO_INCREMENT,
-	StoreName CHAR(30) UNIQUE,
+	StoreName CHAR(255),
 	Address CHAR(255),
 	SPassword CHAR(40),
 	PRIMARY KEY (StoreID)
@@ -49,7 +57,7 @@ CREATE TABLE BeerVendor (
 -- grant select on BeerVendor to public;
 
 CREATE TABLE BeerInStock (
-	BName CHAR(30),
+	BName CHAR(255),
 	StoreID INTEGER,
 	PRIMARY KEY(BName, StoreID),
 	FOREIGN KEY(BName) REFERENCES BeerInfo (BName),
@@ -60,7 +68,7 @@ CREATE TABLE BeerInStock (
 
 CREATE TABLE StoreEmployeeHasA (
 	EmpID	INTEGER,
-	EmpName CHAR(40),
+	EmpName CHAR(255),
 	PRIMARY KEY(EmpID)
 	-- ON UPDATE CASCADE
 	-- ON DELETE NO ACTION
@@ -70,7 +78,7 @@ CREATE TABLE StoreEmployeeHasA (
 
 CREATE TABLE Rates (
 	CID INTEGER,
-	BName CHAR(30),
+	BName CHAR(255),
 	BRate INTEGER,
 	Review CHAR(255)
 		DEFAULT '',
@@ -83,7 +91,7 @@ CREATE TABLE Rates (
 
 
 CREATE TABLE Updates(
-	BName CHAR(30),
+	BName CHAR(255),
 	StoreID INTEGER,
 	EmpID INTEGER,
 	PRIMARY KEY(BName, StoreID, EmpID),
@@ -106,15 +114,15 @@ CREATE TABLE SearchesFor(
 
 CREATE TABLE Searches(
 	CID INTEGER,
-	BName CHAR(30),
+	BName CHAR(255),
 	PRIMARY KEY (CID, BName),
 	FOREIGN KEY (CID) REFERENCES Customer (CID),
 	FOREIGN KEY (BName) REFERENCES BeerInfo (BName)
 );
 DELIMITER $$
 
-CREATE PROCEDURE update_avg_ratings_table
-	(IN beername CHAR(30))
+CREATE PROCEDURE update_avg_ratings
+	(IN beername CHAR(255))
 MODIFIES SQL DATA
 	BEGIN
 		UPDATE BeerInfo
@@ -126,7 +134,8 @@ MODIFIES SQL DATA
 DELIMITER ;
 
 CREATE TRIGGER the_average_insert AFTER INSERT ON Rates
-FOR EACH ROW CALL update_avg_ratings_table(New.BName);
+FOR EACH ROW CALL update_avg_ratings(New.BName);
 
 CREATE TRIGGER the_average_update AFTER UPDATE ON Rates
-FOR EACH ROW CALL update_avg_ratings_table(New.BName);
+FOR EACH ROW CALL update_avg_ratings(New.BName);
+

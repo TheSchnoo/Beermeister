@@ -11,53 +11,56 @@
 
 <body ng-app="Brewmaster" ng-cloak>
   <div ng-controller="AppCtrl" ng-cloak >
-    <md-toolbar class="transparent">
-      <div class="md-toolbar-tools">
-        <h2>
-          <span>Brewmeister</span>
-        </h2>
-        <span flex></span>
-        <md-button ng-show="cid === null" ng-controller="LoginCtrl" id="login" ng-click="showLoginPrompt($event)">
-          Login
-        </md-button>
-        <md-button ng-show="cid === null" ng-controller="LoginCtrl" id="signup" ng-click="showSignupPrompt($event)">
-          Signup
-        </md-button>
-        <md-button ng-show="cid != null" ng-controller="LoginCtrl" id="signup" ng-click="showLogoutPrompt($event)">
-          Logout
-        </md-button>
-        <md-button id="browse" ng-click="submitSearch($event)">
-          Browse
-        </md-button>
-        <md-button id="login-signup" ng-click="submitSearch($event)">
-          Contact
-        </md-button>
-      </div>
-    </md-toolbar>
-    <!-- Top banner -->
-    <div class="jumbotron vertical-center">
-      <div id="jumbotron-text" class="container">
-        <md-title>Love beer? So do we.</md-title>
-        <p>
-          <md-subhead>With Brewmeister, you can search for new beers to try, rate your favourites, and find out where different products are sold.</md-subhead>
-        </p>
+    <div id="top-panel">
+      <div id="top-panel-black-overlay">
+        <div class="md-toolbar tw-cen-text white-text" id="top-navbar">
+          <div class="md-toolbar-tools">
+            <h2>
+              <span class="superclarendon-text" id="site-logo">Brewmeister</span>
+            </h2>
+            <span flex></span>
+            <md-button ng-show="cid === null" ng-controller="LoginCtrl" id="login" ng-click="showLoginPrompt($event)">
+              Login
+            </md-button>
+            <md-button ng-show="cid === null" ng-controller="LoginCtrl" id="signup" ng-click="showSignupPrompt($event)">
+              Signup
+            </md-button>
+            <md-button ng-show="cid != null" ng-controller="LoginCtrl" id="signup" ng-click="showLogoutPrompt($event)">
+              Logout
+            </md-button>
+            <md-button id="browse" ng-click="submitSearch($event)">
+              Browse
+            </md-button>
+            <md-button id="login-signup" ng-click="submitSearch($event)">
+              Contact
+            </md-button>
+          </div>
+        </div>
+        <!-- Top banner -->
+        <div class="container text-center white-text" id="panel-1-text">
+          <h1 class="md-title superclarendon-text">Love beer? So do we.</h1>
+          <div class="col-md-10 col-md-offset-1">
+            <p class="md-subhead tw-cen-text">
+              With Brewmeister, you can search for new beers to try, rate your favourites,
+              and find out where different products are sold.
+            </p>
+          </div>
+        </div>
       </div>
     </div>
 
-    <div class="jumbotron quote-area">
-      <div id="jumbotron-text" class="container">
-        <md-title>Beer is proof that god loves us and wants us to be happy.</md-title>
-        <p id="author">
-        <md-subhead>-Benjamin Franklin</md-subhead>
-        </p>
+    <div id="panel-2" class="white-text superclarendon-text">
+      <div class="container">
+        <div class="col-md-10 col-md-offset-1">
+          <p>Beer is proof that god loves us and wants us to be happy.</p>
+          <p id="author">
+            -Benjamin Franklin
+          </p>
+        </div>
       </div>
-
     </div>
 
-
-
-
-    <div id="search-area">
+    <div id="panel-3">
       <div id="search-form" ng-controller="SearchCtrl" layout="column" ng-cloak class="md-inline-form container">
         <md-toolbar>
           <div class="md-toolbar-tools">
@@ -128,7 +131,7 @@
                   </md-input-container>
 
                 </div>
-            
+
               <md-button id="submit-button" ng-click="submitSearch($event)">
                 Submit Search
               </md-button>
@@ -150,9 +153,10 @@
           </div>
         </md-toolbar>
         <md-content id="search-content">
+          
           <md-list flex id="search-list">
 
-            <md-list-item class="md-3-line" ng-repeat="beer in $root.searchResults">
+            <md-list-item class="md-3-line" multiple="true" ng-repeat="beer in $root.searchResults track by $index">
               <img ng-src="images/stock-beer.jpg" class="md-avatar" alt="images/stock-beer.jpg" />
               <div class="md-list-item-text" layout="column">
                 <h3>{{beer.bname}}</h3>
@@ -161,17 +165,23 @@
               </div>
                 <md-button ng-click="showAdditionalInfo($event, beer)" class="search-action-button md-primary">More Info</md-button>
                 <md-button ng-click="showVendors($event, beer)" class="search-action-button md-primary">Vendors</md-button>
-                <md-button class="search-action-button md-primary">Ratings</md-button>
+                <md-button ng-click="showRatings($event, beer)" class="search-action-button md-primary">Ratings</md-button>
+                <md-button ng-click="showReviewDialog($event, beer)" class="search-action-button md-primary">Submit Review</md-button>
               <md-divider ng-if="!$last"></md-divider>
             </md-list-item>
 
           </md-list>
+
+
+
         </md-content>
       </md-whiteframe>
     </div>
 
+
+    <!--!!!-->
     <div class="container" id="most-popular-beer">
-      Our Most Popular Beer:
+      <md-subhead class="result-heading">Our Most Popular Beer:</md-subhead>
       <div>
         <md-card class="beer-card">
           <md-card-title>
@@ -182,6 +192,7 @@
                 <p>Type: {{mostPopularBeer.type}}</p>
                 <p>ABV: {{mostPopularBeer.abv}}</p>
                 <p>IBU: {{mostPopularBeer.ibu}}</p>
+                <p>Average Rating: {{mostPopularBeer.averageRating}}</p>
               </span>
             </md-card-title-text>
             <md-card-title-media>
@@ -193,6 +204,7 @@
           <md-card-actions layout="row" layout-align="end center">
             <md-button class="md-primary"ng-click="showVendors($event, mostPopularBeer)">Vendors</md-button>
             <md-button class="md-primary" ng-click="showRatings($event, mostPopularBeer)">Ratings</md-button>
+            <md-button ng-click="showReviewDialog($event, mostPopularBeer)" class="search-action-button md-primary">Submit Review</md-button>
           </md-card-actions>
         </md-card>
       </div>
@@ -215,6 +227,7 @@
                     <p>Type: {{beer.type}}</p>
                     <p>ABV: {{beer.abv}}</p>
                     <p>IBU: {{beer.ibu}}</p>
+                    <p>Average Rating: {{beer.averageRating}}</p>
                   </span>
                 </md-card-title-text>
                 <md-card-title-media>
@@ -226,6 +239,7 @@
               <md-card-actions layout="row" layout-align="end center">
                 <md-button class="md-primary"ng-click="showVendors($event, beer)">Vendors</md-button>
                 <md-button class="md-primary" ng-click="showRatings($event, beer)">Ratings</md-button>
+                <md-button ng-click="showReviewDialog($event, beer)" class="search-action-button md-primary">Submit Review</md-button>
               </md-card-actions>
             </md-card>
           </div>
