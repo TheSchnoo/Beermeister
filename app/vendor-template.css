@@ -1,0 +1,47 @@
+#vendor-top-panel {
+    background-image: linear-gradient( rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5) ),url('../images/beer-shelf-edited.jpg');
+    height: 180px;
+    background-size: cover;
+    background-position: 20% 20%;
+}
+
+#beer-vendor-name {
+    font-size: 70px;
+    margin-top: 80px;
+    display: inline-block;
+}
+
+#vendor-address-section {
+    margin-top: 108px;
+    padding-right: 20px;
+}
+
+#location-icon {
+    width: 16px;
+    float: right;
+    margin-right: 15px;
+    margin-top: 5px;
+}
+
+#vendor-address {
+    float: right;
+    margin-top: 10px;
+    margin-right: 20px;
+    font-size: 24px;
+}
+
+#vendor-panel-2 {
+    height: 500px;
+    background-color: #f4f4f4;
+}
+
+#vendor-beers-section {
+    padding-top: 50px;
+}
+
+#vendor-divide-line {
+    border-top: 1px solid rgba(0,0,0,0.3);
+    margin-left: 50px;
+    margin-right: 50px;
+    margin-top: 25px;
+}

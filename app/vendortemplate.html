@@ -1,20 +1,66 @@
-<md-dialog aria-label="Vendors" ng-cloak>
-  <form>
-    <md-toolbar>
-      <div class="md-toolbar-tools">
-        <h2>{{vendor.storeName}}</h2>
-        <span flex></span>
-<!--         <md-button aria-label="cancel" class="md-icon-button" ng-click="cancel()">
-        </md-button> -->
-      </div>
-    </md-toolbar>
-    <md-dialog-content>
-      Beers sold by {{vendor.storeName}}:
-      <div class="md-dialog-content" ng-repeat="beer in beers">
-      	{{beer.bname}}
+<html lang="en" >
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Angular Material style sheet -->
+    <link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/angular_material/1.0.0/angular-material.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="../styles.css">
+    <link rel="stylesheet" type="text/css" href="vendor-template.css">
+  </head>
 
-          
+  <body ng-app="Brewmaster" ng-cloak>
+    <div ng-controller="AppCtrl" ng-cloak >
+      <div id="vendor-top-panel">
+        <div class="container">
+          <div class="row">
+            <div class="col-md-8">
+              <h2 class="white-text tw-cen-text" id="beer-vendor-name">Beer Vendor Name</h2>
+            </div>
+            <div class="col-md-4" id="vendor-address-section">
+              <h6 class="white-text tw-cen-text" id="vendor-address">367 West Broadway </h6>
+              <img id="location-icon" src="../images/white-location-icon.png">
+            </div>
+          </div>
+        </div>
       </div>
-    </md-dialog-content>
-  </form>
-</md-dialog>
+      <div id="vendor-panel-2">
+        <div class="container" id="vendor-beers-section">
+          <div class="row text-center">
+            <h3 id="beers-available-header">Beers Available at this Vendor</h3>
+          </div>
+          <div class="row">
+            <div class="col-md-10 col-md-offset-1">
+              <hr id="vendor-divide-line">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tw-cen-text" id="bottom-navbar">
+      <div class="container">
+        <p>&copy; Brewmeister 2016</p>
+        <p id="course-id">CPSC 304 - University of British Columbia</p>
+      </div>
+    </div>
+  </body>
+
+  <!-- Angular Material requires Angular.js Libraries -->
+  <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
+  <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular-animate.min.js"></script>
+  <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular-aria.min.js"></script>
+  <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular-messages.min.js"></script>
+
+  <!-- Angular Material Library -->
+  <script src="http://ajax.googleapis.com/ajax/libs/angular_material/1.0.0/angular-material.min.js"></script>
+
+  <!--Jquery-->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.2/jquery.min.js"></script>
+
+  <!--Boostrap-->
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+
+
+
+  <script src="breweryuser.js"></script>
+<html>
