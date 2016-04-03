@@ -63,17 +63,9 @@
  	font-size: 20px;
  }
 
- #search-form{
- 	opacity:0.9;
- }
 
- #search-area{
- 	background-image:linear-gradient( rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5) ), url('images/craft-beer.jpg');
- 	background-size: cover;
- 	height:700px;
- 	padding-top: 30px;
 
- }
+
 
  /*.jumbotron{
  	background-size:cover;
@@ -184,7 +176,7 @@
 }
 
 
-/*-- Panel 1 Styling --*/
+/*-- Panel 1 Styling (Greeting) --*/
 
 #top-panel {
 	background-image: url('http://usboattours.com/1000islands/wp-content/uploads/2014/05/craft-beer.jpg');
@@ -234,7 +226,7 @@
 	src: url("tw-cen-mt.ttf");
 }
 
-/*--Panel 2 Styling --*/
+/*--Panel 2 Styling (Quote) --*/
 
 #panel-2 {
 	height: 500px;
@@ -248,4 +240,21 @@
 	margin-right: 65px;
 	font-size: 30px;
 }
+
+
+/*-- Panel 3 Styling (Search) --*/
+
+#panel-3 {
+	background-image: linear-gradient( rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5) ), url('images/craft-beer-edited.jpg');
+	background-size: cover;
+	height:700px;
+	padding-top: 60px;
+}
+
+#search-form{
+	opacity:0.9;
+	border-radius: 3px;
+}
+
+
 
