@@ -131,8 +131,6 @@ insert into BeerInfo(BName,	BType, IBU, ABV, Description, BreweryName)
 VALUES ('West Coast Pale Ale','Pale Ale',38,5.5,'Upfront bitter hops balance with a malt base, finishing slightly fruity with notes of tangerine and pineapple.','Granville Island Brewing');
 
 -- Beers in stock
-insert into BeerInStock
-values('Gypsy Tears',1);
 
 insert into BeerInStock
 values('English Bay Pale Ale',2);
@@ -162,17 +160,26 @@ insert into BeerInStock
 values('Red Racer IPA',6);
 
 insert into BeerInStock
-values('Red Racer Belgian Style Wheat Ale',3);
+    select bname,4
+    from beerinfo
+    where breweryname like "%brass%";
 
-insert into BeerInStock
-values('Red Racer Stout',3);
+insert into beerinstock
+    values((select bname from beerinfo),6);
 
-insert into BeerInStock
-values('Red Racer Copper Ale',3);
+insert into beerinstock(bname,storeid)
+    select bname, 6
+    from beerinfo;
 
-insert into BeerInStock
-values('Red Racer IPA',3);
+delete from beerinstock
+where storeid = 3 and bname like "%doan%";
 
+delete from beerinstock
+where storeid = 1 and bname like "%doan%";
+
+insert into beerinstock(bname,storeid)
+    select bname, 1
+    from beerinfo;
 -- Customers
 
 insert into customer(CName,CPassword) values('Jim','theendofthings2');
