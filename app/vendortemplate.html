@@ -14,10 +14,10 @@
         <div class="container">
           <div class="row">
             <div class="col-md-8">
-              <h2 class="white-text tw-cen-text" id="beer-vendor-name">Beer Vendor Name</h2>
+              <h2 class="white-text tw-cen-text" id="beer-vendor-name">{{vendor.storeName}}</h2>
             </div>
             <div class="col-md-4" id="vendor-address-section">
-              <h6 class="white-text tw-cen-text" id="vendor-address">367 West Broadway </h6>
+              <h6 class="white-text tw-cen-text" id="vendor-address">{{vendor.address}} </h6>
               <img id="location-icon" src="../images/white-location-icon.png">
             </div>
           </div>
@@ -26,7 +26,10 @@
       <div id="vendor-panel-2">
         <div class="container" id="vendor-beers-section">
           <div class="row text-center">
-            <h3 id="beers-available-header">Beers Available at this Vendor</h3>
+            <h3 id="beers-available-header">Beers Available at {{vendor.storeName}}</h3>
+              <div ng-repeat="beer in beers">
+                {{beer.bname}}
+              </div>
           </div>
           <div class="row">
             <div class="col-md-10 col-md-offset-1">
