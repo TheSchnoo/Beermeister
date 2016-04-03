@@ -39,6 +39,13 @@ public class BeerReview {
         this.cid = cid;
         this.newReview = newReview;
     }
+    public BeerReview(String bname, String review, int rating, int cid) {
+        this.bname = bname;
+        this.review = review;
+        this.rating = rating;
+        this.cid = cid;
+        this.newReview = false;
+    }
     public String toTupleValueString() {
         return "(" + this.cid + ", '" + this.bname + "', " + this.rating + ", '" + this.review + "')";
     }
