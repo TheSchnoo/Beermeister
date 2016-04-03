@@ -15,6 +15,8 @@ public class BeerService {
         searchString = "WHERE ";
         int i=0;
         for(Map.Entry<String,String> entry : searchBeerMap.entrySet()){
+            System.out.println(entry.getKey());
+            System.out.println(entry.getValue());
             if(entry.getValue() == null){
                 continue;
             }

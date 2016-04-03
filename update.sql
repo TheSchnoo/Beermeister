@@ -71,7 +71,7 @@ insert into BeerInfo(BName,	BType, IBU, ABV, Description, BreweryName)
 VALUES ('33 Acres of Nirvana','IPA',70,7,'Grapefruit and “woody” bitterness, warming finish','33 Acres');
 
 insert into BeerInfo(BName,	BType, IBU, ABV, Description, BreweryName)
-VALUES ('Bomber ESB','ESB',45, 5.2,'Notes of roasted coffee, chocolate, and molasses, finished with a balanced hop bitterness.','Bomber Brewing');
+    VALUES ('Bomber ESB','ESB',45, 5.2,'Notes of roasted coffee, chocolate, and molasses, finished with a balanced hop bitterness.','Bomber Brewing');
 
 insert into BeerInfo(BName,	BType, IBU, ABV, Description, BreweryName)
 VALUES ('Bomber Pilsner','Pilsner',28, 4.8,'Light bodied and refreshing. Crisp, dry malt profile with the lingering aroma of Czech Saaz hops and citrus zest.','Bomber Brewing');
@@ -89,7 +89,7 @@ insert into BeerInfo(BName,	BType, IBU, ABV, Description, BreweryName)
 VALUES ('Choqlette Porter','Porter',18, 5.5,'3 chocolate additions are done to build flavour and aroma, with French Aramis hops giving it a mild floral aroma beneath the roastiness and chocolate.','Bomber Brewing');
 
 insert into BeerInfo(BName,	BType, IBU, ABV, Description, BreweryName)
-VALUES ('Massive Aggressive','IPA',80,9,'Massive Aggressive was brewed to commemorate the Alibi Room’s 600th beer list. It’s our flagship beer, Passive Aggressive on steroids.','Brassneck Brewery');
+    VALUES ('Massive Aggressive','IPA',80,9,'Massive Aggressive was brewed to commemorate the Alibi Room’s 600th beer list. It’s our flagship beer, Passive Aggressive on steroids.','Brassneck Brewery');
 
 insert into BeerInfo(BName,	BType, IBU, ABV, Description, BreweryName)
 VALUES ('Magician’s Assistant','Blonde',18,6,'Experimental Sour with Amarillo and Citra hops','Brassneck Brewery');

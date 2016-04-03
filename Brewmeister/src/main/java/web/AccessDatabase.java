@@ -13,6 +13,11 @@ public class AccessDatabase {
     private ResultSet resultSet = null;
     public final static String CUSTOMER_TABLE = "Customer";
     public final static String BEER_VENDOR_TABLE = "BeerVendor";
+    private boolean success;
+    private final String CUSTOMERTABLE = "Customer";
+    private final String SESSIONTABLE = "CustomerSession";
+
+    public static int numAccounts = 0;
 
     public static enum loginErrorTypes {
         noAccountFound, wrongPassword, sqlError;
@@ -271,6 +276,57 @@ public class AccessDatabase {
 
         }
     }
+    public BeerReview checkForReview(int cid, String bname) throws Exception {
+        BeerReview beerReview = new BeerReview(bname, " ",0,cid,true);
+        try{
+            Class.forName("com.mysql.jdbc.Driver");
+
+            connect = DriverManager
+                    .getConnection("jdbc:mysql://localhost/beerinfo?"
+                            + "user=sqluser&password=sqluserpw");
+            preparedStatement = connect
+                    .prepareStatement("Select * FROM Rates WHERE bname like '" + bname + "' AND CID = " + cid);
+            resultSet = preparedStatement.executeQuery();
+            BeerReviewService beerReviewService = new BeerReviewService();
+
+            while(resultSet.next()){
+                beerReview = beerReviewService.convertResultSetToBeerReview(resultSet);
+            }
+
+
+        } catch (Exception e) {
+            System.out.println("broken");
+        } finally {
+            close();
+        }
+        return beerReview;
+    }
+    public Boolean addOrModifyReview(BeerReview review) throws Exception {
+        try{
+            Class.forName("com.mysql.jdbc.Driver");
+
+            connect = DriverManager
+                    .getConnection("jdbc:mysql://localhost/beerinfo?"
+                            + "user=sqluser&password=sqluserpw");
+            if (review.isNewReview()) {
+                preparedStatement = connect
+                        .prepareStatement("INSERT INTO Rates VALUES " + review.toTupleValueString());
+                success = preparedStatement.execute();
+            }else{
+                preparedStatement = connect.prepareStatement("UPDATE Rates SET BRate = " + review.getRating() + " WHERE " + " BNAME LIKE '" + review.getBname() + "' AND CID = " + review.getCid() + ";");
+                success = preparedStatement.execute();
+                preparedStatement = connect.prepareStatement("UPDATE Rates SET Review = '" + review.getReview() + "' WHERE " + " BNAME LIKE '" + review.getBname() + "' AND CID = " + review.getCid() + ";");
+                success = (success && preparedStatement.execute());
+            }
+            return true;
+
+        } catch (Exception e) {
+            throw e;
+        } finally {
+            close();
+        }
+    }
+
 
     public Map createAccount(ArrayList<String> createAccountParams, String nameLabel,String tableName) {
 

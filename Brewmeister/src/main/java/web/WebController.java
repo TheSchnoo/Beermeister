@@ -33,17 +33,17 @@ public class WebController {
         ArrayList<BeerInfo> beers;
         AccessDatabase accessDatabase = new AccessDatabase();
 
-        if (storeId == null) {
+        Map<String, String> searchBeerMap = new HashMap<>();
 
-            Map<String, String> searchBeerMap = new HashMap<>();
-
-            searchBeerMap.put("bname", bname);
-            searchBeerMap.put("type", btype);
-            searchBeerMap.put("ibu", ibu);
-            searchBeerMap.put("abv", abv);
+        searchBeerMap.put("bname", bname);
+        searchBeerMap.put("btype", btype);
+        searchBeerMap.put("ibu", ibu);
+        searchBeerMap.put("abv", abv);
 //            searchBeerMap.put("averageRating", rating);
-            searchBeerMap.put("description", description);
-            searchBeerMap.put("breweryName", breweryName);
+        searchBeerMap.put("description", description);
+        searchBeerMap.put("breweryName", breweryName);
+
+        if (storeId == null) {
 
             BeerService beerService = new BeerService();
             try {
@@ -54,23 +54,13 @@ public class WebController {
 
 
         } else {
-//            if (bname==null) {
-//                try {
-//                    VendorService vendorService = new VendorService();
-//                    beers = accessDatabase.searchBeers(vendorService.getBeersByVendor(storeId));
-//                } catch (Exception e) {
-//                    beers = null;
-//                    e.printStackTrace();
-//                }
-//            } else {
-                try {
-                    VendorService vendorService = new VendorService();
-                    beers = accessDatabase.searchBeersByVendor(vendorService.getBeersByVendorStocked(storeId));
-                } catch (Exception e) {
-                    beers = null;
-                    e.printStackTrace();
-                }
-//            }
+            try {
+                VendorService vendorService = new VendorService();
+                beers = accessDatabase.searchBeersByVendor(vendorService.getBeersByVendorStocked(storeId, searchBeerMap));
+            } catch (Exception e) {
+                beers = null;
+                e.printStackTrace();
+            }
         }
         httpResponse.setStatus(HttpServletResponse.SC_OK);
         return beers;
@@ -210,11 +200,22 @@ public class WebController {
         return new ArrayList<BeerInfo>();
     }
 
-//    POST REQUESTS
+    @RequestMapping(value = "/rating", method = RequestMethod.GET)
+    public
+    @ResponseBody
+    BeerReview revs (
+            @RequestParam(value="cid", required = true) int cid,
+            @RequestParam(value="bname", required = true) String bname,
+            HttpServletResponse httpResponse) throws Exception {
+        AccessDatabase accessDB = new AccessDatabase();
+        return accessDB.checkForReview(cid, bname);
+    }
+        //    POST REQUESTS
 //++++++++++++++++++++++++++++++++++
 
     //    Creating and updating beers
     @RequestMapping(value = "/beers", method = RequestMethod.POST)
+
     public
     @ResponseBody
     Map postBeer(@RequestBody String body,
@@ -361,4 +362,30 @@ public class WebController {
 
         return returnStatus;
     }
+    // Add or Update a Review
+    @RequestMapping(value = "/rating", method = RequestMethod.POST)
+    public @ResponseBody Map postRating(@RequestBody String body) throws JSONException {
+
+        JSONObject bodyJSON = new JSONObject(body);
+        String bname = bodyJSON.getString("bname");
+        int rating = bodyJSON.getInt("brate");
+        String review = bodyJSON.getString("review");
+        int cid = bodyJSON.getInt("cid");
+        boolean newReview = bodyJSON.getBoolean("newReview");
+
+        BeerReview newBR = new BeerReview(bname, review, rating, cid, newReview);
+
+        AccessDatabase accessDB = new AccessDatabase();
+        Map<String,Boolean> returnMap = new HashMap<>();
+        try {
+            accessDB.addOrModifyReview(newBR);
+            returnMap.put("created", true);
+        } catch (Exception e) {
+            returnMap.put("created", false);
+        }
+
+        return returnMap;
+    }
 }
+
+
