@@ -189,8 +189,8 @@ insert into customer(CName,CPassword) values('Paul','worstLaptopEva!');
 
 
 -- Ratings
-INSERT into rates values(2,'Gypsy Tears', 7, 'Great!');
+INSERT into rates values(2,'Gypsy Tears', 2, 'Great!');
 INsert into rates values(1,'Gypsy Tears', 3, 'Suboptimal');
 INSERT into rates values(2,'Watermelon Witbier', 3, 'Bad');
-INSERT into rates values(1,'Jerkface 9000', 8, 'Excellent');
-INSERT into rates values(2,'Jerkface 9000', 6, 'Good');
+INSERT into rates values(1,'Jerkface 9000', 5, 'Excellent');
+INSERT into rates values(2,'Jerkface 9000', 4, 'Good');
