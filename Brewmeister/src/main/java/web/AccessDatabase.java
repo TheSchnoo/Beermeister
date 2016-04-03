@@ -328,8 +328,8 @@ public class AccessDatabase {
             }else{
                 preparedStatement = connect.prepareStatement("UPDATE Rates SET BRate = " + review.getRating() + " WHERE " + " BNAME LIKE '" + review.getBname() + "' AND CID = " + review.getCid() + ";");
                 success = preparedStatement.execute();
-                preparedStatement = connect.prepareStatement("UPDATE Rates SET Review = '" + review.getReview() + "' WHERE " + " BNAME LIKE '" + review.getBname() + "' AND CID = " + review.getCid() + ";");
-                success = (success && preparedStatement.execute());
+                preparedStatement = connect.prepareStatement("UPDATE Rates SET Review = '" + review.getReview() + "' WHERE " + "BNAME LIKE '" + review.getBname() + "' AND CID = " + review.getCid() + ";");
+                success = (success & preparedStatement.execute());
             }
             return true;
 
