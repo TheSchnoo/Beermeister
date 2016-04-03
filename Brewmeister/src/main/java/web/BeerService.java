@@ -98,7 +98,8 @@ public class BeerService {
                         "WHERE not exists " +
                         "(SELECT beerinfo.*, r.cid " +
                         "FROM BeerInfo, rates r, customer c " +
-                        "WHERE r.bname = bi.bname AND c.cid = " + cid + " AND r.cid=c.cid) LIMIT 4";
+                        "WHERE r.bname = bi.bname AND c.cid = " + cid + " AND r.cid=c.cid) " +
+                        "ORDER BY bi.AvgRating DESC LIMIT 4";
         return searchString;
     }
 }
