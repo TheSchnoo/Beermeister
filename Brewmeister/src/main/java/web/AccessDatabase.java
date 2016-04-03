@@ -115,11 +115,9 @@ public class AccessDatabase {
             BeerService bs = new BeerService();
 
             ArrayList<BeerInfo> listBeers = new ArrayList<>();
-            int count = 4;
 
-            while(resultSet.next() && count<4){
+            while(resultSet.next()){
                 listBeers.add(bs.convertResultSetToBeerInfo(resultSet));
-                count++;
             }
             return listBeers;
 

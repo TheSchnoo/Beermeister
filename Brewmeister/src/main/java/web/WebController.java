@@ -73,6 +73,8 @@ public class WebController {
 
         AccessDatabase accessDB = new AccessDatabase();
         ArrayList<BeerInfo> beers;
+
+        // Get 4 beers not rated by user
         if(cid!=null) {
             try {
                 BeerService beerService = new BeerService();
@@ -84,6 +86,8 @@ public class WebController {
             }
             return beers;
         }
+
+        // Get 4 top rated beers
         else {
             beers = accessDB.getHighestRatedBeers(4);
             return beers;
