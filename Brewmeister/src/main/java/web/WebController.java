@@ -73,8 +73,6 @@ public class WebController {
             @RequestParam(value = "userid", required = false) String userid,
             HttpServletResponse httpResponse) throws IOException {
 
-        // TODO: ADD FUNCTIONALITY
-
         AccessDatabase accessDB = new AccessDatabase();
         ArrayList<BeerInfo> beers;
         try {
