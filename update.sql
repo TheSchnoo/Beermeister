@@ -44,13 +44,13 @@ values('Liberty Liquor Store','1622 Commercial Drive');
 
 -- Beers
 insert into BeerInfo(BName,	BType, IBU, ABV, Description, BreweryName)
-values('Gypsy Tears', 'Ruby Ale', 40, 6.0, 'Caramel', 'Parallel 49');
+values('Gypsy Tears', 'Amber Ale', 40, 6.0, 'Caramel', 'Parallel 49');
 
 insert into BeerInfo(BName,	BType, IBU, ABV, Description, BreweryName)
 values('Watermelon Witbier', 'Hefeweizen', 50, 5.22, 'Fruity, refreshing', 'Parallel 49');
 
 insert into BeerInfo(BName,	BType, IBU, ABV, Description, BreweryName)
-values('Jerkface 9000', 'Wheat Ale', 37, 5.0, 'Citrus, floral, malt base, hop punch', 'Parallel 49');
+values('Jerkface 9000', 'Hefeweizen', 37, 5.0, 'Citrus, floral, malt base, hop punch', 'Parallel 49');
 
 insert into BeerInfo(BName,	BType, IBU, ABV, Description, BreweryName)
 VALUES ('33 Acres of Life','Lager',40,4.8,'This hybrid utilizes Mount Hood hops, which lend a spice infused aroma. A fruit-like quality is created by fermenting the lager at ale temperatures.','33 Acres');
@@ -59,13 +59,13 @@ insert into BeerInfo(BName,	BType, IBU, ABV, Description, BreweryName)
 VALUES ('33 Acres of Ocean','Pale Ale',50,5.3,'A full flavoured beer integrated with a distinct floral hop which gives it a quality unique to our Pacific Northwest surroundings.','33 Acres');
 
 insert into BeerInfo(BName,	BType, IBU, ABV, Description, BreweryName)
-VALUES ('33 Acres of Sunshine','Wheat Beer',14,5,'Lightly hopped with Styrian Goldings and flavoured with orange peel, coriander seed and anise seed, brings out a fruity, spicy character.','33 Acres');
+VALUES ('33 Acres of Sunshine','Hefeweizen',14,5,'Lightly hopped with Styrian Goldings and flavoured with orange peel, coriander seed and anise seed, brings out a fruity, spicy character.','33 Acres');
 
 insert into BeerInfo(BName,	BType, IBU, ABV, Description, BreweryName)
-VALUES ('33 Acres of Darkness','Black Lager',30,5,'If you’re the type who likes to judge a beer by it’s colour, 33 Acres of Darkness will surely surprise. While most equate heaviness with flavour this Schwarzbier strives to bring tantalizing taste beyond the usual weight.','33 Acres');
+VALUES ('33 Acres of Darkness','Lager',30,5,'If you’re the type who likes to judge a beer by it’s colour, 33 Acres of Darkness will surely surprise. While most equate heaviness with flavour this Schwarzbier strives to bring tantalizing taste beyond the usual weight.','33 Acres');
 
 insert into BeerInfo(BName,	BType, IBU, ABV, Description, BreweryName)
-VALUES ('33 Acres of Euphoria','Tripel',30,9.2,'A fruity lemon rind finish conceals what is pound for pound our most dangerous, yet very drinkable, Belgian.','33 Acres');
+VALUES ('33 Acres of Euphoria','Double/Tripel',30,9.2,'A fruity lemon rind finish conceals what is pound for pound our most dangerous, yet very drinkable, Belgian.','33 Acres');
 
 insert into BeerInfo(BName,	BType, IBU, ABV, Description, BreweryName)
 VALUES ('33 Acres of Nirvana','IPA',70,7,'Grapefruit and “woody” bitterness, warming finish','33 Acres');
@@ -80,7 +80,7 @@ insert into BeerInfo(BName,	BType, IBU, ABV, Description, BreweryName)
 VALUES ('Bomber IPA','IPA',65, 6.3,'Grapefruit and floral aromas with big hop flavour.  Notes of caramel, malt, and dried grass.','Bomber Brewing');
 
 insert into BeerInfo(BName,	BType, IBU, ABV, Description, BreweryName)
-VALUES ('Bomber Blonde','Blonde',17, 5.0,'The drinkability of an American Blonde Ale with the complexity of its Belgian counterpart!','Bomber Brewing');
+VALUES ('Bomber Blonde','Blonde Ale',17, 5.0,'The drinkability of an American Blonde Ale with the complexity of its Belgian counterpart!','Bomber Brewing');
 
 insert into BeerInfo(BName,	BType, IBU, ABV, Description, BreweryName)
 VALUES ('Shout Out Stout','Stout',45, 6.0,'Dark chocolate and cocoa aromas. Medium-bodied with a tickle of carbonation; just enough to keep this stout refreshing! Oatmeal cookie & burnt chocolate notes. Lingering espresso finish.','Bomber Brewing');
@@ -92,7 +92,7 @@ insert into BeerInfo(BName,	BType, IBU, ABV, Description, BreweryName)
     VALUES ('Massive Aggressive','IPA',80,9,'Massive Aggressive was brewed to commemorate the Alibi Room’s 600th beer list. It’s our flagship beer, Passive Aggressive on steroids.','Brassneck Brewery');
 
 insert into BeerInfo(BName,	BType, IBU, ABV, Description, BreweryName)
-VALUES ('Magician’s Assistant','Blonde',18,6,'Experimental Sour with Amarillo and Citra hops','Brassneck Brewery');
+VALUES ('Magician’s Assistant','Blonde Ale',18,6,'Experimental Sour with Amarillo and Citra hops','Brassneck Brewery');
 
 insert into BeerInfo(BName,	BType, IBU, ABV, Description, BreweryName)
 VALUES ('Passive Aggressive Pale Ale','IPA',60,7,'Single hop, dry hopped, extra pale ale.','Brassneck Brewery');
@@ -131,8 +131,6 @@ insert into BeerInfo(BName,	BType, IBU, ABV, Description, BreweryName)
 VALUES ('West Coast Pale Ale','Pale Ale',38,5.5,'Upfront bitter hops balance with a malt base, finishing slightly fruity with notes of tangerine and pineapple.','Granville Island Brewing');
 
 -- Beers in stock
-insert into BeerInStock
-values('Gypsy Tears',1);
 
 insert into BeerInStock
 values('English Bay Pale Ale',2);
@@ -162,16 +160,33 @@ insert into BeerInStock
 values('Red Racer IPA',6);
 
 insert into BeerInStock
-values('Red Racer Belgian Style Wheat Ale',3);
+    select bname,4
+    from beerinfo
+    where breweryname like "%brass%";
 
-insert into BeerInStock
-values('Red Racer Stout',3);
 
-insert into BeerInStock
-values('Red Racer Copper Ale',3);
+insert into beerinstock(bname,storeid)
+    select bname, 1
+    from beerinfo;
 
-insert into BeerInStock
-values('Red Racer IPA',3);
+insert into beerinstock(bname,storeid)
+    select bname, 3
+    from beerinfo;
+
+insert into beerinstock(bname,storeid)
+    select bname,5
+    from beerinfo
+    where bname like "%ale%";
+delete from beerinstock
+where storeid = 3 and bname like "%doan%";
+
+delete from beerinstock
+where storeid = 1 and bname like "%doan%";
+
+insert into beerinstock(bname,storeid)
+    select bname,5
+    from beerinfo
+    where btype like "%ale%";
 
 -- Customers
 
@@ -189,8 +204,8 @@ insert into customer(CName,CPassword) values('Paul','worstLaptopEva!');
 
 
 -- Ratings
-INSERT into rates values(2,'Gypsy Tears', 7, 'Great!');
+INSERT into rates values(2,'Gypsy Tears', 2, 'Great!');
 INsert into rates values(1,'Gypsy Tears', 3, 'Suboptimal');
 INSERT into rates values(2,'Watermelon Witbier', 3, 'Bad');
-INSERT into rates values(1,'Jerkface 9000', 8, 'Excellent');
-INSERT into rates values(2,'Jerkface 9000', 6, 'Good');
+INSERT into rates values(1,'Jerkface 9000', 5, 'Excellent');
+INSERT into rates values(2,'Jerkface 9000', 4, 'Good');
