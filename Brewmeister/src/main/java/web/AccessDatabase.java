@@ -105,6 +105,32 @@ public class AccessDatabase {
         return listBeers;
     }
 
+    public ArrayList<BeerInfo> searchBeersByVendorNoStock(String searchString) throws Exception {
+        open();
+        preparedStatement = connect
+                .prepareStatement(searchString);
+
+        resultSet = preparedStatement.executeQuery();
+
+        ArrayList<BeerInfo> listBeers = new ArrayList<BeerInfo>();
+
+        while(resultSet.next()){
+            String bname = resultSet.getString("BName");
+            String breweryName = resultSet.getString("BreweryName");
+            String type = resultSet.getString("BType");
+            float abv = resultSet.getFloat("ABV");
+            float ibu = resultSet.getFloat("IBU");
+            String description = resultSet.getString("Description");
+            Boolean brewed = resultSet.getBoolean("Brewed");
+            double averageRating = resultSet.getDouble("AvgRating");
+
+            BeerInfo newBI = new BeerInfo(bname, breweryName, type, abv, ibu,
+                    description, averageRating, brewed);
+            listBeers.add(newBI);
+        }
+        return listBeers;
+    }
+
     public ArrayList<BeerInfo> getRecommendations(String searchString) throws Exception {
         open();
         try{

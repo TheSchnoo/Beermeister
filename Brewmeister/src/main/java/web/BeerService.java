@@ -56,7 +56,6 @@ public class BeerService {
         if(i==0){
             searchString = "";
         }
-        System.out.println(searchString);
 
         return searchString;
     }

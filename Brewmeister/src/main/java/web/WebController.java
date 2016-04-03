@@ -27,8 +27,9 @@ public class WebController {
                                     @RequestParam(value = "description", required = false) String description,
                                     @RequestParam(value = "breweryName", required = false) String breweryName,
                                     @RequestParam(value = "storeId", required = false) String storeId,
+                                    @RequestParam(value = "storeName", required = false) String storeName,
                                     HttpServletResponse httpResponse) throws IOException {
-        ArrayList<BeerInfo> beers;
+        ArrayList<BeerInfo> beers = new ArrayList<>();
         AccessDatabase accessDatabase = new AccessDatabase();
 
         Map<String, String> searchBeerMap = new HashMap<>();
@@ -37,20 +38,27 @@ public class WebController {
         searchBeerMap.put("btype", btype);
         searchBeerMap.put("ibu", ibu);
         searchBeerMap.put("abv", abv);
-//            searchBeerMap.put("averageRating", rating);
         searchBeerMap.put("description", description);
         searchBeerMap.put("breweryName", breweryName);
 
         if (storeId == null) {
+            if(storeName == null) {
 
-            BeerService beerService = new BeerService();
-            try {
-                beers = accessDatabase.searchBeers(beerService.getBeers(searchBeerMap));
-            } catch (Exception e) {
-                beers = null;
+                try {
+                    BeerService beerService = new BeerService();
+                    beers = accessDatabase.searchBeers(beerService.getBeers(searchBeerMap));
+                } catch (Exception e) {
+                    beers = null;
+                }
             }
-
-
+            else {
+                try{
+                    VendorService vs = new VendorService();
+                    beers = accessDatabase.searchBeersByVendorNoStock(vs.getBeersByVendor(storeName, searchBeerMap));
+                } catch (Exception e){
+                    System.out.print(e);
+                }
+            }
         } else {
             try {
                 VendorService vendorService = new VendorService();
