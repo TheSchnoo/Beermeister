@@ -48,6 +48,7 @@ CREATE TABLE BeerVendor (
 	StoreName CHAR(255),
 	Address CHAR(255),
 	SPassword CHAR(40),
+	CONSTRAINT name_address UNIQUE (StoreName,Address),
 	PRIMARY KEY (StoreID)
 	-- CANDIDATE KEY (StoreName, StoreID) UNIQUE,
 	-- ON UPDATE CASCADE
