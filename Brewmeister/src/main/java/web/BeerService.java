@@ -73,7 +73,7 @@ public class BeerService {
             String bname = rs.getString("BName");
             String breweryName = rs.getString("BreweryName");
             String type = rs.getString("BType");
-            float abv = rs.getFloat("ABV");
+            double abv = Math.floor(rs.getDouble("ABV")*100.0)/100.0;
             float ibu = rs.getFloat("IBU");
             String description = rs.getString("Description");
             Boolean brewed = rs.getBoolean("Brewed");

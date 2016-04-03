@@ -91,8 +91,8 @@ public class AccessDatabase {
             String bname = resultSet.getString("BName");
             String breweryName = resultSet.getString("BreweryName");
             String type = resultSet.getString("BType");
-            float abv = resultSet.getFloat("ABV");
-            float ibu = resultSet.getFloat("IBU");
+            double abv = Math.floor(resultSet.getFloat("ABV")* 100.0) / 100.0;
+            double ibu = resultSet.getFloat("IBU");
             String description = resultSet.getString("Description");
             Boolean brewed = resultSet.getBoolean("Brewed");
             double averageRating = resultSet.getDouble("AvgRating");
@@ -118,8 +118,8 @@ public class AccessDatabase {
             String bname = resultSet.getString("BName");
             String breweryName = resultSet.getString("BreweryName");
             String type = resultSet.getString("BType");
-            float abv = resultSet.getFloat("ABV");
-            float ibu = resultSet.getFloat("IBU");
+            double abv = Math.floor(resultSet.getFloat("ABV")* 100.0) / 100.0;
+            double ibu = resultSet.getFloat("IBU");
             String description = resultSet.getString("Description");
             Boolean brewed = resultSet.getBoolean("Brewed");
             double averageRating = resultSet.getDouble("AvgRating");
