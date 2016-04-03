@@ -25,7 +25,7 @@ public class WebController {
                                     @RequestParam(value = "vendor", required = false) String vendor,
                                     @RequestParam(value = "ibu", required = false) String ibu,
                                     @RequestParam(value = "abv", required = false) String abv,
-                                    @RequestParam(value = "rating", required = false) String rating,
+                                    @RequestParam(value = "averageRating", required = false) String rating,
                                     @RequestParam(value = "description", required = false) String description,
                                     @RequestParam(value = "breweryName", required = false) String breweryName,
                                     @RequestParam(value = "storeId", required = false) String storeId,
@@ -40,6 +40,7 @@ public class WebController {
         searchBeerMap.put("btype", btype);
         searchBeerMap.put("ibu", ibu);
         searchBeerMap.put("abv", abv);
+        searchBeerMap.put("avgRating", rating);
         searchBeerMap.put("description", description);
         searchBeerMap.put("breweryName", breweryName);
 

@@ -48,6 +48,10 @@ public class BeerService {
                     searchString = searchString + entry.getKey() + " BETWEEN " + value + " AND " + upperRange;
                 }
             }
+            else if(entry.getKey()=="avgRating"){
+                Double value = Double.parseDouble(entry.getValue());
+                searchString = searchString + entry.getKey() + " > " + entry.getValue();
+                }
             else {
                 searchString = searchString + entry.getKey() + " LIKE '%" + entry.getValue() + "%'";
             }
