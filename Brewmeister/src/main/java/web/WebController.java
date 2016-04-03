@@ -70,15 +70,14 @@ public class WebController {
     public
     @ResponseBody
     ArrayList<BeerInfo> recs(
-            @RequestParam(value = "userid", required = false) String userid,
+            @RequestParam(value = "cid", required = false) int cid,
             HttpServletResponse httpResponse) throws IOException {
-
-        // TODO: ADD FUNCTIONALITY
 
         AccessDatabase accessDB = new AccessDatabase();
         ArrayList<BeerInfo> beers;
         try {
-            beers = accessDB.getRecommendations(Integer.parseInt(userid));
+            BeerService beerService = new BeerService();
+            beers = accessDB.getRecommendations(beerService.getUnratedBeers(cid));
             httpResponse.setStatus(HttpServletResponse.SC_OK);
         } catch (Exception e) {
             beers = null;

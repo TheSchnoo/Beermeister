@@ -92,11 +92,11 @@ public class AccessDatabase {
         return listBeers;
     }
 
-    public ArrayList<BeerInfo> getRecommendations(int userid) throws Exception {
+    public ArrayList<BeerInfo> getRecommendations(String searchString) throws Exception {
         open();
         try{
             preparedStatement = connect
-                    .prepareStatement("SELECT * FROM beerinfo");
+                    .prepareStatement(searchString);
             resultSet = preparedStatement.executeQuery();
 
             BeerService bs = new BeerService();
