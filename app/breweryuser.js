@@ -59,11 +59,12 @@ app.controller('SearchCtrl', function($scope, $http, $timeout, $rootScope, $mdDi
                             .targetEvent(ev)
                     );
                 } else {
+
                     $mdDialog.show(
                         $mdDialog.alert()
                             .parent(angular.element(document.querySelector('#popupContainer')))
                             .clickOutsideToClose(true)
-                            .textContent('Beer creation failed. Try a different name.')
+                            .textContent(response.data.message)
                             .ariaLabel('Alert Dialog Demo')
                             .ok('Got it!')
                             .targetEvent(ev)
