@@ -8,11 +8,9 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.ExecutionException;
 
 @Controller
 public class WebController {
@@ -29,8 +27,9 @@ public class WebController {
                                     @RequestParam(value = "description", required = false) String description,
                                     @RequestParam(value = "breweryName", required = false) String breweryName,
                                     @RequestParam(value = "storeId", required = false) String storeId,
+                                    @RequestParam(value = "storeName", required = false) String storeName,
                                     HttpServletResponse httpResponse) throws IOException {
-        ArrayList<BeerInfo> beers;
+        ArrayList<BeerInfo> beers = new ArrayList<>();
         AccessDatabase accessDatabase = new AccessDatabase();
 
         Map<String, String> searchBeerMap = new HashMap<>();
@@ -39,20 +38,27 @@ public class WebController {
         searchBeerMap.put("btype", btype);
         searchBeerMap.put("ibu", ibu);
         searchBeerMap.put("abv", abv);
-//            searchBeerMap.put("averageRating", rating);
         searchBeerMap.put("description", description);
         searchBeerMap.put("breweryName", breweryName);
 
         if (storeId == null) {
+            if(storeName == null) {
 
-            BeerService beerService = new BeerService();
-            try {
-                beers = accessDatabase.searchBeers(beerService.getBeers(searchBeerMap));
-            } catch (Exception e) {
-                beers = null;
+                try {
+                    BeerService beerService = new BeerService();
+                    beers = accessDatabase.searchBeers(beerService.getBeers(searchBeerMap));
+                } catch (Exception e) {
+                    beers = null;
+                }
             }
-
-
+            else {
+                try{
+                    VendorService vs = new VendorService();
+                    beers = accessDatabase.searchBeersByVendorNoStock(vs.getBeersByVendor(storeName, searchBeerMap));
+                } catch (Exception e){
+                    System.out.print(e);
+                }
+            }
         } else {
             try {
                 VendorService vendorService = new VendorService();
@@ -70,21 +76,31 @@ public class WebController {
     public
     @ResponseBody
     ArrayList<BeerInfo> recs(
-            @RequestParam(value = "userid", required = false) String userid,
+            @RequestParam(value = "cid", required = false) Integer cid,
             HttpServletResponse httpResponse) throws IOException {
-
-        // TODO: ADD FUNCTIONALITY
 
         AccessDatabase accessDB = new AccessDatabase();
         ArrayList<BeerInfo> beers;
-        try {
-            beers = accessDB.getRecommendations(Integer.parseInt(userid));
-            httpResponse.setStatus(HttpServletResponse.SC_OK);
-        } catch (Exception e) {
-            beers = null;
-            httpResponse.setStatus(HttpServletResponse.SC_NOT_FOUND);
+
+        // Get 4 beers not rated by user
+        if(cid!=null) {
+            try {
+                BeerService beerService = new BeerService();
+                beers = accessDB.getRecommendations(beerService.getUnratedBeers(cid));
+                httpResponse.setStatus(HttpServletResponse.SC_OK);
+            } catch (Exception e) {
+                beers = null;
+                httpResponse.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            }
+            return beers;
         }
-        return beers;
+
+        // Get 4 top rated beers
+        else {
+            beers = accessDB.getHighestRatedBeers(4);
+            return beers;
+        }
+
     }
 
     @RequestMapping(value = "/most-rated-beer", method = RequestMethod.GET)
@@ -187,6 +203,7 @@ public class WebController {
         try {
             reviews = accessDatabase.searchReviews(beerReviewService.getReviews(bname));
         } catch (Exception e) {
+            System.out.println("Review error:" + e);
             reviews = null;
         }
 

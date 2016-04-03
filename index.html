@@ -153,6 +153,7 @@
           </div>
         </md-toolbar>
         <md-content id="search-content">
+          
           <md-list flex id="search-list">
 
             <md-list-item class="md-3-line" multiple="true" ng-repeat="beer in $root.searchResults track by $index">
@@ -165,16 +166,22 @@
                 <md-button ng-click="showAdditionalInfo($event, beer)" class="search-action-button md-primary">More Info</md-button>
                 <md-button ng-click="showVendors($event, beer)" class="search-action-button md-primary">Vendors</md-button>
                 <md-button ng-click="showRatings($event, beer)" class="search-action-button md-primary">Ratings</md-button>
+                <md-button ng-click="showReviewDialog($event, beer)" class="search-action-button md-primary">Submit Review</md-button>
               <md-divider ng-if="!$last"></md-divider>
             </md-list-item>
 
           </md-list>
+
+
+
         </md-content>
       </md-whiteframe>
     </div>
 
+
+    <!--!!!-->
     <div class="container" id="most-popular-beer">
-      Our Most Popular Beer:
+      <md-subhead class="result-heading">Our Most Popular Beer:</md-subhead>
       <div>
         <md-card class="beer-card">
           <md-card-title>
@@ -185,6 +192,7 @@
                 <p>Type: {{mostPopularBeer.type}}</p>
                 <p>ABV: {{mostPopularBeer.abv}}</p>
                 <p>IBU: {{mostPopularBeer.ibu}}</p>
+                <p>Average Rating: {{mostPopularBeer.averageRating}}</p>
               </span>
             </md-card-title-text>
             <md-card-title-media>
@@ -196,6 +204,7 @@
           <md-card-actions layout="row" layout-align="end center">
             <md-button class="md-primary"ng-click="showVendors($event, mostPopularBeer)">Vendors</md-button>
             <md-button class="md-primary" ng-click="showRatings($event, mostPopularBeer)">Ratings</md-button>
+            <md-button ng-click="showReviewDialog($event, mostPopularBeer)" class="search-action-button md-primary">Submit Review</md-button>
           </md-card-actions>
         </md-card>
       </div>
@@ -218,6 +227,7 @@
                     <p>Type: {{beer.type}}</p>
                     <p>ABV: {{beer.abv}}</p>
                     <p>IBU: {{beer.ibu}}</p>
+                    <p>Average Rating: {{beer.averageRating}}</p>
                   </span>
                 </md-card-title-text>
                 <md-card-title-media>
@@ -229,6 +239,7 @@
               <md-card-actions layout="row" layout-align="end center">
                 <md-button class="md-primary"ng-click="showVendors($event, beer)">Vendors</md-button>
                 <md-button class="md-primary" ng-click="showRatings($event, beer)">Ratings</md-button>
+                <md-button ng-click="showReviewDialog($event, beer)" class="search-action-button md-primary">Submit Review</md-button>
               </md-card-actions>
             </md-card>
           </div>

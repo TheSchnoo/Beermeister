@@ -1,0 +1,49 @@
+<md-dialog aria-label="Login" ng-cloak ng-controller="LoginCtrl">
+  <form>
+    <md-toolbar>
+      <div class="md-toolbar-tools">
+        <h2>Submit a review for {{beer.bname}}</h2>
+        <span flex></span>
+       <!--  <md-button aria-label="cancel" class="md-icon-button" ng-click="cancel()">
+        </md-button> -->
+      </div>
+    </md-toolbar>
+    <md-dialog-content>
+      <div class="md-dialog-content">
+          
+        <md-input-container class="md-block" flex-gt-sm>
+          <label>Review</label>
+          <input ng-model="rating.review">
+        </md-input-container>
+
+        <md-input-container class="md-block" flex-gt-sm>
+	      <label>Rating</label>
+	      <md-select ng-model="rating.rating">
+	        <md-option value="1">1</md-option>
+	        <md-option value="2">2</md-option>
+	        <md-option value="3">3</md-option>
+	        <md-option value="4">4</md-option>
+	        <md-option value="5">5</md-option>
+	      </md-select>
+	    </md-input-container>
+
+        <!--{"bname":"Gypsy Tears","review":" ","rating":0,"cid":3,"newReview":true}-->
+
+        <md-button ng-click="submitReview($event)" target="_blank" md-autofocus>
+          Submit Review!
+        </md-button>
+
+
+
+          
+      </div>
+    </md-dialog-content>
+
+    <!-- <md-dialog-actions layout="row">
+      <md-button ng-click="sendLoginInfo($event)" target="_blank" md-autofocus>
+        Log me in Captain!
+      </md-button>
+      <span flex></span>
+    </md-dialog-actions> -->
+  </form>
+</md-dialog>

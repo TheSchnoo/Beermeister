@@ -56,14 +56,8 @@ public class BeerService {
         if(i==0){
             searchString = "";
         }
-        System.out.println(searchString);
 
         return searchString;
-    }
-
-    public String getRecommendations(int userid) throws Exception {
-        String searchString = "";
-            return searchString;
     }
 
     // Convert a ResultSet to a BeerInfo object
@@ -94,5 +88,17 @@ public class BeerService {
             System.out.println("Error in converting to BeerInfo:"+ e);
         }
         return null;
+    }
+
+    public String getUnratedBeers(int cid){
+        String searchString =
+                "SELECT bi.* " +
+                        "FROM beerinfo bi " +
+                        "WHERE not exists " +
+                        "(SELECT beerinfo.*, r.cid " +
+                        "FROM BeerInfo, rates r, customer c " +
+                        "WHERE r.bname = bi.bname AND c.cid = " + cid + " AND r.cid=c.cid) " +
+                        "ORDER BY bi.AvgRating DESC LIMIT 4";
+        return searchString;
     }
 }

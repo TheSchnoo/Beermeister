@@ -1,0 +1,47 @@
+#vendor-top-panel {
+    height: 140px;
+}
+
+#vendor-top-panel-image {
+    height: 140px;
+    position: absolute;
+}
+
+#beer-vendor-name {
+    font-size: 42px;
+    top: 50px;
+    left: 30px;
+    display: inline-block;
+    position: absolute;
+}
+
+#location-icon {
+    width: 10px;
+    position: absolute;
+    left: 535px;
+    top: 90px;
+}
+
+#vendor-address {
+    font-size: 20px;
+    position: absolute;
+    left: 560px;
+    top: 78px;
+}
+
+#vendor-panel-2 {
+    height: 500px;
+    width: 763px;
+    background-color: #f4f4f4;
+}
+
+#vendor-beers-section {
+    padding-top: 25px;
+}
+
+#vendor-divide-line {
+    border-top: 1px solid rgba(0,0,0,0.3);
+    margin-left: 50px;
+    margin-right: 50px;
+    margin-top: 20px;
+}

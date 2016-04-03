@@ -44,11 +44,13 @@ public class VendorService {
         }
     }
 
-    public String getBeersByVendor(String storeName) throws SQLException, ClassNotFoundException {
+    public String getBeersByVendor(String storeName, Map searchMap) throws Exception {
+        BeerService beerService = new BeerService();
         String searchString =
                 "SELECT bi.* " +
                 "FROM BeerInfo bi, BeerVendor bv, BeerInStock bis " +
-                "WHERE bi.BName = bis.BName AND bv.storeID = bis.storeID and bv.storeName LIKE '%" + storeName + "%'";
+                "WHERE bi.BName = bis.BName AND bv.storeID = bis.storeID and bv.storeName LIKE '%" + storeName + "%' " +
+                        beerService.getBeers(searchMap);
 
         System.out.println(searchString);
         return searchString;

@@ -60,15 +60,23 @@ app.controller('AppCtrl', function($scope, $mdDialog, $mdMedia, $rootScope, $htt
 	$rootScope.loading = false;
 	//this block used to get the recommended beers, and set to a scope variable
 	if (mockMode) {
-		$scope.recommendedBeers = mockBeers;
+		$rootScope.recommendedBeers = mockBeers;
 		$scope.mostPopularBeer = mockBeers[1];
   	} else {
+  		var recURL = baseURL;
+  		if ($rootScope.cid === null){
+  			recURL = recURL + '/recommendedbeers';
+  		} else if ($rootScope.cid != null) {
+  			recURL = recURL + '/recommendedbeers?cid=' + $rootScope;
+  		}
+
+  		console.log('making HTTP GET to ' + recURL);
   		$http({
 		    method: 'GET',
-		    url: baseURL + '/recommendedbeers?userid=' + userid
+		    url: recURL
 		}).then(function successCallback(response) {
 			console.log('recommended beers are ' + JSON.stringify(response.data));
-		    $scope.recommendedBeers = response.data;
+		    $rootScope.recommendedBeers = response.data;
 		}, function errorCallback(response) {
 		    // called asynchronously if an error occurs
 		    // or server returns response with an error status.
@@ -77,8 +85,8 @@ app.controller('AppCtrl', function($scope, $mdDialog, $mdMedia, $rootScope, $htt
 		    method: 'GET',
 		    url: baseURL + '/most-rated-beer'
 		}).then(function successCallback(response) {
-			console.log('recommended beers are ' + JSON.stringify(response.data));
-		    $scope.mostPopularBeer = response.data;
+			console.log('most rated beer is ' + JSON.stringify(response.data));
+		    $scope.mostPopularBeer = response.data[0];
 		}, function errorCallback(response) {
 		    // called asynchronously if an error occurs
 		    // or server returns response with an error status.
@@ -152,6 +160,7 @@ app.controller('AppCtrl', function($scope, $mdDialog, $mdMedia, $rootScope, $htt
 
 		function VendorPageCtrl($scope, $mdDialog, vendor){
 			$scope.vendor = vendor;
+			console.log('in VendorPageCtrl, the vendor object is ' + JSON.stringify($scope.vendor));
 			$scope.beers = [];
 			//$scope.beers = get the beers for this vendor by providing storeName
 			if (mockMode) {
@@ -199,9 +208,106 @@ app.controller('AppCtrl', function($scope, $mdDialog, $mdMedia, $rootScope, $htt
 
   	function RatingsDialogCtrl($scope, $mdDialog, beer){
   		$scope.beer = beer;
+  		$scope.reviews = null;
   		console.log('got to RatingsDialogCtrl');
+  		var url = baseURL + '/reviews?bname=' + beer.bname; //###
+  		//!!! TODO: implmeent this after backend done
+  		$http({
+		    method: 'GET',
+		    url: url
+		}).then(function successCallback(response) {
+			console.log('received response of ' + JSON.stringify(response.data))
+			$scope.reviews = response.data
+		}, function errorCallback(response) {
+		    // called asynchronously if an error occurs
+		    // or server returns response with an error status.
+		});
   		
   	}
+
+  	$scope.showReviewDialog = function (ev, beer){
+    	console.log('got to showReviewDialog');
+    	console.log('the current beer is ' + JSON.stringify(beer));
+
+    	if ($rootScope.cid === null) {
+    		$mdDialog.show(
+				$mdDialog.alert()
+					.parent(angular.element(document.querySelector('#popupContainer')))
+					.clickOutsideToClose(true)
+					.textContent('Yo dawg, login first!')
+					.ariaLabel('Alert Dialog Demo')
+					.ok('Got it!')
+					.targetEvent(ev)
+	    	);
+
+    	} else {
+
+	    	var useFullScreen = ($mdMedia('sm') || $mdMedia('xs'))  && $scope.customFullscreen;
+	    	$mdDialog.show({
+		        controller: RatingSubmissionDialogCtrl,
+		      	templateUrl: 'app/reviewsubmission.html',
+		      	parent: angular.element(document.body),
+		      	targetEvent: ev,
+		      	clickOutsideToClose:true,
+		      	fullscreen: useFullScreen,
+		      	locals:{
+		      		beer: beer,
+		      	}
+		    });
+    	}
+
+    }
+
+    function RatingSubmissionDialogCtrl($scope, $mdDialog, beer){
+    	console.log('got to ratingsubmissiondialogctrl');
+
+    	$scope.beer = beer;
+    	$scope.rating = null;
+    	var url = baseURL + '/rating?bname=' + $scope.beer.bname + '&cid=' + $rootScope.cid;
+
+    	console.log('makine HTTP GET to ' + url);
+
+    	$http({
+		    method: 'GET',
+		    url: url
+		}).then(function successCallback(response) {
+			console.log('received a response of ' + JSON.stringify(response.data));
+			$scope.rating = response.data;
+		}, function errorCallback(response) {
+		    // called asynchronously if an error occurs
+		    // or server returns response with an error status.
+		});
+
+		$scope.submitReview = function (ev){
+			var url = baseURL + '/rating';
+			console.log('making http POST to ' + url + ' with a body of ' + JSON.stringify($scope.rating));
+			$http({
+		    	method: 'POST',
+		    	url: url,
+		    	data: $scope.rating
+		    	
+			}).then(function successCallback(response) {
+				console.log('received a response of ' + JSON.stringify(response.data));
+				$mdDialog.show(
+					$mdDialog.alert()
+						.parent(angular.element(document.querySelector('#popupContainer')))
+						.clickOutsideToClose(true)
+						.textContent('Review submitted.')
+						.ariaLabel('Alert Dialog Demo')
+						.ok('Got it!')
+						.targetEvent(ev)
+		    	);
+
+
+			}, function errorCallback(response) {
+		    // called asynchronously if an error occurs
+		    // or server returns response with an error status.
+			});	
+		
+		}
+
+	}
+
 
 });
 
@@ -311,6 +417,7 @@ app.controller('SearchCtrl', function($scope, $http, $timeout, $rootScope, $mdMe
 	    }
 	
     }
+
     $scope.showAdditionalInfo = function(ev, beer){
     	console.log('showing additional information for ' + beer.bname);
     	var useFullScreen = ($mdMedia('sm') || $mdMedia('xs'))  && $scope.customFullscreen;
@@ -360,7 +467,6 @@ app.controller('SearchCtrl', function($scope, $http, $timeout, $rootScope, $mdMe
 app.controller('LoginCtrl', function($scope, $mdDialog, $mdMedia, $rootScope, $http) {
 	$scope.loginInfo = {};
 	$scope.signupInfo = {};
-	
 
 
 	//called when login button is clicked
@@ -442,6 +548,28 @@ app.controller('LoginCtrl', function($scope, $mdDialog, $mdMedia, $rootScope, $h
 	    	
 				} else {
 					$rootScope.cid = response.data.cid;
+					//###
+
+					console.log('attempting to update recommended beers');
+					var recURL = baseURL;
+					if ($rootScope.cid === null){
+			  			recURL = recURL + '/recommendedbeers';
+			  		} else if ($rootScope.cid != null) {
+			  			recURL = recURL + '/recommendedbeers?cid=' + $rootScope.cid;
+			  		}
+
+			  		console.log('making HTTP GET to ' + recURL);
+			  		$http({
+					    method: 'GET',
+					    url: recURL
+					}).then(function successCallback(response) {
+						console.log('recommended beers are ' + JSON.stringify(response.data));
+					    $rootScope.recommendedBeers = response.data;
+					}, function errorCallback(response) {
+					    // called asynchronously if an error occurs
+					    // or server returns response with an error status.
+					});
+					
 					$mdDialog.show(
 						$mdDialog.alert()
 							.parent(angular.element(document.querySelector('#popupContainer')))
