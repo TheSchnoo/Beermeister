@@ -5,7 +5,7 @@
     <link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/angular_material/1.0.0/angular-material.min.css">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
     <link rel="stylesheet" type="text/css" href="../styles.css">
-    <link rel="stylesheet" type="text/css" href="vendor-template.css">
+    <link rel="stylesheet" type="text/css" href="../vendor-template.css">
   </head>
 
   <body ng-app="Brewmaster" ng-cloak>
@@ -22,14 +22,32 @@
         <div id="vendor-beers-section">
           <div class="text-center">
             <h3 id="beers-available-header">Beers Available at {{vendor.storeName}}</h3>
-            <div ng-repeat="beer in beers">
-              {{beer.bname}}
+            <div class="row">
+              <hr id="vendor-divide-line">
             </div>
           </div>
-          <div class="row">
-              <hr id="vendor-divide-line">
-          </div>
         </div>
+      </div>
+      <div ng-repeat="beer in beers">
+        <md-card class="vendor-beer-card">
+          <md-card-title>
+            <md-card-title-text>
+              <span class="md-headline beer-name">{{beer.bname}}</span>
+                    <span class="md-subhead beer-info">
+                      <p>Brewery: {{beer.breweryName}}</p>
+                      <p>Type: {{beer.type}}</p>
+                      <p>ABV: {{beer.abv}}</p>
+                      <p>IBU: {{beer.ibu}}</p>
+                      <p>Average Rating: {{beer.averageRating}}</p>
+                    </span>
+            </md-card-title-text>
+            <md-card-title-media>
+              <div class="md-media-lg card-media">
+                <img class="beer-image" src="images/stock-beer.jpg">
+              </div>
+            </md-card-title-media>
+          </md-card-title>
+        </md-card>
       </div>
     </div>
   </body>
