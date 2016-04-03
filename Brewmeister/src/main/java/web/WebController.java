@@ -186,6 +186,7 @@ public class WebController {
         try {
             reviews = accessDatabase.searchReviews(beerReviewService.getReviews(bname));
         } catch (Exception e) {
+            System.out.println("Review error:" + e);
             reviews = null;
         }
 

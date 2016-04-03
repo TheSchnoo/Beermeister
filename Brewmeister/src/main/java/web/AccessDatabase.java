@@ -28,7 +28,7 @@ public class AccessDatabase {
     public ArrayList<BeerReview> searchReviews(String searchString) throws Exception {
         open();
         preparedStatement = connect
-                .prepareStatement("SELECT * FROM rates " + searchString);
+                .prepareStatement(searchString);
         resultSet = preparedStatement.executeQuery();
 
         BeerReviewService brs = new BeerReviewService();
@@ -39,6 +39,7 @@ public class AccessDatabase {
         }
         return listReviews;
     }
+    
     public ArrayList<BeerInfo> searchBeers(String searchString) throws Exception {
         open();
 

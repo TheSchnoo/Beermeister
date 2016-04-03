@@ -29,7 +29,7 @@ public class BeerReviewService {
     }
 
     public String getReviews(String bname) throws Exception{
-        String searchString = "Select * from Rates Where BName like '" + bname + "');";
+        String searchString = "Select * from Rates Where BName like '%" + bname + "%'";
         return searchString;
     }
 }
