@@ -120,7 +120,7 @@ CREATE TABLE Searches(
 );
 DELIMITER $$
 
-CREATE PROCEDURE update_avg_ratings_table
+CREATE PROCEDURE update_avg_ratings
 	(IN beername CHAR(255))
 MODIFIES SQL DATA
 	BEGIN
@@ -133,7 +133,8 @@ MODIFIES SQL DATA
 DELIMITER ;
 
 CREATE TRIGGER the_average_insert AFTER INSERT ON Rates
-FOR EACH ROW CALL update_avg_ratings_table(New.BName);
+FOR EACH ROW CALL update_avg_ratings(New.BName);
 
 CREATE TRIGGER the_average_update AFTER UPDATE ON Rates
-FOR EACH ROW CALL update_avg_ratings_table(New.BName);
+FOR EACH ROW CALL update_avg_ratings(New.BName);
+
