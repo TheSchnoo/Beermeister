@@ -25,10 +25,23 @@ public class AccessDatabase {
 
     public AccessDatabase(){
     }
+    public ArrayList<BeerReview> searchReviews(String searchString) throws Exception {
+        open();
+        preparedStatement = connect
+                .prepareStatement(searchString);
+        resultSet = preparedStatement.executeQuery();
+
+        BeerReviewService brs = new BeerReviewService();
+        ArrayList<BeerReview> listReviews = new ArrayList<>();
+
+        while(resultSet.next()){
+            listReviews.add(brs.convertResultSetToBeerReview(resultSet));
+        }
+        return listReviews;
+    }
 
     public ArrayList<BeerInfo> searchBeers(String searchString) throws Exception {
         open();
-        System.out.println(searchString);
 
         //Beer search by vendor
         if(searchString.contains("SELECT")){
@@ -92,11 +105,11 @@ public class AccessDatabase {
         return listBeers;
     }
 
-    public ArrayList<BeerInfo> getRecommendations(int userid) throws Exception {
+    public ArrayList<BeerInfo> getRecommendations(String searchString) throws Exception {
         open();
         try{
             preparedStatement = connect
-                    .prepareStatement("SELECT * FROM beerinfo");
+                    .prepareStatement(searchString);
             resultSet = preparedStatement.executeQuery();
 
             BeerService bs = new BeerService();
@@ -315,8 +328,8 @@ public class AccessDatabase {
             }else{
                 preparedStatement = connect.prepareStatement("UPDATE Rates SET BRate = " + review.getRating() + " WHERE " + " BNAME LIKE '" + review.getBname() + "' AND CID = " + review.getCid() + ";");
                 success = preparedStatement.execute();
-                preparedStatement = connect.prepareStatement("UPDATE Rates SET Review = '" + review.getReview() + "' WHERE " + " BNAME LIKE '" + review.getBname() + "' AND CID = " + review.getCid() + ";");
-                success = (success && preparedStatement.execute());
+                preparedStatement = connect.prepareStatement("UPDATE Rates SET Review = '" + review.getReview() + "' WHERE " + "BNAME LIKE '" + review.getBname() + "' AND CID = " + review.getCid() + ";");
+                success = (success & preparedStatement.execute());
             }
             return true;
 
