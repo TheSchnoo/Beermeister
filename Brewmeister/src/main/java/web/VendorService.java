@@ -12,8 +12,10 @@ public class VendorService {
     private ResultSet resultSet = null;
 
     public ArrayList<Vendor> getVendorsThatSellABeer(String bname) throws Exception{
-        String searchString = "SELECT bv.* FROM BeerVendor bv, beerinstock bis " +
-                "WHERE bv.StoreID = bis.StoreID AND bis.bname LIKE '%" + bname + "%'";
+        String searchString =
+                "SELECT bv.* " +
+                        "FROM BeerVendor bv, beerinstock bis " +
+                        "WHERE bv.StoreId = bis.StoreId AND bis.bname LIKE '%" + bname + "%'";
 
         System.out.println(searchString);
 
@@ -43,18 +45,22 @@ public class VendorService {
     }
 
     public String getBeersByVendor(String storeName) throws SQLException, ClassNotFoundException {
-        String searchString = "SELECT bi.*" +
-                " FROM BeerInfo bi, BeerVendor bv, BeerInStock bis " +
-                "WHERE bi.BName = bis.BName AND bv.storeID = bis.storeID and bv.storeName like '%" + storeName + "%'";
+        String searchString =
+                "SELECT bi.* " +
+                "FROM BeerInfo bi, BeerVendor bv, BeerInStock bis " +
+                "WHERE bi.BName = bis.BName AND bv.storeID = bis.storeID and bv.storeName LIKE '%" + storeName + "%'";
 
         System.out.println(searchString);
         return searchString;
     }
 
-    public String getBeersByVendorStocked(String storeName) throws SQLException, ClassNotFoundException {
-        String searchString = "SELECT *, CASE WHEN (SELECT BName FROM BeerVendor bv, BeerInStock bis WHERE " +
-                "beerinfo.BName = bis.BName AND bv.storeID = bis.storeID AND " +
-                "bv.storeName like '%"+storeName+"%') is null then 0 else 1 end as stocked from beerinfo";
+    public String getBeersByVendorStocked(String storeId) throws SQLException, ClassNotFoundException {
+        String searchString =
+                "SELECT *, CASE WHEN " +
+                        "(SELECT BName " +
+                        "FROM BeerVendor bv, BeerInStock bis " +
+                        "WHERE beerinfo.BName = bis.BName AND bv.storeID = bis.storeID " +
+                        "AND bv.storeId="+storeId+") IS NULL THEN 0 ELSE 1 END AS stocked FROM beerinfo";
 
         System.out.println(searchString);
         return searchString;

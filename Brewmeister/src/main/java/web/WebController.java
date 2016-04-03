@@ -28,12 +28,12 @@ public class WebController {
                                     @RequestParam(value = "rating", required = false) String rating,
                                     @RequestParam(value = "description", required = false) String description,
                                     @RequestParam(value = "breweryName", required = false) String breweryName,
-                                    @RequestParam(value = "storeName", required = false) String storeName,
+                                    @RequestParam(value = "storeId", required = false) String storeId,
                                     HttpServletResponse httpResponse) throws IOException {
         ArrayList<BeerInfo> beers;
         AccessDatabase accessDatabase = new AccessDatabase();
 
-        if (storeName == null) {
+        if (storeId == null) {
 
             Map<String, String> searchBeerMap = new HashMap<>();
 
@@ -57,7 +57,7 @@ public class WebController {
 //            if (bname==null) {
 //                try {
 //                    VendorService vendorService = new VendorService();
-//                    beers = accessDatabase.searchBeers(vendorService.getBeersByVendor(storeName));
+//                    beers = accessDatabase.searchBeers(vendorService.getBeersByVendor(storeId));
 //                } catch (Exception e) {
 //                    beers = null;
 //                    e.printStackTrace();
@@ -65,7 +65,7 @@ public class WebController {
 //            } else {
                 try {
                     VendorService vendorService = new VendorService();
-                    beers = accessDatabase.searchBeersByVendor(vendorService.getBeersByVendorStocked(storeName));
+                    beers = accessDatabase.searchBeersByVendor(vendorService.getBeersByVendorStocked(storeId));
                 } catch (Exception e) {
                     beers = null;
                     e.printStackTrace();

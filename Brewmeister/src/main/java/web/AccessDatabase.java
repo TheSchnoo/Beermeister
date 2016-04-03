@@ -116,11 +116,19 @@ public class AccessDatabase {
     public ArrayList<Object> getMostRated() throws SQLException{
         open();
        ArrayList<Object> returnArray = new ArrayList<>();
-        String searchString = "SELECT b1.*, rates_count FROM BeerInfo b1 JOIN (SELECT b2.BName, COUNT(r1.BName)" +
-                " rates_count FROM BeerInfo b2, rates r1 WHERE b2.BName = r1.BName GROUP BY b2.BName) " +
-                "CountRatings ON b1.BName = CountRatings.BName WHERE rates_count = (SELECT MAX(rates_count) " +
-                "FROM (SELECT b2.BName, COUNT(r1.BName) rates_count FROM BeerInfo b2, rates r1 " +
-                "WHERE b2.BName = r1.BName GROUP BY b2.BName) CountRating)";
+        String searchString =
+                "SELECT b1.*, rates_count " +
+                "FROM BeerInfo b1 JOIN " +
+                        "(SELECT b2.BName, COUNT(r1.BName) rates_count " +
+                        "FROM BeerInfo b2, rates r1 " +
+                        "WHERE b2.BName = r1.BName " +
+                        "GROUP BY b2.BName) " +
+                "CountRatings ON b1.BName = CountRatings.BName " +
+                        "WHERE rates_count = " +
+                        "(SELECT MAX(rates_count) " +
+                        "FROM (SELECT b2.BName, COUNT(r1.BName) rates_count " +
+                        "FROM BeerInfo b2, rates r1 " +
+                        "WHERE b2.BName = r1.BName GROUP BY b2.BName) CountRating)";
         try{
             preparedStatement = connect
                     .prepareStatement(searchString);
