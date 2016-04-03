@@ -54,9 +54,6 @@
 
     </div>
 
-
-
-
     <div id="search-area">
       <div id="search-form" ng-controller="SearchCtrl" layout="column" ng-cloak class="md-inline-form container">
         <md-toolbar>
@@ -153,7 +150,7 @@
           <md-list flex id="search-list">
 
             <md-list-item class="md-3-line" ng-repeat="beer in $root.searchResults">
-              <img ng-src="images/stock-beer.jpg" class="md-avatar" alt="images/stock-beer.jpg" />
+              <img ng-src="../images/stock-beer.jpg" class="md-avatar" alt="images/stock-beer.jpg" />
               <div class="md-list-item-text" layout="column">
                 <h3>{{beer.bname}}</h3>
                 <h4>{{beer.breweryName}}</h4>
@@ -161,7 +158,9 @@
               </div>
                 <md-button ng-click="showAdditionalInfo($event, beer)" class="search-action-button md-primary">More Info</md-button>
                 <md-button ng-click="showVendors($event, beer)" class="search-action-button md-primary">Vendors</md-button>
-                <md-button class="search-action-button md-primary">Ratings</md-button>
+                <!-- <md-button class="search-action-button md-primary">Ratings</md-button> -->
+                <md-button ng-click="removeFromInventory($event, beer)" ng-show="beer.stocked" class="search-action-button md-primary">Remove from inventory</md-button>
+                <md-button ng-click="addToInventory($event, beer)" ng-show="!beer.stocked" class="search-action-button md-primary">Add to inventory</md-button>
               <md-divider ng-if="!$last"></md-divider>
             </md-list-item>
 

@@ -1,4 +1,4 @@
-var mockMode = true;
+var mockMode = false;
 var debugMode = false;
 var baseURL = 'http://localhost:8080'
 var userid = 1;
@@ -176,8 +176,10 @@ app.controller('AppCtrl', function($scope, $mdDialog, $mdMedia, $rootScope, $htt
 		}
 	}
 
+
 	//called when the ratings button is clicked
   	$scope.showRatings = function(ev, beer) {
+  		console.log('ratings button pressed');
   		var useFullScreen = ($mdMedia('sm') || $mdMedia('xs'))  && $scope.customFullscreen;
 
 	    $mdDialog.show({
@@ -198,6 +200,7 @@ app.controller('AppCtrl', function($scope, $mdDialog, $mdMedia, $rootScope, $htt
   	function RatingsDialogCtrl($scope, $mdDialog, beer){
   		$scope.beer = beer;
   		console.log('got to RatingsDialogCtrl');
+  		
   	}
 
 });
@@ -273,7 +276,19 @@ app.controller('SearchCtrl', function($scope, $http, $timeout, $rootScope, $mdMe
 			}).then(function successCallback(response) {
 				console.log('received a response of ' + JSON.stringify(response.data));
 			    $rootScope.searchResults = response.data;
-			    console.log("the search results are " + JSON.stringify($scope.searchResults));
+			    if ($rootScope.searchResults.length === 0){ 
+
+			    	$mdDialog.show(
+						$mdDialog.alert()
+							.parent(angular.element(document.querySelector('#popupContainer')))
+							.clickOutsideToClose(true)
+							.textContent('No results found.')
+							.ariaLabel('Alert Dialog Demo')
+							.ok('Got it!')
+							.targetEvent(ev)
+			    	);
+
+			    }
 			}, function errorCallback(response) {
 			    // called asynchronously if an error occurs
 			    // or server returns response with an error status.
