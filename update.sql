@@ -164,13 +164,19 @@ insert into BeerInStock
     from beerinfo
     where breweryname like "%brass%";
 
-insert into beerinstock
-    values((select bname from beerinfo),6);
 
 insert into beerinstock(bname,storeid)
-    select bname, 6
+    select bname, 1
     from beerinfo;
 
+insert into beerinstock(bname,storeid)
+    select bname, 3
+    from beerinfo;
+
+insert into beerinstock(bname,storeid)
+    select bname,5
+    from beerinfo
+    where bname like "%ale%";
 delete from beerinstock
 where storeid = 3 and bname like "%doan%";
 
@@ -178,8 +184,10 @@ delete from beerinstock
 where storeid = 1 and bname like "%doan%";
 
 insert into beerinstock(bname,storeid)
-    select bname, 1
-    from beerinfo;
+    select bname,5
+    from beerinfo
+    where btype like "%ale%";
+
 -- Customers
 
 insert into customer(CName,CPassword) values('Jim','theendofthings2');
