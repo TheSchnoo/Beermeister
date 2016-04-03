@@ -326,8 +326,7 @@ public class WebController {
     }
     // Add or Update a Review
     @RequestMapping(value = "/rating", method = RequestMethod.POST)
-    public @ResponseBody JSONObject postRating(@RequestBody String body,
-                                               @RequestParam(value="bname", required=true) String beerName) throws JSONException {
+    public @ResponseBody Map postRating(@RequestBody String body) throws JSONException {
 
         JSONObject bodyJSON = new JSONObject(body);
         String bname = bodyJSON.getString("bname");
@@ -339,13 +338,15 @@ public class WebController {
         BeerReview newBR = new BeerReview(bname, review, rating, cid, newReview);
 
         AccessDatabase accessDB = new AccessDatabase();
+        Map<String,Boolean> returnMap = new HashMap<>();
         try {
             accessDB.addOrModifyReview(newBR);
+            returnMap.put("created", true);
         } catch (Exception e) {
-            return new JSONObject().append("created", false);
+            returnMap.put("created", false);
         }
 
-        return new JSONObject().append("created", true);
+        return returnMap;
     }
 }
 

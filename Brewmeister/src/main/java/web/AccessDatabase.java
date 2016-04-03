@@ -243,10 +243,10 @@ public class AccessDatabase {
             Class.forName("com.mysql.jdbc.Driver");
 
             connect = DriverManager
-                    .getConnection("jdbc:mysql://localhost/review?"
+                    .getConnection("jdbc:mysql://localhost/beerinfo?"
                             + "user=sqluser&password=sqluserpw");
             preparedStatement = connect
-                    .prepareStatement("Select * FROM Rates WWHERE bname like '" + bname + "' AND CID = " + cid);
+                    .prepareStatement("Select * FROM Rates WHERE bname like '" + bname + "' AND CID = " + cid);
             resultSet = preparedStatement.executeQuery();
             BeerReviewService beerReviewService = new BeerReviewService();
 
@@ -274,12 +274,12 @@ public class AccessDatabase {
                         .prepareStatement("INSERT INTO Rates VALUES " + review.toTupleValueString());
                 success = preparedStatement.execute();
             }else{
-                preparedStatement = connect.prepareStatement("UPDATE Rates SET BRate = " + review.getRating() + " WHERE " + " BNAME LIKE " + review.getBname() + " AND CID = " + review.getCid() + ";");
+                preparedStatement = connect.prepareStatement("UPDATE Rates SET BRate = " + review.getRating() + " WHERE " + " BNAME LIKE '" + review.getBname() + "' AND CID = " + review.getCid() + ";");
                 success = preparedStatement.execute();
                 preparedStatement = connect.prepareStatement("UPDATE Rates SET Review = '" + review.getReview() + "' WHERE " + " BNAME LIKE '" + review.getBname() + "' AND CID = " + review.getCid() + ";");
                 success = (success && preparedStatement.execute());
             }
-            return success;
+            return true;
 
         } catch (Exception e) {
             throw e;
