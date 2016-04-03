@@ -267,8 +267,8 @@ app.controller('AppCtrl', function($scope, $mdDialog, $mdMedia, $rootScope, $htt
 		});
 
 		$scope.submitReview = function (ev){
-			var url = baseURL + '/rating?';
-			console.log('making http POST to ' + url + 'with a body of ' + JSON.stringify($scope.rating));
+			var url = baseURL + '/rating';
+			console.log('making http POST to ' + url + ' with a body of ' + JSON.stringify($scope.rating));
 			$http({
 		    	method: 'POST',
 		    	url: url,
