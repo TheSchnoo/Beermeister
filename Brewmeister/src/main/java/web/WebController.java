@@ -91,18 +91,20 @@ public class WebController {
                 BeerService beerService = new BeerService();
                 beers = accessDB.getRecommendations(beerService.getUnratedBeers(cid));
                 httpResponse.setStatus(HttpServletResponse.SC_OK);
+                if(beers==null || beers.size()==0){
+                    beers = accessDB.getHighestRatedBeers(4);
+                }
             } catch (Exception e) {
                 beers = null;
                 httpResponse.setStatus(HttpServletResponse.SC_NOT_FOUND);
             }
-            return beers;
         }
 
         // Get 4 top rated beers
         else {
             beers = accessDB.getHighestRatedBeers(4);
-            return beers;
         }
+        return beers;
 
     }
 
