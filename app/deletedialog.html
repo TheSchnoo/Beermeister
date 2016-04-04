@@ -1,0 +1,34 @@
+<md-dialog aria-label="Delete" ng-cloak ng-controller="LoginCtrl">  <form>
+  <md-toolbar>
+    <div class="md-toolbar-tools">
+      <h2>To Delete An Account, Provide Your Account Information</h2>
+      <span flex></span>
+      <!-- <md-button aria-label="cancel" class="md-icon-button" ng-click="cancel()">
+      </md-button> -->
+    </div>
+  </md-toolbar>
+  <md-dialog-content>
+    <div class="md-dialog-content">
+
+      <form name="deleteForm">
+        <!-- <div layout-gt-sm="column"> -->
+        <div layout="column">
+          <md-input-container class="md-block" flex-gt-sm>
+            <label>Username</label>
+            <input ng-model="deleteInfo.username">
+          </md-input-container>
+ 
+          <md-input-container class="md-block" flex-gt-sm>
+            <label>Password</label>
+            <input ng-model="deleteInfo.password">
+          </md-input-container>
+
+          <md-button ng-click="sendDeleteInfo($event)" target="_blank" md-autofocus>
+            Delete My Account!
+          </md-button>
+        </div>
+  	  </form>
+
+    </div>
+  </md-dialog-content>
+</md-dialog>

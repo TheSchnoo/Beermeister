@@ -28,7 +28,7 @@ public class CustomerAccountService {
         loginParams.add("CName");
         loginParams.add(username);
 
-        //Check db for match values
+        //Check db for matching values
         AccessDatabase ad = new AccessDatabase();
         Map checkCredsResult = new HashMap<>();
 
@@ -44,12 +44,42 @@ public class CustomerAccountService {
         return checkCredsResult;
     }
 
-    public static Map logout(String sessionId) {
-        Map response = new HashMap();
-        Map<String, String> loginMap = new HashMap<>();
+    public static Map deleteAccount(String username, String password) {
+        ArrayList<String> deleteAccountParams = new ArrayList<String>();
 
+        deleteAccountParams.add("CName");
+        deleteAccountParams.add(username);
 
-        return response;
+        Map checkCredsResult = new HashMap<>();
+        Map deleteAccountResult = new HashMap<>();
+        AccessDatabase ad = new AccessDatabase();
+
+        try {
+            checkCredsResult = ad.checkCredentials(deleteAccountParams, password, AccessDatabase.CUSTOMER_TABLE);
+        } catch (SQLException e) {
+            deleteAccountResult.put("deleted", false);
+            deleteAccountResult.put("message", AccessDatabase.DATABASE_ERROR_MSG);
+            return deleteAccountResult;
+        }
+
+        if (checkCredsResult.get("authenticated").equals(false)) {
+            deleteAccountResult.put("deleted", false);
+            if (checkCredsResult.get("error").equals(AccessDatabase.loginErrorTypes.noAccountFound)) {
+                deleteAccountResult.put("message", "No account with that username was found.");
+            } else if (checkCredsResult.get("error").equals(AccessDatabase.loginErrorTypes.wrongPassword)) {
+                deleteAccountResult.put("message", "Incorrect password provided.");
+            } else if  (checkCredsResult.get("error").equals(AccessDatabase.loginErrorTypes.sqlError)) {
+                deleteAccountResult.put("message", AccessDatabase.DATABASE_ERROR_MSG);
+            }
+            return deleteAccountResult;
+        }
+
+        deleteAccountParams.add("CPassword");
+        deleteAccountParams.add(password);
+
+        deleteAccountResult = ad.deleteCustomerAccount(deleteAccountParams, AccessDatabase.CUSTOMER_TABLE);
+
+        return deleteAccountResult;
     }
 
     private static String generateSessionId() {

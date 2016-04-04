@@ -15,12 +15,9 @@ public class AccessDatabase {
     public final static String CUSTOMER_TABLE = "Customer";
     public final static String BEER_VENDOR_TABLE = "BeerVendor";
     private boolean success;
-    private final String CUSTOMERTABLE = "Customer";
-    private final String SESSIONTABLE = "CustomerSession";
+    public static final String DATABASE_ERROR_MSG = "A database error occurred, please contact our site administrator.";
 
-    public static int numAccounts = 0;
-
-    public static enum loginErrorTypes {
+    public enum loginErrorTypes {
         noAccountFound, wrongPassword, sqlError;
     }
 
@@ -381,7 +378,7 @@ public class AccessDatabase {
         String insertAccountString = this.generateInsertString(createAccountParams, tableName);
 
         try {
-            int createAccountResult = insertNewEntry(insertAccountString);
+            int createAccountResult = updateDatabase(insertAccountString);
         } catch (Exception e) {
             createAccountResponse.put("created", false);
             close();
@@ -493,6 +490,28 @@ public class AccessDatabase {
         return checkCredentialResponse;
     }
 
+    public Map deleteCustomerAccount(ArrayList<String> deleteAccountParams, String tableName) {
+
+        Map deleteAccountResponse = new HashMap<>();
+        String deleteString = "DELETE FROM " + tableName + " WHERE " + deleteAccountParams.get(0)
+                + " LIKE " + "'" +  deleteAccountParams.get(1) + "'" + " AND " + deleteAccountParams.get(2)
+                + " LIKE " + "'" + deleteAccountParams.get(3) + "'";
+
+        try {
+            int deleteAccountResult = updateDatabase(deleteString);
+        } catch (Exception e) {
+            deleteAccountResponse.put("deleted", false);
+            deleteAccountResponse.put("message", DATABASE_ERROR_MSG);
+            close();
+            return deleteAccountResponse;
+        }
+
+        deleteAccountResponse.put("deleted", true);
+        deleteAccountResponse.put("message", "Your account was successfully deleted.");
+
+        return deleteAccountResponse;
+    }
+
     private String generateInsertString(ArrayList<String> insertParams, String tableName) {
 
         if (insertParams.isEmpty()) {
@@ -579,7 +598,7 @@ public class AccessDatabase {
         return resultSet;
     }
 
-    private int insertNewEntry(String insertString) throws Exception {
+    private int updateDatabase(String insertString) throws Exception {
         int result;
         try {
             Class.forName("com.mysql.jdbc.Driver");

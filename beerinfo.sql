@@ -11,18 +11,10 @@ CREATE TABLE Customer(
 	CID int NOT NULL AUTO_INCREMENT,
 	CName CHAR(255) UNIQUE,
 	CPassword CHAR(40),
-	PRIMARY Key (CID));
+	PRIMARY Key (CID))
+;
 
 -- grant select on Customer to public;
-
-CREATE TABLE CustomerSession(
-	CID int NOT NULL,
-	SID CHAR(40) NOT NULL,
-	PRIMARY KEY (CID),
-	FOREIGN KEY (CID) REFERENCES Customer (CID)
-		ON DELETE CASCADE);
-
--- grant select on CustomerSession to public;
 
 CREATE TABLE BeerInfo (
 	BName CHAR(255),
@@ -84,7 +76,8 @@ CREATE TABLE Rates (
 	Review CHAR(255)
 		DEFAULT '',
 	PRIMARY KEY (CID, BName),
-	FOREIGN KEY (CID) REFERENCES Customer (CID),
+	FOREIGN KEY (CID) REFERENCES Customer (CID)
+		ON DELETE CASCADE,
 	FOREIGN KEY (BName) REFERENCES BeerInfo (BName)
 );
 
@@ -132,11 +125,24 @@ MODIFIES SQL DATA
 										 WHERE BName=beername)
 		WHERE beername = BName;
 	END $$
-DELIMITER ;
+
+
 
 CREATE TRIGGER the_average_insert AFTER INSERT ON Rates
-FOR EACH ROW CALL update_avg_ratings(New.BName);
+FOR EACH ROW CALL update_avg_ratings(New.BName);$$
 
 CREATE TRIGGER the_average_update AFTER UPDATE ON Rates
-FOR EACH ROW CALL update_avg_ratings(New.BName);
+FOR EACH ROW CALL update_avg_ratings(New.BName);$$
 
+
+CREATE TRIGGER the_average_delete AFTER DELETE ON Rates
+FOR EACH ROW
+	BEGIN
+		UPDATE beerinfo
+		set avgrating = IFnull((SELECT AVG(BRate)
+														FROM Rates
+														WHERE BName = OLD.BName),0)
+		WHERE BName = OLD.BName;
+	END$$
+
+DELIMITER ;
