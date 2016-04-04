@@ -344,6 +344,8 @@ app.controller('VendorLoginCtrl', function($scope, $mdDialog, $mdMedia, $rootSco
 					.ok('Got it!')
 					.targetEvent(ev)
 	    	);
+
+		window.location.href = "../index.html";
 	}
 
 
