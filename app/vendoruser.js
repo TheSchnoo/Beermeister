@@ -61,6 +61,17 @@ app.controller('SearchCtrl', function($scope, $http, $timeout, $rootScope, $mdMe
 				}
 				$rootScope.searchResults = filteredResults;
 			    console.log('rootScope.searchResults are now ' + JSON.stringify($rootScope.searchResults));
+			    if (filteredResults.length === 0) {
+			    	$mdDialog.show(
+					$mdDialog.alert()
+						.parent(angular.element(document.querySelector('#popupContainer')))
+						.clickOutsideToClose(true)
+						.textContent('No results found.')
+						.ariaLabel('Alert Dialog Demo')
+						.ok('Got it!')
+						.targetEvent(ev)
+		    	);
+			    }
 			}, function errorCallback(response) {
 			    // called asynchronously if an error occurs
 			    // or server returns response with an error status.
