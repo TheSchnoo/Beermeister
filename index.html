@@ -28,6 +28,9 @@
             <md-button ng-show="cid != null" ng-controller="LoginCtrl" id="signup" ng-click="showLogoutPrompt($event)">
               Logout
             </md-button>
+            <md-button ng-show="cid != null" ng-controller="LoginCtrl" id="delete" ng-click="showDeletePrompt($event)">
+              Delete Account
+            </md-button>
             <md-button id="browse" ng-click="submitSearch($event)">
               Browse
             </md-button>
@@ -192,7 +195,7 @@
                 <p>Type: {{mostPopularBeer.type}}</p>
                 <p>ABV: {{mostPopularBeer.abv}}</p>
                 <p>IBU: {{mostPopularBeer.ibu}}</p>
-                <p>Average Rating: {{mostPopularBeer.averageRating}}</p>
+                <p>Average Rating: {{mostPopularBeer.averageRating}} Stars</p>
               </span>
             </md-card-title-text>
             <md-card-title-media>
@@ -227,7 +230,7 @@
                     <p>Type: {{beer.type}}</p>
                     <p>ABV: {{beer.abv}}</p>
                     <p>IBU: {{beer.ibu}}</p>
-                    <p>Average Rating: {{beer.averageRating}}</p>
+                    <p>Average Rating: {{beer.averageRating}} Stars</p>
                   </span>
                 </md-card-title-text>
                 <md-card-title-media>
