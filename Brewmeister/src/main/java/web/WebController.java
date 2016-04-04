@@ -148,7 +148,7 @@ public class WebController {
         return CustomerAccountService.login(username, password);
     }
 
-    @RequestMapping(value = "/customer-delete", method = RequestMethod.GET)
+    @RequestMapping(value = "/customer-delete", method = RequestMethod.DELETE)
     public
     @ResponseBody
     Map logout(

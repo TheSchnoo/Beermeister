@@ -64,10 +64,8 @@ public class CustomerAccountService {
 
         if (checkCredsResult.get("authenticated").equals(false)) {
             deleteAccountResult.put("deleted", false);
-            if (checkCredsResult.get("error").equals(AccessDatabase.loginErrorTypes.noAccountFound)) {
-                deleteAccountResult.put("message", "No account with that username was found.");
-            } else if (checkCredsResult.get("error").equals(AccessDatabase.loginErrorTypes.wrongPassword)) {
-                deleteAccountResult.put("message", "Incorrect password provided.");
+            if (checkCredsResult.get("error").equals(AccessDatabase.loginErrorTypes.wrongPassword)) {
+                deleteAccountResult.put("message", "Incorrect username and/or password provided.");
             } else if  (checkCredsResult.get("error").equals(AccessDatabase.loginErrorTypes.sqlError)) {
                 deleteAccountResult.put("message", AccessDatabase.DATABASE_ERROR_MSG);
             }
