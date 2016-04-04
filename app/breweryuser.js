@@ -11,7 +11,8 @@ app.config(function($mdThemingProvider) {
 
 app.controller('SearchCtrl', function($scope, $http, $timeout, $rootScope, $mdDialog) {
     $scope.beer = {};
-    $scope.beerTypeCategories = ["IPA", "Pilsner", "Porter", "Stout", "Lager"];
+    $scope.beerTypeCategories = ["Amber Ale", "Blonde Ale", "Brown Ale", "Copper Ale", "Double/Tripel", 
+        "Fruit Beer", "Hefeweizen", "IPA", "Lager", "Pale Ale", "Pilsner", "Porter", "Seasonal", "Sour", "Stout"];
     $scope.abvCategories = ["<4%", "4-4.99%", "5-5.99%", "6-6.99%", ">7%" ];
     $scope.ibuCategories = ["<10", "10-19", "20-29", "30-39", "40-49", "50-59", "60-69", ">70"];
     $scope.ratingCategories = ["1", "2", "3", "4"];
