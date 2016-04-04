@@ -148,15 +148,16 @@ public class WebController {
         return CustomerAccountService.login(username, password);
     }
 
-    @RequestMapping(value = "/logout", method = RequestMethod.GET)
+    @RequestMapping(value = "/customer-delete", method = RequestMethod.GET)
     public
     @ResponseBody
     Map logout(
-            @RequestParam(value = "sessionId", required = true) String sessionId,
+            @RequestParam(value = "username", required = true) String username,
+            @RequestParam(value = "password", required = true) String password,
             HttpServletResponse httpResponse) throws IOException {
 
         httpResponse.setStatus(HttpServletResponse.SC_OK);
-        return CustomerAccountService.logout(sessionId);
+        return CustomerAccountService.deleteAccount(username, password);
     }
 
     @RequestMapping(value = "/vendor-signup", method = RequestMethod.POST)
