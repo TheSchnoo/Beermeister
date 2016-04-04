@@ -12,6 +12,7 @@ CREATE TABLE Customer(
 	CName CHAR(255) UNIQUE,
 	CPassword CHAR(40),
 	PRIMARY Key (CID))
+		ON DELETE CASCADE
 ;
 
 -- grant select on Customer to public;
