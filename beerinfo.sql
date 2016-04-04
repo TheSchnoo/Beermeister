@@ -132,11 +132,24 @@ MODIFIES SQL DATA
 										 WHERE BName=beername)
 		WHERE beername = BName;
 	END $$
-DELIMITER ;
+
+
 
 CREATE TRIGGER the_average_insert AFTER INSERT ON Rates
-FOR EACH ROW CALL update_avg_ratings(New.BName);
+FOR EACH ROW CALL update_avg_ratings(New.BName);$$
 
 CREATE TRIGGER the_average_update AFTER UPDATE ON Rates
-FOR EACH ROW CALL update_avg_ratings(New.BName);
+FOR EACH ROW CALL update_avg_ratings(New.BName);$$
 
+
+CREATE TRIGGER the_average_delete AFTER DELETE ON Rates
+FOR EACH ROW
+	BEGIN
+		UPDATE beerinfo
+		set avgrating = IFnull((SELECT AVG(BRate)
+														FROM Rates
+														WHERE BName = OLD.BName),0)
+		WHERE BName = OLD.BName;
+	END$$
+
+DELIMITER ;
