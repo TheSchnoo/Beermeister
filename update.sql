@@ -161,7 +161,7 @@ insert into beerinstock(bname,storeid)
 insert into beerinstock(bname,storeid)
     select bname,5
     from beerinfo
-    where bname like "%ale%";=
+    where bname like "%ale%";
 
 
 -- Customers
