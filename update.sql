@@ -161,13 +161,7 @@ insert into beerinstock(bname,storeid)
 insert into beerinstock(bname,storeid)
     select bname,5
     from beerinfo
-    where bname like "%ale%";
-
--- delete from beerinstock
--- where storeid = 3 and bname like "%doan%";
-
--- delete from beerinstock
--- where storeid = 1 and bname like "%doan%";
+    where bname like "%ale%";=
 
 
 -- Customers

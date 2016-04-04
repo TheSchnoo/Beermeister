@@ -14,7 +14,7 @@
         <div class="md-toolbar tw-cen-text white-text" id="top-navbar">
           <div class="md-toolbar-tools">
             <h2>
-              <span class="superclarendon-text" id="site-logo">Brewmeister</span>
+              <a href="../index.html" style="text-decoration : none; color: inherit"><span class="superclarendon-text" id="site-logo">Brewmeister</span></a>
             </h2>
             <span flex></span>
             <md-button ng-show="storeId === null" ng-controller="VendorLoginCtrl" id="login" ng-click="showLoginPrompt($event)">
@@ -161,7 +161,6 @@
                 <p>{{beer.description}}</p>
               </div>
                 <md-button ng-click="showAdditionalInfo($event, beer)" class="search-action-button md-primary">More Info</md-button>
-                <md-button ng-click="showVendors($event, beer)" class="search-action-button md-primary">Vendors</md-button>
                 <!-- <md-button class="search-action-button md-primary">Ratings</md-button> -->
                 <md-button ng-click="removeFromInventory($event, beer)" ng-show="beer.stocked" class="search-action-button md-primary">Remove from inventory</md-button>
                 <md-button ng-click="addToInventory($event, beer)" ng-show="!beer.stocked" class="search-action-button md-primary">Add to inventory</md-button>

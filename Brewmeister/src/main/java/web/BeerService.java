@@ -61,6 +61,7 @@ public class BeerService {
             searchString = "";
         }
 
+        System.out.println(searchString);
         return searchString;
     }
 

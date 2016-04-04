@@ -5,6 +5,7 @@ import java.sql.*;
 import java.util.*;
 
 import org.json.JSONObject;
+import org.omg.Messaging.SYNC_WITH_TRANSPORT;
 
 public class AccessDatabase {
     private Connection connect = null;
@@ -169,7 +170,9 @@ public class AccessDatabase {
                         "(SELECT MAX(rates_count) " +
                         "FROM (SELECT b2.BName, COUNT(r1.BName) rates_count " +
                         "FROM BeerInfo b2, rates r1 " +
-                        "WHERE b2.BName = r1.BName GROUP BY b2.BName) CountRating)";
+                        "WHERE b2.BName = r1.BName GROUP BY b2.BName) CountRatings)";
+
+        System.out.println(searchString);
         try{
             preparedStatement = connect
                     .prepareStatement(searchString);

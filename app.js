@@ -189,7 +189,10 @@ app.controller('AppCtrl', function($scope, $mdDialog, $mdMedia, $rootScope, $htt
 	//called when the ratings button is clicked
   	$scope.showRatings = function(ev, beer) {
   		console.log('ratings button pressed');
-  		var useFullScreen = ($mdMedia('sm') || $mdMedia('xs'))  && $scope.customFullscreen;
+
+  		
+
+		var useFullScreen = ($mdMedia('sm') || $mdMedia('xs'))  && $scope.customFullscreen;
 
 	    $mdDialog.show({
 	        controller: RatingsDialogCtrl,
@@ -202,6 +205,7 @@ app.controller('AppCtrl', function($scope, $mdDialog, $mdMedia, $rootScope, $htt
 	      		beer: beer
 	      	}
 	    });
+		
 
 		// console.log("clicked on a beer's vendors" + beer.name);
   	};
@@ -218,6 +222,19 @@ app.controller('AppCtrl', function($scope, $mdDialog, $mdMedia, $rootScope, $htt
 		}).then(function successCallback(response) {
 			console.log('received response of ' + JSON.stringify(response.data))
 			$scope.reviews = response.data
+			if ($scope.reviews.length === 0){
+				console.log('no reviews found for ' + $scope.beer.bname + ' yet. Try sumitting one!');
+				$mdDialog.show(
+					$mdDialog.alert()
+						.parent(angular.element(document.querySelector('#popupContainer')))
+						.clickOutsideToClose(true)
+						.textContent('No reviews submitted for ' + beer.bname + ' yet. Try submitting one!')
+						.ariaLabel('Alert Dialog Demo')
+						.ok('Got it!')
+						// .targetEvent(ev)
+		    	);
+				
+			}
 		}, function errorCallback(response) {
 		    // called asynchronously if an error occurs
 		    // or server returns response with an error status.
@@ -314,7 +331,8 @@ app.controller('AppCtrl', function($scope, $mdDialog, $mdMedia, $rootScope, $htt
 //controller used for search functionality
 app.controller('SearchCtrl', function($scope, $http, $timeout, $rootScope, $mdMedia, $mdDialog) {
     $scope.beer = {};
-    $scope.beerTypeCategories = ["IPA", "Pilsner", "Porter", "Stout", "Lager"];
+    $scope.beerTypeCategories = ["Amber Ale", "Blonde Ale", "Brown Ale", "Copper Ale", "Double/Tripel", 
+    	"Fruit Beer", "Hefeweizen", "IPA", "Lager", "Pale Ale", "Pilsner", "Porter", "Seasonal", "Sour", "Stout"];
     $scope.abvCategories = ["<4%", "4-4.99%", "5-5.99%", "6-6.99%", ">7%" ];
     $scope.ibuCategories = ["<10", "10-19", "20-29", "30-39", "40-49", "50-59", "60-69", ">70"];
     $scope.ratingCategories = ["1", "2", "3", "4"];
@@ -381,7 +399,16 @@ app.controller('SearchCtrl', function($scope, $http, $timeout, $rootScope, $mdMe
 			    url: url
 			}).then(function successCallback(response) {
 				console.log('received a response of ' + JSON.stringify(response.data));
-			    $rootScope.searchResults = response.data;
+				var rawResults = response.data;
+				var filteredResults = [];
+				for(var i = 0; i<rawResults.length; i++){
+					if (rawResults[i] != null){
+						filteredResults.push(rawResults[i]);
+					}
+
+				}
+
+			    $rootScope.searchResults = filteredResults;
 			    if ($rootScope.searchResults.length === 0){ 
 
 			    	$mdDialog.show(
@@ -467,6 +494,7 @@ app.controller('SearchCtrl', function($scope, $http, $timeout, $rootScope, $mdMe
 app.controller('LoginCtrl', function($scope, $mdDialog, $mdMedia, $rootScope, $http) {
 	$scope.loginInfo = {};
 	$scope.signupInfo = {};
+	$scope.deleteInfo = {};
 
 
 	//called when login button is clicked
@@ -676,6 +704,63 @@ app.controller('LoginCtrl', function($scope, $mdDialog, $mdMedia, $rootScope, $h
 		    // called asynchronously if an error occurs
 		    // or server returns response with an error status.
 			});	
+		}
+	}
+	$scope.showDeletePrompt = function(ev){
+		var useFullScreen = ($mdMedia('sm') || $mdMedia('xs'))  && $scope.customFullscreen;
+	    $mdDialog.show({
+
+	      	templateUrl: 'app/deletedialog.html',
+	      	parent: angular.element(document.body),
+	      	targetEvent: ev,
+	      	clickOutsideToClose:true,
+	      	fullscreen: useFullScreen
+	    });
+	}
+
+	$scope.sendDeleteInfo = function(ev){
+		//once account deleted, set $rootScope.cid = null;
+		if (!$scope.deleteInfo.hasOwnProperty('username') || !$scope.deleteInfo.hasOwnProperty('password')){
+			$mdDialog.show(
+				$mdDialog.alert()
+					.parent(angular.element(document.querySelector('#popupContainer')))
+					.clickOutsideToClose(true)
+					.textContent('Yo dawg, you need to provide us with both a username and password.')
+					.ariaLabel('Alert Dialog Demo')
+					.ok('Got it!')
+					.targetEvent(ev)
+	    	);
+
+		//THE FOLLOWING CODE BLOCK IS UNTESTED, WAITING FOR LOGIN API IMPLEMENTATION
+		} else {
+
+			var str = jQuery.param($scope.deleteInfo);
+			var url = baseURL + '/customer-delete?' + str
+			console.log('Making DELETE request to ' + url);
+			$http({
+		    	method: 'DELETE',
+		    	url: url
+			}).then(function successCallback(response) {
+				console.log('received a response of ' + JSON.stringify(response.data));
+				if (response.data.deleted === true  || response.data.deleted === "true"){
+					$rootScope.cid = null;
+				}
+
+				$mdDialog.show(
+						$mdDialog.alert()
+							.parent(angular.element(document.querySelector('#popupContainer')))
+							.clickOutsideToClose(true)
+							.textContent(response.data.message)
+							.ariaLabel('Alert Dialog Demo')
+							.ok('Got it!')
+							.targetEvent(ev)
+				);
+
+			}, function errorCallback(response) {
+		    // called asynchronously if an error occurs
+		    // or server returns response with an error status.
+			});	
+
 		}
 	}
 

@@ -1,4 +1,5 @@
 var baseURL = 'http://localhost:8080';
+var prevSearch;
 
 var app = angular.module('Brewmaster', ['ngMaterial']);
 app.config(function($mdThemingProvider) {
@@ -18,7 +19,6 @@ app.controller('SearchCtrl', function($scope, $http, $timeout, $rootScope, $mdMe
     $scope.ibuCategories = ["<10", "10-19", "20-29", "30-39", "40-49", "50-59", "60-69", ">70"];
     $scope.ratingCategories = ["1", "2", "3", "4"];
     $rootScope.searchResults = [];
-
 
 
     $scope.submitSearch = function(ev){
@@ -41,6 +41,8 @@ app.controller('SearchCtrl', function($scope, $http, $timeout, $rootScope, $mdMe
 	    		url = url + '&storeId=' + $rootScope.storeId;
 
 	    	}
+
+	    	var prevSearch = url;
 	    	
 	    	console.log('making HTTP GET request to ' + url);
 	    	$http({
@@ -112,56 +114,43 @@ app.controller('SearchCtrl', function($scope, $http, $timeout, $rootScope, $mdMe
 			    url: url,
 			}).then(function successCallback(response) {
 				console.log('received a response of ' + JSON.stringify(response.data));
-				console.log('trying to update search information');
+
+				$mdDialog.show(
+					$mdDialog.alert()
+						.parent(angular.element(document.querySelector('#popupContainer')))
+						.clickOutsideToClose(true)
+						.textContent(response.data.status)
+						.ariaLabel('Alert Dialog Demo')
+						.ok('Got it!')
+						.targetEvent(ev)
+		    	);
+
+		    	$rootScope.searchResults = [];
+				// console.log('trying to update search information');
+				// // console.log('$scope.beer is currently ' + JSON.stringify($scope.beers));
 				
-				var url = convertBeerToURL($scope.beer);
+				// var url = convertBeerToURL($scope.beer);
 
-		    	if (url === baseURL + '/beers'){
-		    		url = url + '?storeId=' + $rootScope.storeId;
+		  //   	if (url === baseURL + '/beers'){
+		  //   		url = url + '?storeId=' + $rootScope.storeId;
 
-		    	} else {
-		    		url = url + '&storeId=' + $rootScope.storeId;
+		  //   	} else {
+		  //   		url = url + '&storeId=' + $rootScope.storeId;
 
-		    	}
+		  //   	}
 		    	
-		    	console.log('making HTTP GET request to ' + url);
-		    	$http({
-				    method: 'GET',
-				    url: url
-				}).then(function successCallback(response) {
-					console.log('received a response of ' + JSON.stringify(response.data));
-				    $rootScope.searchResults = response.data;
-				    console.log("the search results are " + JSON.stringify($scope.searchResults));
-				}, function errorCallback(response) {
-				    // called asynchronously if an error occurs
-			    // or server returns response with an error status.
-				    console.log('received a response of ' + JSON.stringify(response.data));
-					console.log('trying to update search information');
-					
-					var url = convertBeerToURL($scope.beer);
+		  //   	console.log('making HTTP GET request to ' + prevSearch);
+		  //   	$http({
+				//     method: 'GET',
+				//     url: prevSearch
+				// }).then(function successCallback(response) {
+				// 	console.log('received a response of ' + JSON.stringify(response.data));
+				//     $rootScope.searchResults = response.data;
+				//     console.log("the search results are " + JSON.stringify($scope.searchResults));
+				// }, function errorCallback(response) {
+				// 	//stuff here
 
-			    	if (url === baseURL + '/beers'){
-			    		url = url + '?storeId=' + $rootScope.storeId;
-
-			    	} else {
-			    		url = url + '&storeId=' + $rootScope.storeId;
-
-			    	}
-			    	
-			    	console.log('making HTTP GET request to ' + url);
-			    	$http({
-					    method: 'GET',
-					    url: url
-					}).then(function successCallback(response) {
-						console.log('received a response of ' + JSON.stringify(response.data));
-					    $rootScope.searchResults = response.data;
-					    console.log("the search results are " + JSON.stringify($scope.searchResults));
-					}, function errorCallback(response) {
-					    // called asynchronously if an error occurs
-					    // or server returns response with an error status.
-					});
-
-				});
+				// });
 
 
 			
@@ -180,31 +169,44 @@ app.controller('SearchCtrl', function($scope, $http, $timeout, $rootScope, $mdMe
 	    	method: 'DELETE',
 	    	url: url
 		}).then(function successCallback(response) { //@@@
-			console.log('received a response of ' + JSON.stringify(response.data));
-			console.log('trying to update search information');
+			$mdDialog.show(
+				$mdDialog.alert()
+					.parent(angular.element(document.querySelector('#popupContainer')))
+					.clickOutsideToClose(true)
+					.textContent(response.data.status)
+					.ariaLabel('Alert Dialog Demo')
+					.ok('Got it!')
+					.targetEvent(ev)
+	    	);
+
+	    	$rootScope.searchResults = [];
+
+			// console.log('received a response of ' + JSON.stringify(response.data));
+			// console.log('trying to update search information');
+			// console.log('$scope.beer is currently ' + JSON.stringify($scope.beer));
 			
-			var url = convertBeerToURL($scope.beer);
+			// var url = convertBeerToURL($scope.beer);
 
-	    	if (url === baseURL + '/beers'){
-	    		url = url + '?storeId=' + $rootScope.storeId;
+	  //   	if (url === baseURL + '/beers'){
+	  //   		url = url + '?storeId=' + $rootScope.storeId;
 
-	    	} else {
-	    		url = url + '&storeId=' + $rootScope.storeId;
+	  //   	} else {
+	  //   		url = url + '&storeId=' + $rootScope.storeId;
 
-	    	}
+	  //   	}
 	    	
-	    	console.log('making HTTP GET request to ' + url);
-	    	$http({
-			    method: 'GET',
-			    url: url
-			}).then(function successCallback(response) {
-				console.log('received a response of ' + JSON.stringify(response.data));
-			    $rootScope.searchResults = response.data;
-			    console.log("the search results are " + JSON.stringify($scope.searchResults));
-			}, function errorCallback(response) {
-			    // called asynchronously if an error occurs
-			    // or server returns response with an error status.
-			});
+	  //   	console.log('making HTTP GET request to ' + url);
+	  //   	$http({
+			//     method: 'GET',
+			//     url: prevSearch
+			// }).then(function successCallback(response) {
+			// 	console.log('received a response of ' + JSON.stringify(response.data));
+			//     $rootScope.searchResults = response.data;
+			//     console.log("the search results are " + JSON.stringify($scope.searchResults));
+			// }, function errorCallback(response) {
+			//     // called asynchronously if an error occurs
+			//     // or server returns response with an error status.
+			// });
 			
 		}, function errorCallback(response) {
 	    // called asynchronously if an error occurs
