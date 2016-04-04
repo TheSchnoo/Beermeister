@@ -76,8 +76,7 @@ CREATE TABLE Rates (
 	Review CHAR(255)
 		DEFAULT '',
 	PRIMARY KEY (CID, BName),
-	FOREIGN KEY (CID) REFERENCES Customer (CID)
-		ON DELETE CASCADE,
+	FOREIGN KEY (CID) REFERENCES Customer (CID),
 	FOREIGN KEY (BName) REFERENCES BeerInfo (BName)
 );
 
@@ -122,24 +121,29 @@ MODIFIES SQL DATA
 		UPDATE BeerInfo
 		SET AvgRating = (SELECT AVG(Rates.BRate)
 										 FROM Rates
-										 WHERE BName=beername)
-		WHERE beername = BName;
+										 WHERE BName like beername)
+		WHERE BName like beername;
 	END $$
 
 
 
 CREATE TRIGGER the_average_insert AFTER INSERT ON Rates
-FOR EACH ROW CALL update_avg_ratings(New.BName);$$
+FOR EACH ROW CALL update_avg_ratings(New.BName)$$
 
 CREATE TRIGGER the_average_update AFTER UPDATE ON Rates
-FOR EACH ROW CALL update_avg_ratings(New.BName);$$
+FOR EACH ROW CALL update_avg_ratings(New.BName)$$
 
+CREATE TRIGGER fix_the_average BEFORE DELETE ON Customer
+FOR EACH ROW
+	BEGIN
+		DELETE FROM Rates WHERE Rates.CID = old.CID;
+	end$$
 
 CREATE TRIGGER the_average_delete AFTER DELETE ON Rates
 FOR EACH ROW
 	BEGIN
 		UPDATE beerinfo
-		set avgrating = IFnull((SELECT AVG(BRate)
+		set AvgRating = IFnull((SELECT AVG(BRate)
 														FROM Rates
 														WHERE BName = OLD.BName),0)
 		WHERE BName = OLD.BName;
