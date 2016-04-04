@@ -422,6 +422,8 @@ app.controller('SearchCtrl', function($scope, $http, $timeout, $rootScope, $mdMe
 			    	);
 
 			    }
+
+
 			}, function errorCallback(response) {
 			    // called asynchronously if an error occurs
 			    // or server returns response with an error status.
@@ -529,14 +531,35 @@ app.controller('LoginCtrl', function($scope, $mdDialog, $mdMedia, $rootScope, $h
 	$scope.showLogoutPrompt = function(ev){
 		$rootScope.cid = null;
 		$mdDialog.show(
-				$mdDialog.alert()
-					.parent(angular.element(document.querySelector('#popupContainer')))
-					.clickOutsideToClose(true)
-					.textContent('Logout Successful')
-					.ariaLabel('Alert Dialog Demo')
-					.ok('Got it!')
-					.targetEvent(ev)
-	    	);
+			$mdDialog.alert()
+				.parent(angular.element(document.querySelector('#popupContainer')))
+				.clickOutsideToClose(true)
+				.textContent('Logout Successful')
+				.ariaLabel('Alert Dialog Demo')
+				.ok('Got it!')
+				.targetEvent(ev)
+    	);
+    	//###
+
+    	console.log('attempting to update recommended beers');
+		var recURL = baseURL;
+		if ($rootScope.cid === null){
+  			recURL = recURL + '/recommendedbeers';
+  		} else if ($rootScope.cid != null) {
+  			recURL = recURL + '/recommendedbeers?cid=' + $rootScope.cid;
+  		}
+
+  		console.log('making HTTP GET to ' + recURL);
+  		$http({
+		    method: 'GET',
+		    url: recURL
+		}).then(function successCallback(response) {
+			console.log('recommended beers are ' + JSON.stringify(response.data));
+		    $rootScope.recommendedBeers = response.data;
+		}, function errorCallback(response) {
+		    // called asynchronously if an error occurs
+		    // or server returns response with an error status.
+		});
 	}
 
 

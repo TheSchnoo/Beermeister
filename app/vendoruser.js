@@ -1,5 +1,5 @@
 var baseURL = 'http://localhost:8080';
-var prevSearch;
+
 
 var app = angular.module('Brewmaster', ['ngMaterial']);
 app.config(function($mdThemingProvider) {
@@ -42,7 +42,7 @@ app.controller('SearchCtrl', function($scope, $http, $timeout, $rootScope, $mdMe
 
 	    	}
 
-	    	var prevSearch = url;
+
 	    	
 	    	console.log('making HTTP GET request to ' + url);
 	    	$http({
@@ -50,7 +50,16 @@ app.controller('SearchCtrl', function($scope, $http, $timeout, $rootScope, $mdMe
 			    url: url
 			}).then(function successCallback(response) {
 				// console.log('received a response of ' + JSON.stringify(response.data));
-			    $rootScope.searchResults = response.data;
+			    console.log('received a response of ' + JSON.stringify(response.data));
+				var rawResults = response.data;
+				var filteredResults = [];
+				for(var i = 0; i<rawResults.length; i++){
+					if (rawResults[i] != null){
+						filteredResults.push(rawResults[i]);
+					}
+
+				}
+				$rootScope.searchResults = filteredResults;
 			    console.log('rootScope.searchResults are now ' + JSON.stringify($rootScope.searchResults));
 			}, function errorCallback(response) {
 			    // called asynchronously if an error occurs
