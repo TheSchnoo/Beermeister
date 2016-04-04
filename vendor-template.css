@@ -30,7 +30,7 @@
 }
 
 #vendor-panel-2 {
-    min-height: 500px;
+    min-height: 150px;
     width: 763px;
     background-color: #ffffff;
 }
@@ -49,4 +49,8 @@
 .vendor-beer-card {
     width: 540px;
     height: 285px;
+}
+
+.beer-list-container {
+    padding-left: 105px;
 }

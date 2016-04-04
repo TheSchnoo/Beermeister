@@ -28,26 +28,28 @@
           </div>
         </div>
       </div>
-      <div ng-repeat="beer in beers">
-        <md-card class="vendor-beer-card">
-          <md-card-title>
-            <md-card-title-text>
-              <span class="md-headline beer-name">{{beer.bname}}</span>
-                    <span class="md-subhead beer-info">
-                      <p>Brewery: {{beer.breweryName}}</p>
-                      <p>Type: {{beer.type}}</p>
-                      <p>ABV: {{beer.abv}}</p>
-                      <p>IBU: {{beer.ibu}}</p>
-                      <p>Average Rating: {{beer.averageRating}}</p>
-                    </span>
-            </md-card-title-text>
-            <md-card-title-media>
-              <div class="md-media-lg card-media">
-                <img class="beer-image" src="images/stock-beer.jpg">
-              </div>
-            </md-card-title-media>
-          </md-card-title>
-        </md-card>
+      <div class="beer-list-container">
+        <div ng-repeat="beer in beers">
+          <md-card class="vendor-beer-card">
+            <md-card-title>
+              <md-card-title-text>
+                <span class="md-headline beer-name">{{beer.bname}}</span>
+                      <span class="md-subhead beer-info">
+                        <p>Brewery: {{beer.breweryName}}</p>
+                        <p>Type: {{beer.type}}</p>
+                        <p>ABV: {{beer.abv}}</p>
+                        <p>IBU: {{beer.ibu}}</p>
+                        <p>Average Rating: {{beer.averageRating}}</p>
+                      </span>
+              </md-card-title-text>
+              <md-card-title-media>
+                <div class="md-media-lg card-media">
+                  <img class="beer-image" src="images/stock-beer.jpg">
+                </div>
+              </md-card-title-media>
+            </md-card-title>
+          </md-card>
+        </div>
       </div>
     </div>
   </body>
