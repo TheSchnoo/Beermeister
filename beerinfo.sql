@@ -12,7 +12,6 @@ CREATE TABLE Customer(
 	CName CHAR(255) UNIQUE,
 	CPassword CHAR(40),
 	PRIMARY Key (CID))
-		ON DELETE CASCADE
 ;
 
 -- grant select on Customer to public;
@@ -77,7 +76,8 @@ CREATE TABLE Rates (
 	Review CHAR(255)
 		DEFAULT '',
 	PRIMARY KEY (CID, BName),
-	FOREIGN KEY (CID) REFERENCES Customer (CID),
+	FOREIGN KEY (CID) REFERENCES Customer (CID)
+		ON DELETE CASCADE,
 	FOREIGN KEY (BName) REFERENCES BeerInfo (BName)
 );
 
