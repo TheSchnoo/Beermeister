@@ -1,40 +1,3 @@
-/*#hero{
-	background-image:linear-gradient( rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5) ),url(images/banner.jpg);
-	background-size:cover;
-	position:relative;
-	height:100vh;
-}
-
-.header{
-	position:absolute;
-	top:40%;
-	text-align:center;
-	width:100%;
-	color:#fff;
-	font-size:60px;
-
-}*/
-
-/*.hero-unit {
-    background-image:linear-gradient( rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5) ), url('images/banner.jpg');
-    background-size:cover;
-    background-color: #EEEEEE;
-    height:100vh;
-    margin-top:0;
-    padding-top:0;
- }
-
- #banner-text{
- 	position:absolute;
-	text-align:center;
-	width:100%;
-    color: #FFFFFF;
-    font-size: 60px;
-    letter-spacing: -1px;
-    line-height: 1;
-    margin-bottom: 0;
-    top:20%;
- }*/
 
 #search-results{
 	padding-top:30px;
@@ -55,49 +18,19 @@
 	height:70vh;
 }
 
- #contact{
+#contact{
  	margin-right: 20px;
- }
+}
 
- .result-heading{
+.result-heading{
  	font-size: 20px;
- }
-
-
-
-
-
- /*.jumbotron{
- 	background-size:cover;
- 	height:70px;
- 	text-align: center;
- }*/
-
- /*.vertical-center {
-  background-image:linear-gradient( rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5) ), url('images/banner.jpg');
-  display: flex;
-  align-items: center;
-  padding-top: 0px;
-  height: 500px;
-  margin-bottom: 0;
 }
 
-.jumbotron md-title {
-	text-align:center;
+.fill{
 	width:100%;
-    color: #FFFFFF;
-    font-size: 60;
-}
-
-.jumbotron md-subhead {
-	text-align:center;
-	width:100%;
-    color: #FFFFFF;
-    font-size: 30;
-}*/
-
-
-.fill{width:100%;height:350px;background-position:center;background-size:cover;
+	height:350px;
+	background-position:center;
+	background-size:cover;
 }
 
 
@@ -157,9 +90,7 @@
 	padding-right:20px;
 }
 
-#recommendations-section{
-	padding-top:30px;
-}
+
 
 
 /*--Top Navbar Styling --*/
@@ -276,6 +207,71 @@
 	float: right;
 	margin-right: 30px;
 	margin-left: inherit;
+}
+
+
+/*-- Most Popular Beer Section --*/
+
+#most-popular-beer-section {
+	padding-top: 50px;
+	padding-bottom: 50px;
+}
+
+#most-popular-beer-section h3 {
+	font-size: 46px;
+	margin-bottom: 50px;
+}
+
+#popular-beer-info-section {
+	padding-left: 35px;
+}
+
+#popular-beer-info-section h6 {
+	font-size: 20px;
+}
+
+#popular-beer-divider {
+	margin-right: 60px;
+	border-top-color: rgba(0,0,0,0.3);
+}
+
+#popular-beer-name {
+	font-size: 30px;
+}
+
+#popular-beer-image {
+	height: 300px;
+}
+
+#popular-beer-review-section {
+	margin-top: 10px;
+	padding-left: 30px;
+	padding-right: 30px;
+}
+
+#popular-beer-review-section p {
+	font-size: 24px;
+}
+
+
+
+/*-- Recommendations Section --*/
+#recommendations-section{
+	padding-top:40px;
+	padding-bottom: 70px;
+}
+
+#recommendations-section h3 {
+	font-size: 46px;
+	margin-bottom: 30px;
+}
+
+#recommendation-divider {
+	border-top: 1px solid rgba(0,0,0,0.3);
+	margin-left: 120px;
+	margin-right: 120px;
+	margin-top: 20px;
+	margin-bottom: 50px;
 }
 
 

@@ -424,12 +424,14 @@ app.controller('SearchCtrl', function($scope, $http, $timeout, $rootScope, $mdMe
 			    }
 
 
+
 			}, function errorCallback(response) {
 			    // called asynchronously if an error occurs
 			    // or server returns response with an error status.
 			});
 			$rootScope.loading = false;
 			console.log('rootScope.loading is ' + $rootScope.loading);
+			jQuery('html,body').animate({ scrollTop: $("#search-results").offset().top }, 'slow');
 	    }
 
 	    function convertBeerToURL(){
