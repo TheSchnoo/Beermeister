@@ -156,7 +156,7 @@
           </div>
         </md-toolbar>
         <md-content id="search-content">
-          
+
           <md-list flex id="search-list">
 
             <md-list-item class="md-3-line" multiple="true" ng-repeat="beer in $root.searchResults track by $index">
@@ -174,50 +174,42 @@
             </md-list-item>
 
           </md-list>
-
-
-
         </md-content>
       </md-whiteframe>
     </div>
 
-
-    <!--!!!-->
-    <div class="container" id="most-popular-beer">
-      <md-subhead class="result-heading">Our Most Popular Beer:</md-subhead>
-      <div>
-        <md-card class="beer-card">
-          <md-card-title>
-            <md-card-title-text>
-              <span class="md-headline beer-name">{{mostPopularBeer.bname}}</span>
-              <span class="md-subhead beer-info">
-                <p>Brewery: {{mostPopularBeer.breweryName}}</p>
-                <p>Type: {{mostPopularBeer.type}}</p>
-                <p>ABV: {{mostPopularBeer.abv}}</p>
-                <p>IBU: {{mostPopularBeer.ibu}}</p>
-                <p>Average Rating: {{mostPopularBeer.averageRating}} Stars</p>
-              </span>
-            </md-card-title-text>
-            <md-card-title-media>
-              <div class="md-media-lg card-media">
-                <img class="beer-image" src="images/stock-beer.jpg"> 
-              </div>
-            </md-card-title-media>
-          </md-card-title>
-          <md-card-actions layout="row" layout-align="end center">
-            <md-button class="md-primary"ng-click="showVendors($event, mostPopularBeer)">Vendors</md-button>
-            <md-button class="md-primary" ng-click="showRatings($event, mostPopularBeer)">Ratings</md-button>
-            <md-button ng-click="showReviewDialog($event, mostPopularBeer)" class="search-action-button md-primary">Submit Review</md-button>
-          </md-card-actions>
-        </md-card>
+    <div class="container tw-cen-text" id="most-popular-beer-section">
+      <div class="row">
+        <h3 class="text-center">Behold Our Most Popular Beer</h3>
+        <div class="col-md-7" id="popular-beer-info-section">
+          <div class="col-md-8">
+            <h4 id="popular-beer-name">{{mostPopularBeer.bname}}</h4>
+            <h6>by {{mostPopularBeer.breweryName}}</h6>
+            <hr id="popular-beer-divider">
+            <div>
+              <h6>Type: {{mostPopularBeer.type}}</h6>
+              <h6>ABV: {{mostPopularBeer.abv}}</h6>
+              <h6>IBU: {{mostPopularBeer.ibu}}</h6>
+              <h6>Average Rating: {{mostPopularBeer.averageRating}}</h6>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <img id="popular-beer-image" src="images/popular-beer.jpg">
+          </div>
+        </div>
+        <div class="col-md-5" id="popular-beer-review-section">
+          <p class="tw-cen-text">
+            "This beer is amazing. If there was a battle between this brew and
+            a Molson Canadian, it would beat that wussy ass drink into the ground.
+            It'd be like Dwayne Johnson taking on the Pope."
+          </p>
+        </div>
       </div>
     </div>
 
-
-
     <div class="container" id="recommendations-section">
-
-      <md-subhead class="result-heading" id="recommendations">Our Recommendations:</md-subhead>
+      <hr id="recommendation-divider">
+      <h3 class="result-heading text-center tw-cen-text" id="recommendations">Check Out Our Recommendations</h3>
       <md-content class="md-padding" layout-xs="column" layout="row">
         <!-- <div flex-xs flex-gt-xs="50" layout="row"> -->
           <div data-ng-repeat="beer in recommendedBeers">
@@ -235,7 +227,7 @@
                 </md-card-title-text>
                 <md-card-title-media>
                   <div class="md-media-lg card-media">
-                    <img class="beer-image" src="images/stock-beer.jpg"> 
+                    <img class="beer-image" src="images/stock-beer.jpg">
                   </div>
                 </md-card-title-media>
               </md-card-title>
@@ -251,9 +243,6 @@
     </div>
     <md-toolbar class="transparent">
       <div class="md-toolbar-tools">
-<!--         <h2>
-          <span>Brewmeister</span>
-        </h2> -->
         <span flex></span>
         <a href="/app/breweryuser.html">
           <md-button>Are you a brewery user? Click here.</md-button>
@@ -264,11 +253,6 @@
       </div>
     </md-toolbar>
   </div>
-   
-
-
-
-
   
   <!-- Angular Material requires Angular.js Libraries -->
   <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
