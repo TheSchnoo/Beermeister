@@ -1,0 +1,12 @@
+web/AccessDatabase.class
+web/BeerService.class
+web/CustomerAccountService.class
+web/WebController.class
+web/BeerReview.class
+web/BeerReviewService.class
+web/BrewmeisterApplication.class
+web/SimpleCORSFilter.class
+web/BeerInfo.class
+web/AccessDatabase$loginErrorTypes.class
+web/Vendor.class
+web/VendorService.class
