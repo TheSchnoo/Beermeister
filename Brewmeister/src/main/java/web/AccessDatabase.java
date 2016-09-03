@@ -1,6 +1,8 @@
 package web;
 
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.sql.*;
 import java.util.*;
 
@@ -16,15 +18,17 @@ public class AccessDatabase {
     public final static String BEER_VENDOR_TABLE = "BeerVendor";
     private boolean success;
     public static final String DATABASE_ERROR_MSG = "A database error occurred, please contact our site administrator.";
+//    private static String databaseURL = "jdbc:mysql://localhost/beerinfo?";
+//    private final static String DATABASE_CLASS = "com.mysql.jdbc.Driver";
 
     public enum loginErrorTypes {
         noAccountFound, wrongPassword, sqlError;
     }
 
     public AccessDatabase(){
+        connect = mySqlConnection();
     }
     public ArrayList<BeerReview> searchReviews(String searchString) throws Exception {
-        open();
         preparedStatement = connect
                 .prepareStatement(searchString);
         resultSet = preparedStatement.executeQuery();
@@ -39,7 +43,6 @@ public class AccessDatabase {
     }
 
     public ArrayList<BeerInfo> searchBeers(String searchString) throws Exception {
-        open();
 
         //Beer search by vendor
         if(searchString.contains("SELECT")){
@@ -65,7 +68,6 @@ public class AccessDatabase {
     }
 
     public ArrayList<BeerInfo> searchBeersByVendor(String searchString) throws Exception {
-        open();
         System.out.println(searchString);
 
         //Beer search by vendor
@@ -104,7 +106,6 @@ public class AccessDatabase {
     }
 
     public ArrayList<BeerInfo> searchBeersByVendorNoStock(String searchString) throws Exception {
-        open();
         preparedStatement = connect
                 .prepareStatement(searchString);
 
@@ -130,7 +131,6 @@ public class AccessDatabase {
     }
 
     public ArrayList<BeerInfo> getRecommendations(String searchString) throws Exception {
-        open();
         try{
             preparedStatement = connect
                     .prepareStatement(searchString);
@@ -147,13 +147,10 @@ public class AccessDatabase {
 
         } catch (Exception e) {
             throw e;
-        } finally {
-            close();
         }
     }
 
     public ArrayList<Object> getMostRated() throws SQLException{
-        open();
        ArrayList<Object> returnArray = new ArrayList<>();
         String searchString =
                 "SELECT b1.*, rates_count " +
@@ -184,12 +181,10 @@ public class AccessDatabase {
             System.out.println("Most rated error:" + e);
             throw e;
         }
-        close();
         return returnArray;
     }
 
     public int insertToDB(String table, String values) throws Exception {
-        open();
         try{
             System.out.println(("INSERT INTO " + table + " VALUES " + values));
 
@@ -202,8 +197,6 @@ public class AccessDatabase {
         } catch (Exception e) {
             System.out.println("Error: " + e);
             throw e;
-        } finally {
-            close();
         }
     }
 
@@ -211,7 +204,6 @@ public class AccessDatabase {
         if(updateMap.size()==0){
             return 0;
         }
-        open();
         String searchString = "Update " + table + " SET ";
         int i = 0;
         for(Map.Entry<String,Object> entry : updateMap.entrySet()){
@@ -243,13 +235,10 @@ public class AccessDatabase {
         } catch (Exception e) {
             System.out.println("Error:" + e);
             throw e;
-        } finally {
-            close();
         }
     }
 
     public int deleteTuple(String table, Map<String, Object> deleteMap) throws Exception {
-        open();
         String searchString = "DELETE FROM " + table + " WHERE ";
         int i = 0;
         for(Map.Entry<String,Object> entry : deleteMap.entrySet()){
@@ -278,23 +267,21 @@ public class AccessDatabase {
         } catch (Exception e) {
             System.out.println("Error:" + e);
             throw e;
-        } finally {
-            close();
         }
     }
 
-    private void open(){
-        if(connect==null) {
-            try {
-                Class.forName("com.mysql.jdbc.Driver");
-                connect = DriverManager
-                        .getConnection("jdbc:mysql://localhost/beerinfo?"
-                                + "user=sqluser&password=sqluserpw");
-            } catch (Exception e) {
-                System.out.println("Cannot connect to DB from AccessDatabase object");
-                e.printStackTrace();
-            }
+    private Connection mySqlConnection() {
+        Connection mySql = null;
+        try {
+            URI dbUri = new URI(System.getenv("CLEARDB_DATABASE_URL"));
+            String username = dbUri.getUserInfo().split(":")[0];
+            String password = dbUri.getUserInfo().split(":")[1];
+            String dbUrl = "jdbc:mysql://" + dbUri.getHost() + dbUri.getPath();
+            mySql = DriverManager.getConnection(dbUrl, username, password);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
+        return mySql;
     }
 
     // You need to close the resultSet
@@ -312,63 +299,40 @@ public class AccessDatabase {
                 connect.close();
             }
         } catch (Exception e) {
-
+            e.printStackTrace();
         }
     }
+
     public BeerReview checkForReview(int cid, String bname) throws Exception {
         BeerReview beerReview = new BeerReview(bname, " ",0,cid,true,"fake");
-        try{
-            Class.forName("com.mysql.jdbc.Driver");
+        preparedStatement = connect.prepareStatement("Select Cname from Customer where cid = " + cid);
+        resultSet = preparedStatement.executeQuery();
+        String reviewerName = resultSet.getString("Cname");
+        beerReview = new BeerReview(bname, " ",0,cid,true,reviewerName);
+        preparedStatement = connect
+                .prepareStatement("Select * FROM Rates WHERE bname like '" + bname + "' AND CID = " + cid);
+        resultSet = preparedStatement.executeQuery();
+        BeerReviewService beerReviewService = new BeerReviewService();
 
-            connect = DriverManager
-                    .getConnection("jdbc:mysql://localhost/beerinfo?"
-                            + "user=sqluser&password=sqluserpw");
-            preparedStatement = connect.prepareStatement("Select Cname from Customer where cid = " + cid);
-            resultSet = preparedStatement.executeQuery();
-            String reviewerName = resultSet.getString("Cname");
-            beerReview = new BeerReview(bname, " ",0,cid,true,reviewerName);
-            preparedStatement = connect
-                    .prepareStatement("Select * FROM Rates WHERE bname like '" + bname + "' AND CID = " + cid);
-            resultSet = preparedStatement.executeQuery();
-            BeerReviewService beerReviewService = new BeerReviewService();
-
-            while(resultSet.next()){
-                beerReview = beerReviewService.convertResultSetToBeerReview(resultSet);
-            }
-
-
-        } catch (Exception e) {
-            System.out.println("broken");
-        } finally {
-            close();
+        while(resultSet.next()){
+            beerReview = beerReviewService.convertResultSetToBeerReview(resultSet);
         }
         return beerReview;
     }
+
     public Boolean addOrModifyReview(BeerReview review) throws Exception {
-        try{
-            Class.forName("com.mysql.jdbc.Driver");
+        if (review.isNewReview()) {
+            preparedStatement = connect
+                    .prepareStatement("INSERT INTO Rates VALUES " + review.toTupleValueString());
+            success = preparedStatement.execute();
+        } else{
+            preparedStatement = connect.prepareStatement("UPDATE Rates SET BRate = " + review.getRating() + " WHERE " + " BNAME LIKE '" + review.getBname() + "' AND CID = " + review.getCid() + ";");
+            success = preparedStatement.execute();
+            preparedStatement = connect.prepareStatement("UPDATE Rates SET Review = '" + review.getReview() + "' WHERE " + "BNAME LIKE '" + review.getBname() + "' AND CID = " + review.getCid() + ";");
 
-            connect = DriverManager
-                    .getConnection("jdbc:mysql://localhost/beerinfo?"
-                            + "user=sqluser&password=sqluserpw");
-            if (review.isNewReview()) {
-                preparedStatement = connect
-                        .prepareStatement("INSERT INTO Rates VALUES " + review.toTupleValueString());
-                success = preparedStatement.execute();
-            }else{
-                preparedStatement = connect.prepareStatement("UPDATE Rates SET BRate = " + review.getRating() + " WHERE " + " BNAME LIKE '" + review.getBname() + "' AND CID = " + review.getCid() + ";");
-                success = preparedStatement.execute();
-                preparedStatement = connect.prepareStatement("UPDATE Rates SET Review = '" + review.getReview() + "' WHERE " + "BNAME LIKE '" + review.getBname() + "' AND CID = " + review.getCid() + ";");
-
-                success = (success & preparedStatement.execute());
-            }
-            return true;
-
-        } catch (Exception e) {
-            throw e;
-        } finally {
-            close();
+            success = (success & preparedStatement.execute());
         }
+        return true;
     }
 
 
@@ -381,7 +345,6 @@ public class AccessDatabase {
             int createAccountResult = updateDatabase(insertAccountString);
         } catch (Exception e) {
             createAccountResponse.put("created", false);
-            close();
             return createAccountResponse;
         }
 
@@ -405,7 +368,6 @@ public class AccessDatabase {
             getAccountIdResult = queryDatabase(queryAccountIdString);
         } catch (Exception e) {
             createAccountResponse.put("error", loginErrorTypes.sqlError);
-            close();
             return createAccountResponse;
         }
 
@@ -421,7 +383,6 @@ public class AccessDatabase {
             }
         } catch (SQLException e) {
             createAccountResponse.put("error", loginErrorTypes.sqlError);
-            close();
             return createAccountResponse;
         }
 
@@ -430,7 +391,6 @@ public class AccessDatabase {
         } else if (tableName.equals(BEER_VENDOR_TABLE)) {
             createAccountResponse.put("storeId", tempId);
         }
-        close();
         return createAccountResponse;
     }
 
@@ -479,14 +439,11 @@ public class AccessDatabase {
         } catch (SQLException e) {
             checkCredentialResponse.put("authenticated", false);
             checkCredentialResponse.put("error", loginErrorTypes.sqlError);
-            close();
             return checkCredentialResponse;
         }
 
         checkCredentialResponse.put("authenticated", false);
         checkCredentialResponse.put("error", loginErrorTypes.wrongPassword);
-
-        close();
         return checkCredentialResponse;
     }
 
@@ -502,7 +459,6 @@ public class AccessDatabase {
         } catch (Exception e) {
             deleteAccountResponse.put("deleted", false);
             deleteAccountResponse.put("message", DATABASE_ERROR_MSG);
-            close();
             return deleteAccountResponse;
         }
 
@@ -584,38 +540,19 @@ public class AccessDatabase {
     }
 
     private ResultSet queryDatabase(String queryString) throws Exception {
-        try {
-            Class.forName("com.mysql.jdbc.Driver");
-            connect = DriverManager
-                    .getConnection("jdbc:mysql://localhost/beerinfo?"
-                            + "user=sqluser&password=sqluserpw");
-            preparedStatement = connect.prepareStatement(queryString);
-            resultSet = preparedStatement.executeQuery();
-        } catch (Exception e) {
-            close();
-            throw e;
-        }
+        preparedStatement = connect.prepareStatement(queryString);
+        resultSet = preparedStatement.executeQuery();
         return resultSet;
     }
 
     private int updateDatabase(String insertString) throws Exception {
-        int result;
-        try {
-            Class.forName("com.mysql.jdbc.Driver");
-            connect = DriverManager
-                    .getConnection("jdbc:mysql://localhost/beerinfo?"
-                            + "user=sqluser&password=sqluserpw");
-            preparedStatement = connect.prepareStatement(insertString);
-            result = preparedStatement.executeUpdate();
-        } catch (Exception e) {
-            close();
-            throw e;
-        }
-        return result;
+    int result;
+    preparedStatement = connect.prepareStatement(insertString);
+    result = preparedStatement.executeUpdate();
+    return result;
     }
 
     public ArrayList<BeerInfo> getHighestRatedBeers(int numBeers){
-        open();
         ArrayList<BeerInfo> result = new ArrayList<>();
 
         String searchString = "SELECT * " +
@@ -635,7 +572,6 @@ public class AccessDatabase {
         } catch (Exception e){
             System.out.println("Error getting highest rated");
         }
-        close();
         return result;
     }
 
