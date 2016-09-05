@@ -1,5 +1,6 @@
 package web;
 
+import java.net.URI;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -11,6 +12,20 @@ public class VendorService {
     private PreparedStatement preparedStatement = null;
     private ResultSet resultSet = null;
 
+    private Connection openMySqlConnection() {
+        Connection mySql = null;
+        try {
+            URI dbUri = new URI(System.getenv("CLEARDB_DATABASE_URL"));
+            String username = dbUri.getUserInfo().split(":")[0];
+            String password = dbUri.getUserInfo().split(":")[1];
+            String dbUrl = "jdbc:mysql://" + dbUri.getHost() + dbUri.getPath();
+            mySql = DriverManager.getConnection(dbUrl, username, password);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return mySql;
+    }
+
     public ArrayList<Vendor> getVendorsThatSellABeer(String bname) throws Exception{
         String searchString =
                 "SELECT bv.* " +
@@ -20,12 +35,7 @@ public class VendorService {
         System.out.println(searchString);
 
         try {
-
-            Class.forName("com.mysql.jdbc.Driver");
-
-            connect = DriverManager
-                    .getConnection("jdbc:mysql://localhost/beerinfo?"
-                            + "user=sqluser&password=sqluserpw");
+            connect = openMySqlConnection();
             preparedStatement = connect
                     .prepareStatement(searchString);
             resultSet = preparedStatement.executeQuery();
