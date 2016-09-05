@@ -69,6 +69,7 @@ public class BeerService {
     public BeerInfo convertResultSetToBeerInfo(ResultSet rs){
 
         VendorService vs = new VendorService();
+        System.out.print(rs);
 
         try{
             String bname = rs.getString("BName");
