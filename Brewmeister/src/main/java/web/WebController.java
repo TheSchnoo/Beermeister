@@ -19,14 +19,17 @@ import java.util.Map;
 @Controller
 public class WebController {
 
-    @RequestMapping(value="/start", method = RequestMethod.GET)
+    @RequestMapping(value = "/start", method = RequestMethod.GET)
     public
     @ResponseBody
     ArrayList<BeerInfo> start() {
         System.out.println("Start");
         Connection connect = mySqlConnection();
         try {
-            if( connect.isClosed()) {
+            if(connect == null) {
+                System.out.println("Null connect");
+            }
+            if(connect.isClosed()) {
                 System.out.println("Connection closed");
                 return null;
             }
@@ -51,13 +54,15 @@ public class WebController {
 
     private Connection mySqlConnection() {
         Connection mySql = null;
+        System.out.println(System.getenv("CLEARDB_DATABASE_URL"));
         try {
             URI dbUri = new URI(System.getenv("CLEARDB_DATABASE_URL"));
             String username = dbUri.getUserInfo().split(":")[0];
             String password = dbUri.getUserInfo().split(":")[1];
-            String dbUrl = "jdbc:mysql://" + dbUri.getHost() + dbUri.getPath();
+            String dbUrl = "jdbc:" + dbUri.getHost() + dbUri.getPath();
             mySql = DriverManager.getConnection(dbUrl, username, password);
         } catch (Exception e) {
+            System.out.println("Issue");
             e.printStackTrace();
         }
         return mySql;

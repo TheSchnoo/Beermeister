@@ -2,12 +2,8 @@ package web;
 
 
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.sql.*;
 import java.util.*;
-
-import org.json.JSONObject;
-import org.omg.Messaging.SYNC_WITH_TRANSPORT;
 
 public class AccessDatabase {
     private Connection connect = null;
