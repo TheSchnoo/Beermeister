@@ -133,33 +133,33 @@ insert into BeerInStock
 values('Island Lager',2);
 
 insert into BeerInStock
-values('Red Racer Belgian Style Wheat Ale',6);
+values('Red Racer Belgian Style Wheat Ale',42);
 
 insert into BeerInStock
-values('Red Racer Stout',6);
+values('Red Racer Stout',42);
 
 insert into BeerInStock
-values('Red Racer Copper Ale',6);
+values('Red Racer Copper Ale',42);
 
 insert into BeerInStock
-values('Red Racer IPA',6);
+values('Red Racer IPA',42);
 
 insert into BeerInStock
-    select bname,4
+    select bname,52
     from beerinfo
     where breweryname like "%brass%";
 
 
 insert into beerinstock(bname,storeid)
-    select bname, 1
+    select bname, 2
     from beerinfo;
 
 insert into beerinstock(bname,storeid)
-    select bname, 3
+    select bname, 12
     from beerinfo;
 
 insert into beerinstock(bname,storeid)
-    select bname,5
+    select bname,42
     from beerinfo
     where bname like "%ale%";
 
@@ -168,20 +168,20 @@ insert into beerinstock(bname,storeid)
 
 insert into customer(CName,CPassword) values('Jim','theendofthings2');
 
-insert into customer(CName,CPassword) values('Alvin','LimOfAllLims');
+insert into customer(CName,CPassword) values('Liam','Alpine');
 
-insert into customer(CName,CPassword) values('Wes','notInTheCountryIllegally');
+insert into customer(CName,CPassword) values('Whinston','Time');
 
-insert into customer(CName,CPassword) values('Renee','engineerd');
+insert into customer(CName,CPassword) values('Run','DMC');
 
-insert into customer(CName,CPassword) values('Paul','worstLaptopEva!');
-
-
+insert into customer(CName,CPassword) values('Porter','Lectro');
 
 
--- Ratings
+
+
+-- Ratings-- 
 INSERT into rates values(2,'Gypsy Tears', 2, 'Great!');
-INsert into rates values(1,'Gypsy Tears', 3, 'Suboptimal');
-INSERT into rates values(2,'Watermelon Witbier', 3, 'Bad');
-INSERT into rates values(1,'Jerkface 9000', 5, 'Excellent');
-INSERT into rates values(2,'Jerkface 9000', 4, 'Good');
+INsert into rates values(2,'Gypsy Tears', 3, 'Suboptimal');
+INSERT into rates values(12,'Watermelon Witbier', 3, 'Bad');
+INSERT into rates values(42,'Jerkface 9000', 5, 'Excellent');
+INSERT into rates values(12,'Jerkface 9000', 4, 'Good');

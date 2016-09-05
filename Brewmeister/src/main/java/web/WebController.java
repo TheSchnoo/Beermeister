@@ -83,8 +83,6 @@ public class WebController {
                                     @RequestParam(value = "storeId", required = false) String storeId,
                                     @RequestParam(value = "storeName", required = false) String storeName,
                                     HttpServletResponse httpResponse) throws IOException {
-        System.out.println("Moki print");
-        Log.debug("Moki log");
         ArrayList<BeerInfo> beers = new ArrayList<>();
         AccessDatabase accessDatabase = new AccessDatabase();
 
