@@ -89,7 +89,7 @@ public class BeerService {
             return newBI;
         }
         catch (Exception e){
-            System.out.println("Error in converting to BeerInfo:"+ e);
+            System.out.println("BOO:"+ e);
             e.printStackTrace();
         }
         return null;
