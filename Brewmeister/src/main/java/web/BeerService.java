@@ -90,6 +90,7 @@ public class BeerService {
         }
         catch (Exception e){
             System.out.println("Error in converting to BeerInfo:"+ e);
+            e.printStackTrace();
         }
         return null;
     }
