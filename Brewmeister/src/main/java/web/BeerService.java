@@ -4,7 +4,6 @@ import org.json.JSONObject;
 
 import java.sql.DriverManager;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.TreeMap;
@@ -83,8 +82,8 @@ public class BeerService {
 
             System.out.println(bname + breweryName + type + abv + ibu + description + brewed + averageRating);
 
-//            ArrayList<Vendor> vendors = vs.getVendorsThatSellABeer(bname);
-            ArrayList<Vendor> vendors = new ArrayList<>();
+            ArrayList<Vendor> vendors = vs.getVendorsThatSellABeer(bname);
+
 
             System.out.println(bname + breweryName + type + abv + ibu + description + brewed + averageRating);
 
@@ -94,7 +93,8 @@ public class BeerService {
 
             return newBI;
         }
-        catch (SQLException e){
+        catch (Exception e){
+            System.out.println("Error in converting to BeerInfo:"+ e);
             e.printStackTrace();
         }
         return null;
