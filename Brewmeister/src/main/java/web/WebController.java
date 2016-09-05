@@ -1,5 +1,6 @@
 package web;
 
+import com.oracle.tools.packager.Log;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.stereotype.Controller;
@@ -22,7 +23,7 @@ public class WebController {
     @RequestMapping(value = "/start", method = RequestMethod.GET)
     public
     @ResponseBody
-    ArrayList<BeerInfo> start() {
+    ArrayList<BeerInfo> start(@RequestParam(value = "bname", required = false) String bname) {
         System.out.println("Start");
         Connection connect = mySqlConnection();
         try {
@@ -82,6 +83,8 @@ public class WebController {
                                     @RequestParam(value = "storeId", required = false) String storeId,
                                     @RequestParam(value = "storeName", required = false) String storeName,
                                     HttpServletResponse httpResponse) throws IOException {
+        System.out.println("Moki print");
+        Log.debug("Moki log");
         ArrayList<BeerInfo> beers = new ArrayList<>();
         AccessDatabase accessDatabase = new AccessDatabase();
 
