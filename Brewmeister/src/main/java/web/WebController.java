@@ -1,8 +1,5 @@
 package web;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.mysql.jdbc.ResultSetImpl;
-import com.mysql.jdbc.exceptions.MySQLIntegrityConstraintViolationException;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.stereotype.Controller;
@@ -22,7 +19,7 @@ import java.util.Map;
 @Controller
 public class WebController {
 
-    @RequestMapping(value="/", method = RequestMethod.GET)
+    @RequestMapping(value="/start", method = RequestMethod.GET)
     public
     @ResponseBody
     ArrayList<BeerInfo> start() {
