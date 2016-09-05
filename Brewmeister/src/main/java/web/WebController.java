@@ -1,6 +1,7 @@
 package web;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.mysql.jdbc.ResultSetImpl;
 import com.mysql.jdbc.exceptions.MySQLIntegrityConstraintViolationException;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -9,6 +10,10 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.net.URI;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -16,6 +21,50 @@ import java.util.Map;
 
 @Controller
 public class WebController {
+
+    @RequestMapping(value="/", method = RequestMethod.GET)
+    public
+    @ResponseBody
+    ArrayList<BeerInfo> start() {
+        System.out.println("Start");
+        Connection connect = mySqlConnection();
+        try {
+            if( connect.isClosed()) {
+                System.out.println("Connection closed");
+                return null;
+            }
+
+            ResultSet resultSet = connect.prepareStatement("SELECT BName FROM beerinfo;").executeQuery();
+
+            BeerService bs = new BeerService();
+
+            ArrayList<BeerInfo> listBeers = new ArrayList<BeerInfo>();
+
+            while(resultSet.next()){
+                listBeers.add(bs.convertResultSetToBeerInfo(resultSet));
+            }
+            connect.close();
+            return listBeers;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    private Connection mySqlConnection() {
+        Connection mySql = null;
+        try {
+            URI dbUri = new URI(System.getenv("CLEARDB_DATABASE_URL"));
+            String username = dbUri.getUserInfo().split(":")[0];
+            String password = dbUri.getUserInfo().split(":")[1];
+            String dbUrl = "jdbc:mysql://" + dbUri.getHost() + dbUri.getPath();
+            mySql = DriverManager.getConnection(dbUrl, username, password);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return mySql;
+    }
 
     @RequestMapping(value = "/beers", method = RequestMethod.GET)
     public
