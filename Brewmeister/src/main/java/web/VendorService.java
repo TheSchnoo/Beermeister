@@ -36,6 +36,7 @@ public class VendorService {
 
         try {
             connect = openMySqlConnection();
+            System.out.println("moki");
             preparedStatement = connect
                     .prepareStatement(searchString);
             resultSet = preparedStatement.executeQuery();
