@@ -4,6 +4,7 @@ import org.json.JSONObject;
 
 import java.sql.DriverManager;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.TreeMap;
@@ -93,7 +94,7 @@ public class BeerService {
 
             return newBI;
         }
-        catch (Exception e){
+        catch (SQLException e){
             System.out.println("Error in converting to BeerInfo:"+ e);
             e.printStackTrace();
         }
