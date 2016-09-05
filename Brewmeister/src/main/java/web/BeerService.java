@@ -80,13 +80,7 @@ public class BeerService {
             Boolean brewed = rs.getBoolean("Brewed");
             double averageRating = rs.getDouble("AvgRating");
 
-            System.out.println(bname + breweryName + type + abv + ibu + description + brewed + averageRating);
-
             ArrayList<Vendor> vendors = vs.getVendorsThatSellABeer(bname);
-
-
-            System.out.println(bname + breweryName + type + abv + ibu + description + brewed + averageRating);
-
 
             BeerInfo newBI = new BeerInfo(bname, breweryName, type, abv, ibu, description,
                     averageRating, brewed, vendors);

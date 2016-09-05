@@ -34,7 +34,7 @@ public class WebController {
                 return null;
             }
 
-            ResultSet resultSet = connect.prepareStatement("SELECT BName FROM beerinfo;").executeQuery();
+            ResultSet resultSet = connect.prepareStatement("SELECT * FROM beerinfo;").executeQuery();
 
             BeerService bs = new BeerService();
 
@@ -59,7 +59,7 @@ public class WebController {
             URI dbUri = new URI(System.getenv("CLEARDB_DATABASE_URL"));
             String username = dbUri.getUserInfo().split(":")[0];
             String password = dbUri.getUserInfo().split(":")[1];
-            String dbUrl = "jdbc:" + dbUri.getHost() + dbUri.getPath();
+            String dbUrl = "jdbc:mysql://" + dbUri.getHost() + dbUri.getPath();
             mySql = DriverManager.getConnection(dbUrl, username, password);
         } catch (Exception e) {
             System.out.println("Issue");
