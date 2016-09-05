@@ -1,6 +1,9 @@
 package web;
 
+import com.mysql.jdbc.CommunicationsException;
+
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -20,7 +23,9 @@ public class VendorService {
             String password = dbUri.getUserInfo().split(":")[1];
             String dbUrl = "jdbc:mysql://" + dbUri.getHost() + dbUri.getPath();
             mySql = DriverManager.getConnection(dbUrl, username, password);
-        } catch (Exception e) {
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } catch (URISyntaxException e) {
             e.printStackTrace();
         }
         return mySql;

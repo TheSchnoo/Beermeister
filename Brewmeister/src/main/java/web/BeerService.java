@@ -82,8 +82,8 @@ public class BeerService {
 
             System.out.println(bname + breweryName + type + abv + ibu + description + brewed + averageRating);
 
-            ArrayList<Vendor> vendors = vs.getVendorsThatSellABeer(bname);
-
+//            ArrayList<Vendor> vendors = vs.getVendorsThatSellABeer(bname);
+            ArrayList<Vendor> vendors = new ArrayList<>();
 
             System.out.println(bname + breweryName + type + abv + ibu + description + brewed + averageRating);
 
